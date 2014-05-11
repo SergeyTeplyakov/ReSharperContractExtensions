@@ -1,0 +1,7 @@
+﻿<Solution Format="0.0.0.3">
+  <Version>2014-05-10T16:29:50.843466Z</Version>
+  <Project Path="D:\Sources\Resharper\ContractExtensions\ContractExtensions\ReSharper.ContractExtensions.csproj" />
+  <Project Path="D:\Sources\Resharper\ContractExtensions\ReSharper.ContractExtensions.Tests\ReSharper.ContractExtensions.Tests.csproj">
+    <Reference Path="D:\Sources\Resharper\ContractExtensions\ContractExtensions\ReSharper.ContractExtensions.csproj" />
+  </Project>
+</Solution>

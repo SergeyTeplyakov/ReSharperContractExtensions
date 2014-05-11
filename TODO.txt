@@ -1,0 +1,87 @@
+﻿0. ToDo's
+Rename Ensure Expression to Ensure
+Rename RequiresExpression to Requires
+
+Add inner class for EnsuresContextAction and RequiresContextAction that will managed internal state 
+and simplify contracts.
+
+
+1. Preconditions
+ - Disable for output parameters! +
+ - Generate text into the Contract.Requires(arg shall not be null)
+ - Context action for switching from if throw to Contract.Requires
+ - Warning on public types (add configuration) if public method does not contains an argument validation.
+
+ - Preconditions on abstract methods.
+   Should be disabled right now.
+   Later will add an action that will create contract for the interface or abstract class.
+
+ *- Add the same logic on every usage of the argument, not only on the declaration in the method header!!*
+ 2. Вставлять Contract.Requires в зависимости от наличия других statement-ов проверки 
+
+ 3. Добавить возможность генерировать Requires аналогично тому, как это делается с помощью Assert-а сейчас.
+ (он еще генерирует текст, который можно переопределить!)
+
+В тест кейсы: добавление Contract.Requires должно быть доступным: Contract.Requires(s != "foo")
+
+
+2. Postconditions
+ - Show warning when Contrct.Result<ResultType> mismatches with actual return type.
+   (as a special case: Contract.Result for void return methods)
+ - Add context action (staying on Result) for creating Contract.Result
+ - Add Context action to fix return type. 
+ - Possible feature: integrate Contract.Result with refactoring
+ - Enable this feature on returning variable (what if we have more than one?)
+ - Enable this feature on the return statement!
+
+
+3. Asserts
+Add Contract.Assert statements instead of debug.Assert in arbitrary stuff (not on arguments!)
+
+4. Object Invariants
+- Add not-null object invariant.
+  Context action for field declaration.
+  Result: 
+    - Create method with ObjectInvariant attribute.
+	- Add contract validation for assignment
+
+3.1. Generate Object Invariant
+- Add to Generate menu
+- Select all fields an gettable properties
+- Generate objectInvariant method (or regenerate it)
+
+4. Other
+- Add warning when contracts are placed not in the beginning of the method.
+  (check other Code Contracts docuementation to understand what the other rules are.)
+
+- Create contract class for the interface
+- Create contract class for the abstract class.
+- Show warning if they are not match!
+
+- Add postfix completion on conftract.Requires
+- Create simple bat-file that will install the add-in to my local machine.
+- сделать анализ, который выпрямляет порядок проверок с порядком аргументов (можно ли привязаться к рефакторингу изменения порядка аргументов?)
+
+- Warn on non-pure method call in Precondition
+- warn if non-contract method was used inside contracts
+
+5. Invalid C# Programs
+- Compare behavior for my feature with add arg check on partially valid programs
+
+*Configuration*
+1. Add config that will replace al not-null check with contract requires
+2. Add config that will remove default string into the contracts!
+
+Вопросы JetBrains-у
+1. Проблемы с юнит-тестами. Идея хорошая, но почему бы не выкусывать и не делать несколько отдельных тест-кейсов? Так же нагляднее и удобнее?
+2. проблема с созданием выражения factory.CreateStatement("int {0} = 42;", foo); Приводит к невалидному стейтменту.
+3. Есть ли визуализация выражений?
+4. Как нормально перезаливать адд-ин без закрытия всех студий?
+
+Создать скрипт для обновления адд-ина
+
+
+КАК ИЗМЕНИТЬ ЗНАЧОК КОНТЕКСТНОГО МЕНЮ??????? И ДОБАВИТЬ ПОДРАЗЕДЕЛ!!
+
+*Known Issues*
+

@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReSharper.ContractExtensions", "ContractExtensions\ReSharper.ContractExtensions.csproj", "{015F0C46-EB80-40FA-A508-CAD66B02B7E6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{A30DAFF8-9B8B-447A-801F-15337A16833D}"
+	ProjectSection(SolutionItems) = preProject
+		TODO.txt = TODO.txt
+		UsefullNotes.txt = UsefullNotes.txt
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReSharper.ContractExtensions.Tests", "ReSharper.ContractExtensions.Tests\ReSharper.ContractExtensions.Tests.csproj", "{45CDD107-FF9E-4C98-BCC7-0151953B6CAA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{015F0C46-EB80-40FA-A508-CAD66B02B7E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{015F0C46-EB80-40FA-A508-CAD66B02B7E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{015F0C46-EB80-40FA-A508-CAD66B02B7E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{015F0C46-EB80-40FA-A508-CAD66B02B7E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{45CDD107-FF9E-4C98-BCC7-0151953B6CAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45CDD107-FF9E-4C98-BCC7-0151953B6CAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45CDD107-FF9E-4C98-BCC7-0151953B6CAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{45CDD107-FF9E-4C98-BCC7-0151953B6CAA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
