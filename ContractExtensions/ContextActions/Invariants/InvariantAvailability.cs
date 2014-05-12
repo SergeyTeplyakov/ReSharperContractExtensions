@@ -9,7 +9,7 @@ using ReSharper.ContractExtensions.Utilities;
 namespace ReSharper.ContractExtensions.ContextActions.Invariants
 {
     /// <summary>
-    /// Represents object that shows whether Add Invariant action enabled or not.
+    /// Shows whether Add Invariant action enabled or not.
     /// </summary>
     internal sealed class InvariantAvailability
     {
