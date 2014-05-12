@@ -115,7 +115,6 @@ namespace ReSharper.ContractExtensions.Preconditions.Logic
             return message;
         }
 
-        // TODO: add invariant taht PredicateLhs, and other are not null if IsValid is true
         public bool IsValid { get; private set; }
 
         public PreconditionType? PreconditionType { get; private set; }
@@ -125,10 +124,6 @@ namespace ReSharper.ContractExtensions.Preconditions.Logic
         private IReferenceExpression PredicateLeftSide { get; set; }
         private EqualityExpressionType PredicateEqualityType { get; set; }
         private ILiteralExpression PredicateRightSide { get; set; }
-
-        //private ILiteralExpression PredicateLhs { get; set; }
-        
-        //private ICSharpExpression PredicateRhs { get; set; }
 
         private static PreconditionExpression CreateInvalid()
         {

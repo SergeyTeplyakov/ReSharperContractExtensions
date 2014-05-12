@@ -1,7 +1,7 @@
 ﻿<Solution Format="0.0.0.3">
-  <Version>2014-05-10T16:29:50.843466Z</Version>
-  <Project Path="D:\Sources\Resharper\ContractExtensions\ContractExtensions\ReSharper.ContractExtensions.csproj" />
+  <Version>2014-05-12T07:56:26.1466658Z</Version>
   <Project Path="D:\Sources\Resharper\ContractExtensions\ReSharper.ContractExtensions.Tests\ReSharper.ContractExtensions.Tests.csproj">
     <Reference Path="D:\Sources\Resharper\ContractExtensions\ContractExtensions\ReSharper.ContractExtensions.csproj" />
   </Project>
+  <Project Path="D:\Sources\Resharper\ContractExtensions\ContractExtensions\ReSharper.ContractExtensions.csproj" />
 </Solution>

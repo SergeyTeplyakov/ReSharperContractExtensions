@@ -16,6 +16,12 @@ namespace ReSharper.ContractExtensions.Preconditions.Logic
             Message = preconditionExpression.Message;
         }
 
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(ArgumentName != null);
+        }
+
         public static InvariantStatement TryCreate(ICSharpStatement statement)
         {
             Contract.Requires(statement != null);

@@ -44,6 +44,7 @@ namespace ReSharper.ContractExtensions.ContextActions
         [ContractInvariantMethod]
         private void ObjectInvariant()
         {
+            Contract.Invariant(_invariantAvailability != null);
             Contract.Invariant(_classDeclaration != null);
             Contract.Invariant(_currentFile != null);
             Contract.Invariant(_factory != null);

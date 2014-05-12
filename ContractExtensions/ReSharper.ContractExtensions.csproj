@@ -76,28 +76,31 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ContextActions\Invariant\InvariantActionExecutor.cs" />
-    <Compile Include="ContextActions\Invariant\InvariantAvailability.cs" />
-    <Compile Include="ContextActions\Invariant\InvariantContextAction.cs" />
+    <Compile Include="ContextActions\Invariants\FieldOrPropertyDeclaration.cs" />
+    <Compile Include="ContextActions\Invariants\InvariantActionExecutor.cs" />
+    <Compile Include="ContextActions\Invariants\InvariantAvailability.cs" />
+    <Compile Include="ContextActions\Invariants\InvariantContextAction.cs" />
     <Compile Include="ContextActions\EnsuresContextAction.cs" />
-    <Compile Include="ContextActions\Invariant\InvariantUtils.cs" />
+    <Compile Include="ContextActions\Invariants\InvariantUtils.cs" />
     <Compile Include="ContextActions\Logic\ContractStatement.cs" />
     <Compile Include="ContextActions\Logic\ContractStatementExtensions.cs" />
     <Compile Include="ContextActions\Logic\InvariantStatement.cs" />
     <Compile Include="ContextActions\Logic\InvocationVisitor.cs" />
     <Compile Include="ContextActions\Logic\PreconditionExpression.cs" />
-    <Compile Include="ContextActions\Logic\PreconditionStatement.cs" />
-    <Compile Include="ContextActions\RequiresContextAction.cs" />
+    <Compile Include="ContextActions\Requires\GenericRequiresContextAction.cs" />
+    <Compile Include="ContextActions\Requires\RequiresContextAction.cs" />
     <Compile Include="ContextActions\Logic\EnsureExpression.cs" />
     <Compile Include="ContextActions\Logic\EnsuresStatement.cs" />
     <Compile Include="ContextActions\Logic\RequiresExpression.cs" />
     <Compile Include="ContextActions\Logic\RequiresStatement.cs" />
+    <Compile Include="ContextActions\Requires\RequiresContextActionBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\ExpressionEx.cs" />
     <Compile Include="Utilities\Extensions.cs" />
     <Compile Include="Utilities\IPropertyDeclarationEx.cs" />
     <Compile Include="Utilities\MethodDeclarationEx.cs" />
     <Compile Include="Utilities\Monadic.cs" />
+    <Compile Include="Utilities\StringExtensions.cs" />
     <Compile Include="Utilities\TreeNodeExtensions.cs" />
     <Compile Include="Utilities\TypeEx.cs" />
   </ItemGroup>

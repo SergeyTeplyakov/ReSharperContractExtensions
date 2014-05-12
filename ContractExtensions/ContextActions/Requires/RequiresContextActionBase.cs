@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using JetBrains.Application.Progress;
 using JetBrains.ProjectModel;
-using JetBrains.ReSharper.Feature.Services.Bulbs;
 using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
 using JetBrains.ReSharper.Intentions.Extensibility;
 using JetBrains.ReSharper.Psi;
@@ -17,43 +15,26 @@ using JetBrains.Util;
 using ReSharper.ContractExtensions.Preconditions.Logic;
 using ReSharper.ContractExtensions.Utilities;
 
-namespace ReSharper.ContractExtensions.ContextActions
+namespace ReSharper.ContractExtensions.ContextActions.Requires
 {
-    [ContextAction(Name = Name, Group = "Contracts", Description = Description, Priority = 100)]
-    public class RequiresContextAction : ContextActionBase
+    public abstract class RequiresContextActionBase : ContextActionBase
     {
-        private const string Name = "Add Contract.Requires";
-        private const string Description = "Add Contract.Requires on potentially nullable argument.";
-        private readonly ICSharpContextActionDataProvider _provider;
+        protected readonly ICSharpContextActionDataProvider _provider;
+        protected string _currentParameterName = "unknown";
 
-        private const string Format = "Requires '{0}' is not null";
-        private string _currentParameterName = "unknown";
-
-        public RequiresContextAction(ICSharpContextActionDataProvider provider)
+        protected RequiresContextActionBase(ICSharpContextActionDataProvider provider)
         {
             Contract.Requires(provider != null);
             _provider = provider;
         }
 
-        public override IEnumerable<IntentionAction> CreateBulbItems()
-        {
-            var result = base.CreateBulbItems().ToList();
-            //var item = result[0];
-            //item.ToBulbMenuItem(_provider.Solution, _provider.TextControl);
-            return result;
-        }
-
-        private IParameterDeclaration GetParameterDeclaration()
-        {
-            return _provider.GetSelectedElement<IParameterDeclaration>(true, true);
-        }
         protected override Action<ITextControl> ExecutePsiTransaction(ISolution solution, IProgressIndicator progress)
         {
             var parameterDeclaration = GetParameterDeclaration();
             Contract.Assert(parameterDeclaration != null);
 
             var functionDeclaration = GetFunctionDeclaration(parameterDeclaration);
-            
+
             var psiModule = parameterDeclaration.GetPsiModule();
             var factory = CSharpElementFactory.GetInstance(psiModule);
 
@@ -69,7 +50,23 @@ namespace ReSharper.ContractExtensions.ContextActions
             return null;
         }
 
-        ICSharpStatement GetPreviousRequires(ICSharpFunctionDeclaration functionDeclaration, 
+        public override bool IsAvailable(IUserDataHolder cache)
+        {
+            IParameterDeclaration declaration;
+            if (!IsParameterSelected(out declaration))
+                return false;
+
+            _currentParameterName = declaration.DeclaredElement.ShortName;
+
+            return IsAvailableFor(declaration);
+        }
+
+        private IParameterDeclaration GetParameterDeclaration()
+        {
+            return _provider.GetSelectedElement<IParameterDeclaration>(true, true);
+        }
+
+        ICSharpStatement GetPreviousRequires(ICSharpFunctionDeclaration functionDeclaration,
             IParameterDeclaration parameterDeclaration)
         {
             var parameters = functionDeclaration.DeclaredElement.Parameters.Select(p => p.ShortName).ToList();
@@ -85,11 +82,6 @@ namespace ReSharper.ContractExtensions.ContextActions
                     .Return(x => x.Statement);
         }
 
-        public override string Text
-        {
-            get { return string.Format(Format, _currentParameterName); }
-        }
-
         private bool IsParameterSelected(out IParameterDeclaration parameterDeclaration)
         {
             // If the carret is on the parameter declaration,
@@ -97,7 +89,7 @@ namespace ReSharper.ContractExtensions.ContextActions
             parameterDeclaration = _provider.GetSelectedElement<IParameterDeclaration>(true, true);
             if (parameterDeclaration != null)
                 return true;
-            
+
             // But parameter could be selected inside method body
             var selectedDeclaration = _provider.GetSelectedElement<IReferenceExpression>(true, true)
                 .With(x => x.Reference)
@@ -108,12 +100,12 @@ namespace ReSharper.ContractExtensions.ContextActions
 
             if (selectedDeclaration == null)
                 return false;
-            
+
             var currentFunction = _provider.GetSelectedElement<IFunctionDeclaration>(true, true);
             if (currentFunction == null)
                 return false;
-            
-            bool isArgument = 
+
+            bool isArgument =
                 currentFunction.DeclaredElement.Parameters
                 .SelectMany(pm => pm.GetDeclarations())
                 .Select(pm => pm as IParameterDeclaration)
@@ -129,25 +121,8 @@ namespace ReSharper.ContractExtensions.ContextActions
             return false;
         }
 
-        public override bool IsAvailable(IUserDataHolder cache)
-        {
-            IParameterDeclaration declaration;
-            if (!IsParameterSelected(out declaration))
-                return false;
-
-            _currentParameterName = declaration.DeclaredElement.ShortName;
-
-            return IsAvailableFor(declaration);
-        }
-
-        private static ICSharpStatement CreateContractRequires(CSharpElementFactory factory,
-                                            IParameterDeclaration parameterDeclaration)
-        {
-            string stringStatement = string.Format("{0}.Requires({1} != null);",
-                typeof (Contract).Name, parameterDeclaration.DeclaredName);
-            var statement = factory.CreateStatement(stringStatement);
-            return statement;
-        }
+        protected abstract ICSharpStatement CreateContractRequires(CSharpElementFactory factory,
+            IParameterDeclaration parameterDeclaration);
 
         private static void AddNamespaceUsing(CSharpElementFactory factory, ICSharpFile currentFile)
         {
@@ -217,7 +192,7 @@ namespace ReSharper.ContractExtensions.ContextActions
             Contract.Requires(parameterDeclaration.DeclaredElement != null);
 
             var defaultValue = parameterDeclaration.DeclaredElement.GetDefaultValue();
-            
+
             // TODO: not sure that GetDefaultValue could return null!
             return parameterDeclaration.DeclaredElement.IsOptional
                    && (defaultValue == null

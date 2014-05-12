@@ -15,6 +15,12 @@ namespace ReSharper.ContractExtensions.Preconditions.Logic
             Statement = statement;
         }
 
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(Statement != null);
+        }
+
         public ICSharpStatement Statement { get; private set; }
 
         public override sealed string ToString()

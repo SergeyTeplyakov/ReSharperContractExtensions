@@ -9,6 +9,7 @@ using JetBrains.Application;
 using JetBrains.Threading;
 using NUnit.Framework;
 using ReSharper.ContractExtensions.ContextActions;
+using ReSharper.ContractExtensions.ContextActions.Requires;
 
 [assembly: AssemblyTitle("ReSharper.ContractExtensions.Tests")]
 [assembly: AssemblyDescription("")]

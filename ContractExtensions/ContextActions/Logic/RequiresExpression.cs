@@ -7,11 +7,6 @@ using ReSharper.ContractExtensions.Utilities;
 
 namespace ReSharper.ContractExtensions.Preconditions.Logic
 {
-    struct InvariantExpression
-    {
-        
-    }
-
     struct RequiresExpression
     {
         public static RequiresExpression Parse(IExpression originalExpression)
