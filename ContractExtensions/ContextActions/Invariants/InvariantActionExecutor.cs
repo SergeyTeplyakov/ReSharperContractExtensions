@@ -9,6 +9,7 @@ using JetBrains.ReSharper.Psi.CSharp;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.Util;
+using ReSharper.ContractExtensions.ContextActions.Invariants;
 using ReSharper.ContractExtensions.Utilities;
 
 namespace ReSharper.ContractExtensions.ContextActions
@@ -19,7 +20,7 @@ namespace ReSharper.ContractExtensions.ContextActions
         private readonly ICSharpContextActionDataProvider _provider;
         private readonly CSharpElementFactory _factory;
         private readonly ICSharpFile _currentFile;
-        private readonly IClassDeclaration _classDeclaration;
+        private readonly IClassLikeDeclaration _classDeclaration;
 
         public InvariantActionExecutor(InvariantAvailability invariantAvailability,
             ICSharpContextActionDataProvider provider)
@@ -34,10 +35,18 @@ namespace ReSharper.ContractExtensions.ContextActions
             _factory = CSharpElementFactory.GetInstance(provider.PsiModule);
             // TODO: look at this class CSharpStatementNavigator
 
-            _classDeclaration = provider.GetSelectedElement<IClassDeclaration>(true, true);
+            _classDeclaration = provider.GetSelectedElement<IClassLikeDeclaration>(true, true);
             
             Contract.Assert(provider.SelectedElement != null);
             _currentFile = (ICSharpFile)provider.SelectedElement.GetContainingFile();
+        }
+
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(_classDeclaration != null);
+            Contract.Invariant(_currentFile != null);
+            Contract.Invariant(_factory != null);
         }
 
         public void ExecuteTransaction(ISolution solution, IProgressIndicator progress)
@@ -60,7 +69,6 @@ namespace ReSharper.ContractExtensions.ContextActions
         private ICSharpStatement GetPreviousInvariantStatement(IMethodDeclaration invariantMethod)
         {
             Contract.Requires(invariantMethod != null);
-
 
             // TODO: will implement later!
             // Order will depends whether current member is field or property!

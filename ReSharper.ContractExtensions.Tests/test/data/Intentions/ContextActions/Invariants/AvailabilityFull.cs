@@ -11,6 +11,7 @@ class A
 {
   private string _enabledOnReferenceType{on};
   private int? _enabledOnNullableInt{on};
+  private IComparable _enableOnInterfaceField{on};
 
   private int _disabledOnInt{off};
   private static string _disabledOnStaticFields{off};
@@ -26,6 +27,10 @@ class A
 
   public string EnabledOnReferenceProperty{on} {get; private set;}
   public int? EnabledOnNullableProperty{on} {get; private set;}
+  public IComparable EnabledOnInterfaceProperty{on} {get; private set;}
+  private string EnabledOnPrivateProperty{on} {get; set;}
+
+  public Person EnabledOnPropertyWithUserDefinedType{on} {get; private set;}
 
   public int DisabledOnValueTypeProperty{off} {get; private set;}
   public string DisabledOnSettableOnlyProperty {set {}}

@@ -1,7 +1,7 @@
 using System.Diagnostics.Contracts;
 using System;
 
-abstract class A
+struct A
 {
   public string EnabledOnReferenceProperty{on} {get; private set;}
 

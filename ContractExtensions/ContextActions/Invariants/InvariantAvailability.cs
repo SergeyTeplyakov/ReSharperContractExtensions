@@ -1,17 +1,12 @@
-using System;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using JetBrains.ReSharper.Daemon.CSharp.Errors;
 using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
-using JetBrains.ReSharper.Psi.Resources;
-using JetBrains.ReSharper.Psi.Tree;
-using JetBrains.Util.Special;
 using ReSharper.ContractExtensions.Preconditions.Logic;
 using ReSharper.ContractExtensions.Utilities;
 
-namespace ReSharper.ContractExtensions.ContextActions
+namespace ReSharper.ContractExtensions.ContextActions.Invariants
 {
     internal struct FieldOrPropertyDeclaration
     {
@@ -62,7 +57,8 @@ namespace ReSharper.ContractExtensions.ContextActions
     internal sealed class InvariantAvailability
     {
         private readonly FieldOrPropertyDeclaration _selectedElement;
-        private readonly IClassDeclaration _classDeclaration;
+        // This could be class or struct declarations!
+        private readonly IClassLikeDeclaration _classDeclaration;
         public static readonly InvariantAvailability InvariantUnavailable = new InvariantAvailability {IsAvailable = false};
 
         private InvariantAvailability()
@@ -72,13 +68,21 @@ namespace ReSharper.ContractExtensions.ContextActions
             FieldOrPropertyDeclaration selectedElement)
         {
             Contract.Requires(provider != null);
-
-            _classDeclaration = provider.GetSelectedElement<IClassDeclaration>(true, true);
+            
+            _classDeclaration = provider.GetSelectedElement<IClassLikeDeclaration>(true, true);
             _selectedElement = selectedElement;
 
             IsAvailable = AnalyzeAvailability();
             if (IsAvailable)
                 SelectedMemberName = _selectedElement.Name;
+        }
+
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(IsAvailable == false || !SelectedMemberName.IsNullOrEmpty(),
+                "For available action, selected member should not be null");
+            Contract.Invariant(IsAvailable == false || _classDeclaration != null);
         }
 
         public static InvariantAvailability Create(ICSharpContextActionDataProvider provider)
@@ -158,155 +162,5 @@ namespace ReSharper.ContractExtensions.ContextActions
 
         public bool IsAvailable { get; private set; }
         public string SelectedMemberName { get; private set; }
-
-        // TODO add invariant: IsAvailable == false || SelectedMemberName != null
     }
-
-    /*class InvariantUnavailable : InvariantAvailability
-    {
-        public override bool IsAvailable
-        {
-            get { return false; }
-        }
-    }
-    
-    abstract class InvariantPotentiallyAvailable : InvariantAvailability
-    {
-        protected readonly ICSharpContextActionDataProvider _provider;
-        protected readonly IClassDeclaration _classDeclaration;
-
-        protected bool _isAvailable = false;
-        public override sealed bool IsAvailable { get { return _isAvailable; } }
-        protected InvariantPotentiallyAvailable(ICSharpContextActionDataProvider provider)
-        {
-            Contract.Requires(provider != null);
-            _provider = provider;
-
-            _classDeclaration = _provider.GetSelectedElement<IClassDeclaration>(true, true);
-        }
-
-        public void ValidateAvailability()
-        {
-            
-        }
-
-        protected abstract string GetSelectedElementName();
-        
-    }*/
-
-    //class FieldInvariant : InvariantPotentiallyAvailable
-    //{
-    //    private readonly IFieldDeclaration _fieldDeclaration;
-
-    //    public FieldInvariant(ICSharpContextActionDataProvider provider,
-    //        IFieldDeclaration fieldDeclaration)
-    //        : base(provider)
-    //    {
-    //        Contract.Requires(fieldDeclaration != null);
-    //        _fieldDeclaration = fieldDeclaration;
-
-    //        string selectedName = GetSelectedFieldName(_fieldDeclaration);
-
-    //        _isAvailable = IsActionAvailable(selectedName);
-    //        if (_isAvailable)
-    //            SelectedMemberName = selectedName;
-    //    }
-
-    //    [ContractInvariantMethod]
-    //    private void ObjectInvariant()
-    //    {
-    //        Contract.Invariant(_fieldDeclaration != null);
-    //    }
-
-    //    protected override string GetSelectedElementName()
-    //    {
-    //        return GetSelectedFieldName(_fieldDeclaration);
-    //    }
-
-
-    //    private string GetSelectedFieldName(IFieldDeclaration fieldDeclaration)
-    //    {
-    //        return fieldDeclaration.DeclaredElement.ShortName;
-    //    }
-
-    //    private bool IsActionAvailable(string selectedName)
-    //    {
-    //        // if this possible it should be checked in Validate method
-    //        Contract.Assert(_fieldDeclaration.DeclaredElement.Type != null);
-    //        var fieldType = _fieldDeclaration.DeclaredElement.Type;
-
-    //        // Invariants are impossible on static fields
-    //        if (_fieldDeclaration.IsStatic)
-    //            return false;
-
-    //        if (!fieldType.IsReferenceOrNullableType())
-    //            return false;
-
-    //        if (FieldAlreadyPartOfObjectInvariant(selectedName))
-    //            return false;
-
-    //        return true;
-    //    }
-
-    //    private bool FieldAlreadyPartOfObjectInvariant(string selectedName)
-    //    {
-    //        var invariantMethod = GetInvariantMethod();
-    //        if (invariantMethod == null)
-    //            return false;
-
-    //        return invariantMethod.GetInvariants().Any(s => s.ArgumentName == selectedName);
-    //    }
-
-    //    private IMethodDeclaration GetInvariantMethod()
-    //    {
-    //        return _classDeclaration
-    //            .GetInvariantMethod()
-    //            .Return(x => x.IsObjectInvariantMethod() ? x : null);
-    //    }
-
-    //    internal static InvariantAvailability TryCreate(ICSharpContextActionDataProvider provider)
-    //    {
-    //        Contract.Requires(provider != null);
-    //        Contract.Ensures(Contract.Result<InvariantAvailability>() != null);
-
-    //        var fieldDeclaration = GetFieldDeclaration(provider);
-    //        if (fieldDeclaration == null || !IsFieldDeclarationValid(fieldDeclaration))
-    //            return InvariantAvailability.Unavailable;
-
-    //        return new FieldInvariant(provider, fieldDeclaration);
-    //    }
-
-    //    private static bool IsFieldDeclarationValid(IFieldDeclaration fieldDeclaration)
-    //    {
-    //        // How can I make sure that this stuff is valid???
-    //        return true;
-    //    }
-
-    //    private static IFieldDeclaration GetFieldDeclaration(ICSharpContextActionDataProvider provider)
-    //    {
-    //        // it could be field declaration or field usage
-    //        var fieldDeclaration = provider.GetSelectedElement<IFieldDeclaration>(true, true);
-    //        if (fieldDeclaration != null)
-    //            return fieldDeclaration;
-
-    //        var selectedIdentifier = provider.GetSelectedElement<IIdentifier>(true, true);
-
-    //        return null;
-    //    }
-
-    //}
-
-    //abstract class PropertyInvariant : InvariantPotentiallyAvailable
-    //{
-    //    private readonly IPropertyDeclaration _propertyDeclaration;
-
-    //    protected PropertyInvariant(ICSharpContextActionDataProvider provider, IPropertyDeclaration propertyDeclaration) 
-    //        : base(provider)
-    //    {
-    //        Contract.Requires(propertyDeclaration != null);
-    //        _propertyDeclaration = propertyDeclaration;
-
-    //        bool isStatic = propertyDeclaration.IsStatic;
-    //    }
-    //}
 }

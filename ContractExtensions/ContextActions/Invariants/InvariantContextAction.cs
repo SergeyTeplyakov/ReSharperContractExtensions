@@ -5,11 +5,9 @@ using JetBrains.ProjectModel;
 using JetBrains.ReSharper.Feature.Services.Bulbs;
 using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
 using JetBrains.ReSharper.Intentions.Extensibility;
-using JetBrains.ReSharper.Psi.CSharp.Tree;
-using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.TextControl;
 using JetBrains.Util;
-using ReSharper.ContractExtensions.Utilities;
+using ReSharper.ContractExtensions.ContextActions.Invariants;
 
 namespace ReSharper.ContractExtensions.ContextActions
 {
@@ -21,13 +19,19 @@ namespace ReSharper.ContractExtensions.ContextActions
         private const string Description = "Add Contract.Invariant on the selected field or property.";
         private readonly ICSharpContextActionDataProvider _provider;
 
-        // TODO: add invariant via my own tool!
         private InvariantAvailability _invariantContract = InvariantAvailability.InvariantUnavailable;
 
         public InvariantContextAction(ICSharpContextActionDataProvider provider)
         {
             Contract.Requires(provider != null);
             _provider = provider;
+        }
+
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(_provider != null);
+            Contract.Invariant(_invariantContract != null);
         }
 
         protected override Action<ITextControl> ExecutePsiTransaction(ISolution solution, IProgressIndicator progress)

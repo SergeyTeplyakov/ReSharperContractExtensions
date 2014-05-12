@@ -1,15 +1,14 @@
 ﻿using System.Diagnostics.Contracts;
-using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using ReSharper.ContractExtensions.Utilities;
 
-namespace ReSharper.ContractExtensions.ContextActions
+namespace ReSharper.ContractExtensions.ContextActions.Invariants
 {
     internal static class InvariantUtils
     {
         public const string InvariantMethodName = "ObjectInvariant";
 
-        public static IMethodDeclaration GetInvariantMethod(this IClassDeclaration classDeclaration)
+        public static IMethodDeclaration GetInvariantMethod(this IClassLikeDeclaration classDeclaration)
         {
             Contract.Requires(classDeclaration != null);
 
