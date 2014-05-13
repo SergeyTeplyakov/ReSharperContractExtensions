@@ -61,7 +61,7 @@ public class SamplePluginTestEnvironmentAssembly : ReSharperTestEnvironmentAssem
         yield return Assembly.GetExecutingAssembly();
 
         // Plugin code
-        yield return typeof(RequiresContextAction).Assembly;
+        yield return typeof(RequiresContextActionBase).Assembly;
     }
 
     public override void SetUp()

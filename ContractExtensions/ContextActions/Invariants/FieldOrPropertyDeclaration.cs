@@ -15,7 +15,6 @@ namespace ReSharper.ContractExtensions.ContextActions.Invariants
             Contract.Invariant(Type != null);
         }
 
-        // TODO: Add Invariant that one of them is not null!
         public IFieldDeclaration Field { get; private set; }
         public IPropertyDeclaration Property { get; private set; }
 

@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics.Contracts;
 using System.Linq;
-using JetBrains.ReSharper.Daemon.CSharp.Errors;
 using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
@@ -160,7 +159,6 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
 
         private bool MethodIsAbstract()
         {
-            // TODO: maybe would be useful to extract this as a state!
             return _functionDeclaration.IsAbstract;
         }
 
