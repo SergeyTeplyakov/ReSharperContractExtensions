@@ -76,6 +76,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ContextActions\ContractsFor\AddContractForAvailability.cs" />
+    <Compile Include="ContextActions\ContractsFor\AddContractForContextAction.cs" />
+    <Compile Include="ContextActions\ContractsFor\SampleAbstractClass.cs" />
+    <Compile Include="ContextActions\ContractsFor\SampleInterface.cs" />
     <Compile Include="ContextActions\Invariants\FieldOrPropertyDeclaration.cs" />
     <Compile Include="ContextActions\Invariants\InvariantActionExecutor.cs" />
     <Compile Include="ContextActions\Invariants\InvariantAvailability.cs" />
