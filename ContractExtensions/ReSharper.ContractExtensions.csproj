@@ -101,9 +101,9 @@
     <Compile Include="ContextActions\Requires\RequiresContextActionBase.cs" />
     <Compile Include="ContextActions\Requires\RequiresExecutor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utilities\AttributeExtensions.cs" />
     <Compile Include="Utilities\ExpressionEx.cs" />
     <Compile Include="Utilities\Extensions.cs" />
-    <Compile Include="Utilities\IPropertyDeclarationEx.cs" />
     <Compile Include="Utilities\MethodDeclarationEx.cs" />
     <Compile Include="Utilities\Monadic.cs" />
     <Compile Include="Utilities\StringExtensions.cs" />

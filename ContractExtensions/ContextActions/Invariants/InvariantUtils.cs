@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.Contracts;
+using System.Linq;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using ReSharper.ContractExtensions.Utilities;
 
@@ -18,13 +19,10 @@ namespace ReSharper.ContractExtensions.ContextActions.Invariants
 
         public static bool IsObjectInvariantMethod(this IMethodDeclaration methodDeclaration)
         {
-            // TODO: this definetely more correct way (because it will work only for resolved types)
-            // but not sure about performance and simplicity!
-            return methodDeclaration.Attributes.Any(
-                n => n.With(x => x.TypeReference)
-                      .With(x => x.Resolve())
-                      .With(x => x.DeclaredElement)
-                      .Return(x => x.ShortName) == typeof (ContractInvariantMethodAttribute).Name);
+            return methodDeclaration.Attributes
+                .Select(a => a.GetClrTypeName())
+                .Where(a => a != null)
+                .Any(a => a.FullName == typeof (ContractInvariantMethodAttribute).FullName);
         }
 
     }
