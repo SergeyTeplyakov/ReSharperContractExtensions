@@ -7,9 +7,8 @@ using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
 using JetBrains.ReSharper.Intentions.Extensibility;
 using JetBrains.TextControl;
 using JetBrains.Util;
-using ReSharper.ContractExtensions.ContextActions.Invariants;
 
-namespace ReSharper.ContractExtensions.ContextActions
+namespace ReSharper.ContractExtensions.ContextActions.Invariants
 {
     [ContextAction(Name = Name, Group = "Contracts", Description = Description, Priority = 90)]
     public class InvariantContextAction : ContextActionBase

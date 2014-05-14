@@ -1,7 +1,5 @@
-using System;
 using System.Diagnostics.Contracts;
 using JetBrains.Application.Progress;
-using JetBrains.DataFlow;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
 using JetBrains.ReSharper.Psi;
@@ -9,10 +7,9 @@ using JetBrains.ReSharper.Psi.CSharp;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.Util;
-using ReSharper.ContractExtensions.ContextActions.Invariants;
 using ReSharper.ContractExtensions.Utilities;
 
-namespace ReSharper.ContractExtensions.ContextActions
+namespace ReSharper.ContractExtensions.ContextActions.Invariants
 {
     class InvariantActionExecutor
     {
