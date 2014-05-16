@@ -69,17 +69,19 @@ namespace ReSharper.ContractExtensions.ContextActions.Invariants
             method.Body.AddStatementAfter(statement, addAfter);
         }
 
+        /// <summary>
+        /// Returns statement after which current invariant should be added.
+        /// </summary>
+        /// <remarks>
+        /// Order of the invariants:
+        /// Invariants that check fields
+        /// Invariants that check properties
+        /// All of them would be in the order of the declaration.
+        /// </remarks>
         [CanBeNull]
         private ICSharpStatement GetPreviousInvariantStatement()
         {
-
             var declaration = _invariantAvailability.FieldOrPropertyDeclaration;
-            //if (declaration.IsField)
-            //{
-            //    return GetPreviousInvariantForField(declaration);
-            //}
-
-            //return GetPreviousInvariantForProperty(declaration);
 
             IEnumerable<IDeclaration> fields = _classDeclaration.MemberDeclarations.OfType<IFieldDeclaration>();
             IEnumerable<IDeclaration> properties = Enumerable.Empty<IDeclaration>();
@@ -106,80 +108,6 @@ namespace ReSharper.ContractExtensions.ContextActions.Invariants
             }
 
             return null;
-
-            //var fields = _classDeclaration.MemberDeclarations.OfType<IFieldDeclaration>().ToList();
-
-            //if (declaration.IsField)
-            //{
-            //    var index = fields.FindIndex(x => x.DeclaredName == declaration.Name);
-            //    return index > 0 ? fields[index - 1] : null;
-
-            //}
-            //else
-            //{
-            //    var properties = _classDeclaration.MemberDeclarations.OfType<IPropertyDeclaration>().ToList();
-
-            //    // If we're adding prop
-            //    if (properties.Count == 0)
-            //    {
-            //        return fields.LastOrDefault();
-            //    }
-
-            //    var index = properties.FindIndex(x => x.DeclaredName == declaration.Name);
-            //    return index > 0 ? properties[index - 1] : null;
-        }
-
-        private ICSharpStatement GetPreviousInvariantForProperty(FieldOrPropertyDeclaration declaration)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        private ICSharpStatement GetPreviousInvariantForField(FieldOrPropertyDeclaration declaration)
-        {
-            var fields = _classDeclaration.MemberDeclarations.OfType<IFieldDeclaration>().ToList();
-
-            var fieldInvariantStatements =
-                _classDeclaration.GetInvariants()
-                .Where(i => fields.Any(f => i.ArgumentName == f.DeclaredName))
-                .ToDictionary(x => x.ArgumentName, x => x);
-
-            // Looking for "previous" fields backwards
-            foreach (var previousField in fields.SkipWhile(fd => fd.DeclaredName != declaration.Name).Reverse())
-            {
-                if (fieldInvariantStatements.ContainsKey(previousField.DeclaredName))
-                {
-                    return fieldInvariantStatements[previousField.DeclaredName].Statement;
-                }
-            }
-
-            return null;
-        }
-
-
-        [CanBeNull]
-        private IDeclaration GetPreviousFieldOrProperty(FieldOrPropertyDeclaration declaration)
-        {
-            var fields = _classDeclaration.MemberDeclarations.OfType<IFieldDeclaration>().ToList();
-
-            if (declaration.IsField)
-            {
-                var index = fields.FindIndex(x => x.DeclaredName == declaration.Name);
-                return index > 0 ? fields[index - 1] : null;
-
-            }
-            else
-            {
-                var properties = _classDeclaration.MemberDeclarations.OfType<IPropertyDeclaration>().ToList();
-
-                // If we're adding prop
-                if (properties.Count == 0)
-                {
-                    return fields.LastOrDefault();
-                }
-
-                var index = properties.FindIndex(x => x.DeclaredName == declaration.Name);
-                return index > 0 ? properties[index - 1] : null;
-            }
         }
 
         private IMethodDeclaration AddObjectInvariantMethodIfNecessary()
