@@ -3,8 +3,8 @@ using System.Diagnostics.Contracts;
 class A
 {
   private string _anotherString = "";
-  private string _shouldNotBeNull{caret} = "";
 
+  public string SomeProperty{caret} {get; set;}
   public A()
   {
   }

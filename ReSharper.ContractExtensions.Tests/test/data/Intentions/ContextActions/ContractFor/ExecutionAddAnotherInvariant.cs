@@ -2,9 +2,8 @@ using System.Diagnostics.Contracts;
 
 class A
 {
-  private string _anotherString = "";
   private string _shouldNotBeNull{caret} = "";
-
+  private string _anotherString = "";
   public A()
   {
   }

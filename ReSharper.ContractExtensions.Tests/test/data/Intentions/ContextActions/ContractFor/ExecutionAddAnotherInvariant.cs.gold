@@ -1,10 +1,9 @@
-using System.Diagnostics.Contracts;
+﻿using System.Diagnostics.Contracts;
 
 class A
 {
-  private string _anotherString = "";
   private string _shouldNotBeNull{caret} = "";
-
+  private string _anotherString = "";
   public A()
   {
   }
@@ -12,6 +11,7 @@ class A
   [ContractInvariantMethod]
   private void ObjectInvariant()
   {
+    Contract.Invariant(_shouldNotBeNull != null);
     Contract.Invariant(_anotherString != null);
   }
 }

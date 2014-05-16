@@ -2,8 +2,9 @@
 
 class A
 {
-  private string _shouldNotBeNull{caret} = "";
   private string _anotherString = "";
+  private string _shouldNotBeNull{caret} = "";
+
   public A()
   {
   }
@@ -11,7 +12,7 @@ class A
   [ContractInvariantMethod]
   private void ObjectInvariant()
   {
-    Contract.Invariant(_shouldNotBeNull != null);
     Contract.Invariant(_anotherString != null);
+    Contract.Invariant(_shouldNotBeNull != null);
   }
 }
