@@ -4,7 +4,6 @@ using System.Linq;
 using JetBrains.Application.Progress;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
-using JetBrains.ReSharper.Features.SolBuilderDuo.Engine.MsbuildExe.Components;
 using JetBrains.ReSharper.Psi.CSharp;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Tree;
@@ -99,20 +98,25 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             }
         }
 
-
         ICSharpStatement GetPreviousRequires()
         {
-            var parameters = _functionDeclaration.DeclaredElement.Parameters.Select(p => p.ShortName).ToList();
-            var index = parameters.FindIndex(s => s == _parameterName);
-            if (index == 0 || index == -1)
-                return null;
+            // Getting all previous parameters in reverse order
+            var parameters = _functionDeclaration.DeclaredElement.Parameters
+                .Select(p => p.ShortName).TakeWhile(paramName => paramName != _parameterName)
+                .Reverse().ToList();
 
-            var prevParameterName = parameters[index - 1];
-            var requiresStatements = _functionDeclaration.GetRequires().ToList();
+            var requiresStatements = _functionDeclaration.GetRequires().ToDictionary(x => x.ArgumentName, x => x);
 
-            return
-                requiresStatements.FirstOrDefault(rs => rs.ArgumentName == prevParameterName)
-                    .Return(x => x.Statement);
+            // Looking for the last requires
+            foreach (var p in parameters)
+            {
+                if (requiresStatements.ContainsKey(p))
+                {
+                    return requiresStatements[p].Statement;
+                }
+            }
+
+            return null;
         }
 
 
