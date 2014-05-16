@@ -119,5 +119,6 @@ namespace ReSharper.ContractExtensions.ContextActions.Invariants
 
         public bool IsAvailable { get; private set; }
         public string SelectedMemberName { get; private set; }
+        public FieldOrPropertyDeclaration FieldOrPropertyDeclaration { get { return _selectedElement; } }
     }
 }

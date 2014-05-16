@@ -1,4 +1,8 @@
+using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using System.Linq;
+using JetBrains.Annotations;
 using JetBrains.Application.Progress;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
@@ -7,6 +11,7 @@ using JetBrains.ReSharper.Psi.CSharp;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.Util;
+using ReSharper.ContractExtensions.Preconditions.Logic;
 using ReSharper.ContractExtensions.Utilities;
 
 namespace ReSharper.ContractExtensions.ContextActions.Invariants
@@ -53,7 +58,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Invariants
             var invariantMethod = AddObjectInvariantMethodIfNecessary();
 
             var invariantStatement = CreateInvariantStatement();
-            var addAfter = GetPreviousInvariantStatement(invariantMethod);
+            var addAfter = GetPreviousInvariantStatement();
 
             AddStatementAfter(invariantMethod, invariantStatement, addAfter);
         }
@@ -64,13 +69,117 @@ namespace ReSharper.ContractExtensions.ContextActions.Invariants
             method.Body.AddStatementAfter(statement, addAfter);
         }
 
-        private ICSharpStatement GetPreviousInvariantStatement(IMethodDeclaration invariantMethod)
+        [CanBeNull]
+        private ICSharpStatement GetPreviousInvariantStatement()
         {
-            Contract.Requires(invariantMethod != null);
 
-            // TODO: will implement later!
-            // Order will depends whether current member is field or property!
+            var declaration = _invariantAvailability.FieldOrPropertyDeclaration;
+            //if (declaration.IsField)
+            //{
+            //    return GetPreviousInvariantForField(declaration);
+            //}
+
+            //return GetPreviousInvariantForProperty(declaration);
+
+            IEnumerable<IDeclaration> fields = _classDeclaration.MemberDeclarations.OfType<IFieldDeclaration>();
+            IEnumerable<IDeclaration> properties = Enumerable.Empty<IDeclaration>();
+            if (declaration.IsProperty)
+            {
+                properties = _classDeclaration.MemberDeclarations.OfType<IPropertyDeclaration>();
+            }
+
+            var members = fields.ToList();
+            members.AddRange(properties);
+
+            var membersInInvariants =
+                _classDeclaration.GetInvariants()
+                .Where(i => members.Any(f => i.ArgumentName == f.DeclaredName))
+                .ToDictionary(x => x.ArgumentName, x => x);
+
+            // Looking for "previous" members backwards: 
+            foreach (var previousField in members.TakeWhile(fd => fd.DeclaredName != declaration.Name).Reverse())
+            {
+                if (membersInInvariants.ContainsKey(previousField.DeclaredName))
+                {
+                    return membersInInvariants[previousField.DeclaredName].Statement;
+                }
+            }
+
             return null;
+
+            //var fields = _classDeclaration.MemberDeclarations.OfType<IFieldDeclaration>().ToList();
+
+            //if (declaration.IsField)
+            //{
+            //    var index = fields.FindIndex(x => x.DeclaredName == declaration.Name);
+            //    return index > 0 ? fields[index - 1] : null;
+
+            //}
+            //else
+            //{
+            //    var properties = _classDeclaration.MemberDeclarations.OfType<IPropertyDeclaration>().ToList();
+
+            //    // If we're adding prop
+            //    if (properties.Count == 0)
+            //    {
+            //        return fields.LastOrDefault();
+            //    }
+
+            //    var index = properties.FindIndex(x => x.DeclaredName == declaration.Name);
+            //    return index > 0 ? properties[index - 1] : null;
+        }
+
+        private ICSharpStatement GetPreviousInvariantForProperty(FieldOrPropertyDeclaration declaration)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        private ICSharpStatement GetPreviousInvariantForField(FieldOrPropertyDeclaration declaration)
+        {
+            var fields = _classDeclaration.MemberDeclarations.OfType<IFieldDeclaration>().ToList();
+
+            var fieldInvariantStatements =
+                _classDeclaration.GetInvariants()
+                .Where(i => fields.Any(f => i.ArgumentName == f.DeclaredName))
+                .ToDictionary(x => x.ArgumentName, x => x);
+
+            // Looking for "previous" fields backwards
+            foreach (var previousField in fields.SkipWhile(fd => fd.DeclaredName != declaration.Name).Reverse())
+            {
+                if (fieldInvariantStatements.ContainsKey(previousField.DeclaredName))
+                {
+                    return fieldInvariantStatements[previousField.DeclaredName].Statement;
+                }
+            }
+
+            return null;
+        }
+
+
+        [CanBeNull]
+        private IDeclaration GetPreviousFieldOrProperty(FieldOrPropertyDeclaration declaration)
+        {
+            var fields = _classDeclaration.MemberDeclarations.OfType<IFieldDeclaration>().ToList();
+
+            if (declaration.IsField)
+            {
+                var index = fields.FindIndex(x => x.DeclaredName == declaration.Name);
+                return index > 0 ? fields[index - 1] : null;
+
+            }
+            else
+            {
+                var properties = _classDeclaration.MemberDeclarations.OfType<IPropertyDeclaration>().ToList();
+
+                // If we're adding prop
+                if (properties.Count == 0)
+                {
+                    return fields.LastOrDefault();
+                }
+
+                var index = properties.FindIndex(x => x.DeclaredName == declaration.Name);
+                return index > 0 ? properties[index - 1] : null;
+            }
         }
 
         private IMethodDeclaration AddObjectInvariantMethodIfNecessary()
@@ -90,7 +199,8 @@ namespace ReSharper.ContractExtensions.ContextActions.Invariants
 
         private void AddContractInvariantAttribute(IMethodDeclaration method)
         {
-            ITypeElement type = TypeFactory.CreateTypeByCLRName(typeof(ContractInvariantMethodAttribute).FullName,
+            ITypeElement type = TypeFactory.CreateTypeByCLRName(
+                typeof(ContractInvariantMethodAttribute).FullName,
                 _provider.PsiModule, _currentFile.GetResolveContext()).GetTypeElement();
 
             var attribute = _factory.CreateAttribute(type);

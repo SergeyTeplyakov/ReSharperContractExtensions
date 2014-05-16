@@ -2,6 +2,7 @@
 using System.Diagnostics.Contracts;
 using System.Linq;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
+using ReSharper.ContractExtensions.ContextActions.Invariants;
 
 namespace ReSharper.ContractExtensions.Preconditions.Logic
 {
@@ -27,6 +28,15 @@ namespace ReSharper.ContractExtensions.Preconditions.Logic
 
             return functionDeclaration.Body.Statements
                 .Select(EnsuresStatement.TryCreate).Where(rs => rs != null);
+        }
+
+        /// <summary>
+        /// Return all invariant statements (like Contract.Invariant(Prop != null)) for 
+        /// the specified <paramref name="classLikeDeclaration"/>.
+        /// </summary>
+        public static IEnumerable<InvariantStatement> GetInvariants(this IClassLikeDeclaration classLikeDeclaration)
+        {
+            return classLikeDeclaration.GetInvariantMethods().SelectMany(GetInvariants);
         }
 
         public static IEnumerable<InvariantStatement> GetInvariants(this ICSharpFunctionDeclaration invariantMethod)
