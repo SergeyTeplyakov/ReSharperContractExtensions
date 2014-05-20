@@ -3,6 +3,7 @@ using System.Linq;
 using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
+using JetBrains.ReSharper.Psi.Tree;
 using ReSharper.ContractExtensions.Preconditions.Logic;
 using ReSharper.ContractExtensions.Utilities;
 

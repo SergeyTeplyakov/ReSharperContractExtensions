@@ -79,6 +79,13 @@
     <Compile Include="ContextActions\ContractsFor\AddContractForAvailability.cs" />
     <Compile Include="ContextActions\ContractsFor\AddContractForContextAction.cs" />
     <Compile Include="ContextActions\ContractsFor\AddContractForExecutor.cs" />
+    <Compile Include="ContextActions\ContractsFor\FromControlFlow.cs" />
+    <Compile Include="ContextActions\ContractsFor\GeneratorFromGist.cs" />
+    <Compile Include="ContextActions\ContractsFor\Generator\ContractClassActionWorkflow.cs" />
+    <Compile Include="ContextActions\ContractsFor\Generator\ContractClassBuilder.cs" />
+    <Compile Include="ContextActions\ContractsFor\Generator\ContractClassGenerator.cs" />
+    <Compile Include="ContextActions\ContractsFor\Generator\ContractClassItemProvider.cs" />
+    <Compile Include="ContextActions\ContractsFor\Generator\ContractClassProvider.cs" />
     <Compile Include="ContextActions\ContractsFor\SampleAbstractClass.cs" />
     <Compile Include="ContextActions\ContractsFor\SampleInterface.cs" />
     <Compile Include="ContextActions\Invariants\FieldOrPropertyDeclaration.cs" />
@@ -103,6 +110,7 @@
     <Compile Include="ContextActions\Requires\RequiresExecutor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\AttributeExtensions.cs" />
+    <Compile Include="Utilities\ClassLikeDeclarationExtensions.cs" />
     <Compile Include="Utilities\ExpressionEx.cs" />
     <Compile Include="Utilities\Extensions.cs" />
     <Compile Include="Utilities\MethodDeclarationEx.cs" />
@@ -110,6 +118,7 @@
     <Compile Include="Utilities\StringExtensions.cs" />
     <Compile Include="Utilities\TreeNodeExtensions.cs" />
     <Compile Include="Utilities\TypeEx.cs" />
+    <Compile Include="Utilities\TypeExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

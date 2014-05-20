@@ -39,10 +39,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Invariants
 
         public static bool IsObjectInvariantMethod(this IMethodDeclaration methodDeclaration)
         {
-            return methodDeclaration.Attributes
-                .Select(a => a.GetClrTypeName())
-                .Where(a => a != null)
-                .Any(a => a.FullName == typeof (ContractInvariantMethodAttribute).FullName);
+            return methodDeclaration.HasAttribute(typeof (ContractInvariantMethodAttribute));
         }
 
     }

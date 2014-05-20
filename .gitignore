@@ -16,7 +16,7 @@ build/
 [Oo]bj/
 
 # NuGet Packages Directory
-packages/*
+#packages/*
 ## TODO: If the tool you use requires repositories.config
 ## uncomment the next line
 #!packages/repositories.config
@@ -25,7 +25,7 @@ packages/*
 # NuGet packages use it for MSBuild targets.
 # This line needs to be after the ignore of the build folder
 # (and the packages folder if the line above has been uncommented)
-!packages/build/
+# !packages/build/
 
 
 ContractExtensions.sln.ide/*
@@ -111,7 +111,7 @@ publish/
 
 # NuGet Packages Directory
 ## TODO: If you have NuGet Package Restore enabled, uncomment the next line
-#packages/
+packages/
 
 # Windows Azure Build Output
 csx
@@ -168,3 +168,4 @@ $RECYCLE.BIN/
 
 # Mac desktop service store files
 .DS_Store
+ContractExtensions.sln.ide

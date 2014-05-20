@@ -22,7 +22,8 @@ namespace ReSharper.ContractExtensions.Preconditions.Logic
     /// Every valid precondtion contains following:
     /// Contract.Requires(arg != null);
     /// So the parsed version contains:
-    /// Precondition type ("Requires" in this case)
+    /// Precondition type ("Requires
+    /// " in this case)
     /// Predicate Left Hand Side ("arg" in this case)
     /// Predicate Equality Type ("!=" in this case) and
     /// Predicate Right Hand Side ("null" in this case)
@@ -49,18 +50,6 @@ namespace ReSharper.ContractExtensions.Preconditions.Logic
 
             var left = expression.LeftOperand as IReferenceExpression;
             
-            // Old code. Seems unusable now
-            //if (leftReference == null)
-            //{
-            //    leftReference = expression.LeftOperand
-            //        .With(x => x as IInvocationExpression)
-            //        .With(x => x.InvokedExpression)
-            //        .Return(x => x as IReferenceExpression);
-            //}
-            //var left = leftReference
-            //    .With(x => x.TypeArguments.FirstOrDefault())
-            //    .Return(x => x as IDeclaredType);
-
             var right = expression.RightOperand
                 .With(x => x as ICSharpLiteralExpression)
                 .With(x => x.Literal)

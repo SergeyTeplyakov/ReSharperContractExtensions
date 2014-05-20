@@ -1,13 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Diagnostics.Contracts;
 using JetBrains.Annotations;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
-using JetBrains.ReSharper.Psi.ExtensionsAPI.Resolve.Managed;
-using JetBrains.ReSharper.Psi.Util;
 
 namespace ReSharper.ContractExtensions.Utilities
 {
+    [Obsolete("Do not use IAttribute, get attribute instances instead via DeclaredElement property")]
     internal static class AttributeExtensions
     {
         [CanBeNull]
