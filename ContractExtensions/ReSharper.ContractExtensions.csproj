@@ -79,15 +79,13 @@
     <Compile Include="ContextActions\ContractsFor\AddContractForAvailability.cs" />
     <Compile Include="ContextActions\ContractsFor\AddContractForContextAction.cs" />
     <Compile Include="ContextActions\ContractsFor\AddContractForExecutor.cs" />
-    <Compile Include="ContextActions\ContractsFor\FromControlFlow.cs" />
-    <Compile Include="ContextActions\ContractsFor\GeneratorFromGist.cs" />
+    <Compile Include="ContextActions\ContractsFor\Generator\FromControlFlow.cs" />
+    <Compile Include="ContextActions\ContractsFor\Generator\GeneratorFromGist.cs" />
     <Compile Include="ContextActions\ContractsFor\Generator\ContractClassActionWorkflow.cs" />
     <Compile Include="ContextActions\ContractsFor\Generator\ContractClassBuilder.cs" />
     <Compile Include="ContextActions\ContractsFor\Generator\ContractClassGenerator.cs" />
     <Compile Include="ContextActions\ContractsFor\Generator\ContractClassItemProvider.cs" />
     <Compile Include="ContextActions\ContractsFor\Generator\ContractClassProvider.cs" />
-    <Compile Include="ContextActions\ContractsFor\SampleAbstractClass.cs" />
-    <Compile Include="ContextActions\ContractsFor\SampleInterface.cs" />
     <Compile Include="ContextActions\Invariants\FieldOrPropertyDeclaration.cs" />
     <Compile Include="ContextActions\Invariants\InvariantActionExecutor.cs" />
     <Compile Include="ContextActions\Invariants\InvariantAvailability.cs" />
