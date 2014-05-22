@@ -1,0 +1,11 @@
+﻿using System.Diagnostics.Contracts;
+
+[ContractClass(typeof (ISomeInterfaceContract))]
+internal interface ISomeInterface{caret}
+{
+}
+
+[ContractClassFor(typeof (ISomeInterface))]
+abstract class ISomeInterfaceContract : ISomeInterface
+{
+}

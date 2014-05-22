@@ -1,0 +1,11 @@
+﻿using System.Diagnostics.Contracts;
+
+[ContractClass(typeof (SomeClassContract))]
+abstract class SomeClass{caret}
+{
+}
+
+[ContractClassFor(typeof (SomeClass))]
+abstract class SomeClassContract : SomeClass
+{
+}

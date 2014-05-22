@@ -1,0 +1,28 @@
+﻿using System.Diagnostics.Contracts;
+
+[ContractClass(typeof (ISomeInterfaceContract))]
+internal interface ISomeInterface{caret}
+{
+  void MethodWithPrecondition(string s);
+  string MethodWithPostcondition();
+  string PropertyWithPostcondition { get; }
+}
+
+[ContractClassFor(typeof (ISomeInterface))]
+abstract class ISomeInterfaceContract : ISomeInterface
+{
+  void ISomeInterface.MethodWithPrecondition(string s)
+  {
+    throw new System.NotImplementedException();
+  }
+
+  string ISomeInterface.MethodWithPostcondition()
+  {
+    throw new System.NotImplementedException();
+  }
+
+  string ISomeInterface.PropertyWithPostcondition
+  {
+    get { throw new System.NotImplementedException(); }
+  }
+}
