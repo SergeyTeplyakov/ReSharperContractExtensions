@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections;
-using System.Diagnostics.Contracts;
+﻿using System.Diagnostics.Contracts;
 using System.Linq;
-using JetBrains.Application.Settings.Storage.Persistence;
 using JetBrains.ReSharper.Psi;
-using JetBrains.ReSharper.Psi.CSharp.Resources;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Resolve;
-using JetBrains.ReSharper.Psi.Tree;
 
-namespace ReSharper.ContractExtensions.Preconditions.Logic
+namespace ReSharper.ContractExtensions.ContractsEx
 {
     internal class RequiresStatement : ContractStatement
     {
@@ -20,6 +15,8 @@ namespace ReSharper.ContractExtensions.Preconditions.Logic
         public static RequiresStatement TryCreate(ICSharpStatement statement)
         {
             Contract.Requires(statement != null);
+
+            // TODO: is it necessary? If so, move to "monadic" implementaion!
             var invokedExpression = AsInvocationExpression(statement);
             if (invokedExpression == null)
                 return null;

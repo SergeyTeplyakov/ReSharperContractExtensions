@@ -2,10 +2,9 @@
 using System.Linq;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
-using JetBrains.ReSharper.Psi.Resolve;
 using ReSharper.ContractExtensions.Utilities;
 
-namespace ReSharper.ContractExtensions.Preconditions.Logic
+namespace ReSharper.ContractExtensions.ContractsEx
 {
     /// <summary>
     /// Represent entire Contract.Requires statement.

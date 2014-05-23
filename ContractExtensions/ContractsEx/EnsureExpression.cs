@@ -5,11 +5,14 @@ using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Tree;
 using ReSharper.ContractExtensions.Utilities;
 
-namespace ReSharper.ContractExtensions.Preconditions.Logic
+namespace ReSharper.ContractExtensions.ContractsEx
 {
-    struct RequiresExpression
+    /// <summary>
+    /// Represents Contract.Ensures as a parsed expression.
+    /// </summary>
+    struct EnsureExpression
     {
-        public static RequiresExpression Parse(IExpression originalExpression)
+        public static EnsureExpression Parse(IExpression originalExpression)
         {
             // TODO: potential enhancement: simplify condition first and convert !(result == null)
             Contract.Requires(originalExpression != null);
@@ -24,7 +27,7 @@ namespace ReSharper.ContractExtensions.Preconditions.Logic
                 .With(x => x as IReferenceExpression)
                 .With(x => x.TypeArguments.FirstOrDefault())
                 .With(x => x as IDeclaredType);
-
+            
             var right = expression.RightOperand
                 .With(x => x as ICSharpLiteralExpression)
                 .With(x => x.Literal)
@@ -35,26 +38,30 @@ namespace ReSharper.ContractExtensions.Preconditions.Logic
             {
                 return CreateInvalid();
             }
-
-            return new RequiresExpression()
+            
+            return new EnsureExpression
             {
                 IsValid = true,
 
-                Left = expression.LeftOperand as ILiteralExpression,
+                Left = expression.LeftOperand as IInvocationExpression,
                 Right = expression.RightOperand,
                 EqualityType = expression.EqualityType,
+
+                ResultType = left,
             };
         }
 
         public bool IsValid { get; private set; }
 
-        public ILiteralExpression Left { get; private set; }
+        public IDeclaredType ResultType { get; private set; }
+
+        public IInvocationExpression Left { get; private set; }
         public EqualityExpressionType EqualityType { get; private set; }
         public ICSharpExpression Right { get; private set; }
 
-        private static RequiresExpression CreateInvalid()
+        private static EnsureExpression CreateInvalid()
         {
-            return new RequiresExpression() { IsValid = false };
+            return new EnsureExpression() {IsValid = false};
         }
     }
 }

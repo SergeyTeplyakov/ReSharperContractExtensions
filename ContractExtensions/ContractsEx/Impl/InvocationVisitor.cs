@@ -1,6 +1,6 @@
 ﻿using JetBrains.ReSharper.Psi.CSharp.Tree;
 
-namespace ReSharper.ContractExtensions.Preconditions.Logic
+namespace ReSharper.ContractExtensions.ContractsEx.Impl
 {
     internal sealed class InvocationVisitor : TreeNodeVisitor
     {

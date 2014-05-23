@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Tree;
-using JetBrains.Util;
 using ReSharper.ContractExtensions.Utilities;
 
-namespace ReSharper.ContractExtensions.Preconditions.Logic
+namespace ReSharper.ContractExtensions.ContractsEx
 {
     public enum PreconditionType
     {

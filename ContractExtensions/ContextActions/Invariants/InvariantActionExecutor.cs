@@ -11,7 +11,8 @@ using JetBrains.ReSharper.Psi.CSharp;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.Util;
-using ReSharper.ContractExtensions.Preconditions.Logic;
+using ReSharper.ContractExtensions.ContractsEx;
+using ReSharper.ContractExtensions.ContractUtils;
 using ReSharper.ContractExtensions.Utilities;
 
 namespace ReSharper.ContractExtensions.ContextActions.Invariants

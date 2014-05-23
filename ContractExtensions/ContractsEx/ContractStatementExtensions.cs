@@ -2,9 +2,9 @@
 using System.Diagnostics.Contracts;
 using System.Linq;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
-using ReSharper.ContractExtensions.ContextActions.Invariants;
+using ReSharper.ContractExtensions.ContractUtils;
 
-namespace ReSharper.ContractExtensions.Preconditions.Logic
+namespace ReSharper.ContractExtensions.ContractsEx
 {
     static class ContractStatementExtensions
     {

@@ -1,8 +1,7 @@
-﻿using System;
-using System.Diagnostics.Contracts;
+﻿using System.Diagnostics.Contracts;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 
-namespace ReSharper.ContractExtensions.Preconditions.Logic
+namespace ReSharper.ContractExtensions.ContractsEx
 {
     internal sealed class InvariantStatement : ContractStatement
     {

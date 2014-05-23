@@ -1,11 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics.Contracts;
-using System.Linq;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using ReSharper.ContractExtensions.Utilities;
 
-namespace ReSharper.ContractExtensions.ContextActions.Invariants
+namespace ReSharper.ContractExtensions.ContractUtils
 {
     internal static class InvariantUtils
     {

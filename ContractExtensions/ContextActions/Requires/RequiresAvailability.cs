@@ -8,8 +8,8 @@ using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.ReSharper.Psi.Util;
 using ReSharper.ContractExtensions.ContextActions.ContractsFor;
+using ReSharper.ContractExtensions.ContractsEx;
 using ReSharper.ContractExtensions.ContractUtils;
-using ReSharper.ContractExtensions.Preconditions.Logic;
 using ReSharper.ContractExtensions.Utilities;
 
 namespace ReSharper.ContractExtensions.ContextActions.Requires

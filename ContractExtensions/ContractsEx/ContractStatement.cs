@@ -1,7 +1,8 @@
 ﻿using System.Diagnostics.Contracts;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
+using ReSharper.ContractExtensions.ContractsEx.Impl;
 
-namespace ReSharper.ContractExtensions.Preconditions.Logic
+namespace ReSharper.ContractExtensions.ContractsEx
 {
     /// <summary>
     /// Root class for such contract statements as Precondition, Postcondition or
