@@ -12,6 +12,7 @@ using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.TextControl;
 using JetBrains.Util;
+using ReSharper.ContractExtensions.ContractUtils;
 using ReSharper.ContractExtensions.Preconditions.Logic;
 using ReSharper.ContractExtensions.Utilities;
 
@@ -38,6 +39,8 @@ namespace ReSharper.ContractExtensions.ContextActions
 
             var functionDeclaration = GetFunctionDeclaration();
 
+            var contractFunction = functionDeclaration.GetContractFunction();
+
             var psiModule = functionDeclaration.GetPsiModule();
             var factory = CSharpElementFactory.GetInstance(psiModule);
 
@@ -45,10 +48,10 @@ namespace ReSharper.ContractExtensions.ContextActions
             Contract.Assert(currentFile != null);
 
             AddNamespaceUsing(factory, currentFile);
-            var ensureStatement = CreateContractEnsures(factory, functionDeclaration);
+            var ensureStatement = CreateContractEnsures(factory, contractFunction);
 
-            var requires = GetLastRequiresStatementIfAny(functionDeclaration);
-            AddStatementAfter(functionDeclaration, ensureStatement, requires);
+            var requires = GetLastRequiresStatementIfAny(contractFunction);
+            AddStatementAfter(contractFunction, ensureStatement, requires);
 
             return null;
         }
@@ -125,10 +128,16 @@ namespace ReSharper.ContractExtensions.ContextActions
             if (methodDeclaration == null || methodDeclaration.DeclaredElement == null)
                 return false;
 
-            if (ResultIsVoid(methodDeclaration) || MethodIsAbstract(methodDeclaration))
+            if (ResultIsVoid(methodDeclaration))
                 return false;
 
-            if (ResultIsAlreadyCheckedByContractEnsures(methodDeclaration))
+            // For abstract and interface methods contract method differs from the
+            // current method
+            var contractMethod = methodDeclaration.GetContractFunction();
+            if (contractMethod == null)
+                return false;
+
+            if (ResultIsAlreadyCheckedByContractEnsures(contractMethod))
                 return false;
 
             if (methodDeclaration.GetReturnType().IsReferenceOrNullableType())

@@ -1,5 +1,12 @@
-﻿using JetBrains.ReSharper.Feature.Services.Bulbs;
+﻿using System.Collections.Generic;
+using System.Linq;
+using JetBrains.Application;
+using JetBrains.ReSharper.Daemon.Src.Bulbs.Resources;
+using JetBrains.ReSharper.Feature.Services.Bulbs;
 using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
+using JetBrains.ReSharper.Intentions.Extensibility;
+using JetBrains.ReSharper.Intentions.Extensibility.Menu;
+using JetBrains.UI.BulbMenu;
 
 namespace ReSharper.ContractExtensions.ContextActions.Requires
 {
@@ -20,5 +27,30 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             return string.Format(Format, selectedParameterName);
         }
 
+        public override IEnumerable<IntentionAction> CreateBulbItems()
+        {
+            var actions = base.CreateBulbItems().ToList();
+
+            if (Shell.Instance.IsTestShell)
+            {
+                return actions;
+            }
+
+            var generic = new GenericRequiresContextAction(_provider);
+            generic.IsAvailable(_cache);
+
+            // TODO: add configuration to check, what action should be first: generic or not!
+            var subMenuAnchor = new ExecutableGroupAnchor(
+                actions[0].Anchor,
+                IntentionsAnchors.ContextActionsAnchorPosition);
+
+            return new List<IntentionAction>
+            {
+                new IntentionAction(this, Text, BulbThemedIcons.ContextAction.Id, subMenuAnchor),
+                new IntentionAction(generic, generic.Text,
+                    BulbThemedIcons.ContextAction.Id, subMenuAnchor),
+                
+            };
+        }
     }
 }

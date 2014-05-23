@@ -106,6 +106,7 @@
     <Compile Include="ContextActions\Requires\RequiresContextAction.cs" />
     <Compile Include="ContextActions\Requires\RequiresContextActionBase.cs" />
     <Compile Include="ContextActions\Requires\RequiresExecutor.cs" />
+    <Compile Include="ContractUtils\ContractExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\AttributeExtensions.cs" />
     <Compile Include="Utilities\ClassLikeDeclarationExtensions.cs" />

@@ -1,9 +1,0 @@
-﻿using System.Diagnostics.Contracts;
-
-class A
-{
-  System.String{caret} Foo()
-  {
-    Contract.Ensures(Contract.Result<string>() != null);
-  }
-}

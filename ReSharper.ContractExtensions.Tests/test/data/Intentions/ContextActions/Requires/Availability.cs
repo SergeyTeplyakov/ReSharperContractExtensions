@@ -1,15 +1,16 @@
 using System.Diagnostics.Contracts;
 using System;
 
-class Person
-{
-  public string Name {get; set;}
-}
-
+[ContractClass(typeof(AContract))]
 abstract class A
 {
-    void EnabledWhenCarretIsInTheBodyOfTheMethod(string s)
-    {
-      Console.WriteLine(s{on});
-    }
+  public abstract void EnabledOnAbstractMethod(string s{on});
+}
+
+[ContractClassFor(typeof(A))]
+abstract class AContract : A
+{
+  public override void EnabledOnAbstractMethod(string s)
+  {
+  }
 }

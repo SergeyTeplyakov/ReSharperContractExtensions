@@ -13,11 +13,13 @@ namespace ReSharper.ContractExtensions.Tests.Postconditions
         }
 
         [TestCase("Execution")]
-        [TestCase("ExecutionFull")]
+
+        [TestCase("ExecutionWithAbstractClass")]
+        [TestCase("ExecutionWithInterface")]
+
         [TestCase("ExecutionWithExistingUsing")]
         [TestCase("ExecutionWithGenerics")]
         [TestCase("ExecutionWithRequires")]
-        [Test]
         public void TestExecution(string testSrc)
         {
             DoOneTest(testSrc);

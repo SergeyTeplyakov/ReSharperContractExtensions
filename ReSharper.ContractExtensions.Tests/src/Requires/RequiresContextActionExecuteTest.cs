@@ -14,11 +14,15 @@ namespace ReSharper.ContractExtensions.Tests.Preconditions
         }
 
         [TestCase("Execution")]
+
+        [TestCase("ExecutionForAbstractMethod")]
+        [TestCase("ExecutionForInterface")]
+
         [TestCase("ExecutionWithExistingUsing")]
+
         [TestCase("ExecutionWithSpecifiedOrder")]
         [TestCase("ExecutionWithSpecifiedOrder2")]
         [TestCase("ExecutionWithSpecifiedOrder3")]
-        [Test]
         public void TestSimpleExecution(string testSrc)
         {
             DoOneTest(testSrc);

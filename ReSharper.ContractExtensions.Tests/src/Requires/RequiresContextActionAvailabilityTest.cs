@@ -21,6 +21,8 @@ namespace ReSharper.ContractExtensions.Tests.Preconditions
         }
 
         [TestCase("AvailabilityFull")]
+        [TestCase("AvailabilityOnAbstractClass")]
+        [TestCase("AvailabilityOnInterface")]
         [TestCase("AvailabilityOnStaticClass")]
         [Test]
         public void TestFullAvailability(string testSrc)

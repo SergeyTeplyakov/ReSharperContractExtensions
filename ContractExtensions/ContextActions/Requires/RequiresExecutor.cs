@@ -36,7 +36,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             _shouldBeGeneric = shouldBeGeneric;
             _parameterName = _requiresAvailability.SelectedParameterName;
 
-            _functionDeclaration = _requiresAvailability.FunctionDeclaration;
+            _functionDeclaration = _requiresAvailability.FunctionToInsertPrecondition;
             _factory = CSharpElementFactory.GetInstance(provider.PsiModule);
             _currentFile = (ICSharpFile)requiresAvailability.SelectedParameter.GetContainingFile();
         }

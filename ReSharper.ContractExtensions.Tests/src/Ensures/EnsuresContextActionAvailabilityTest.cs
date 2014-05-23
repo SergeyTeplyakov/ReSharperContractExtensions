@@ -18,10 +18,10 @@ namespace ReSharper.ContractExtensions.Tests.Postconditions
             DoOneTest(testSrc);
         }
 
-        
         [TestCase("AvailabilityFull")]
         [TestCase("AvailabilityOnStaticClass")]
-        [Test]
+        [TestCase("AvailabilityOnInterface")]
+        [TestCase("AvailabilityOnAbstractClass")]
         public void TestOtherAvailability(string testSrc)
         {
             DoOneTest(testSrc);
