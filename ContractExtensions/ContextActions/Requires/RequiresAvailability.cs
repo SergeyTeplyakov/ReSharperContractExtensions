@@ -106,7 +106,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         private bool ParameterSupportRequires(out string parameterName)
         {
             var parameterDeclaration = ParameterRequiresAvailability.Create(_provider);
-            if (!parameterDeclaration.IsAvailable)
+            if (parameterDeclaration.IsAvailable)
             {
                 parameterName = parameterDeclaration.ParameterName;
                 return true;

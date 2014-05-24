@@ -98,14 +98,12 @@
     <Compile Include="ContractsEx\InvariantStatement.cs" />
     <Compile Include="ContractsEx\Impl\InvocationVisitor.cs" />
     <Compile Include="ContractsEx\PreconditionExpression.cs" />
-    <Compile Include="ContextActions\Requires\GenericRequiresContextAction.cs" />
     <Compile Include="ContextActions\Requires\RequiresAvailability.cs" />
     <Compile Include="ContractsEx\EnsureExpression.cs" />
     <Compile Include="ContractsEx\EnsuresStatement.cs" />
     <Compile Include="ContractsEx\RequiresExpression.cs" />
     <Compile Include="ContractsEx\RequiresStatement.cs" />
     <Compile Include="ContextActions\Requires\RequiresContextAction.cs" />
-    <Compile Include="ContextActions\Requires\RequiresContextActionBase.cs" />
     <Compile Include="ContextActions\Requires\RequiresExecutor.cs" />
     <Compile Include="ContractUtils\ContractExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
