@@ -90,6 +90,8 @@
     <Compile Include="ContextActions\Invariants\InvariantContextAction.cs" />
     <Compile Include="ContextActions\EnsuresContextAction.cs" />
     <Compile Include="ContextActions\Requires\ComboRequiresAvailability.cs" />
+    <Compile Include="ContextActions\Requires\ComboRequiresContextAction.cs" />
+    <Compile Include="ContextActions\Requires\ParameterRequiresAvailability.cs" />
     <Compile Include="ContractUtils\InvariantUtils.cs" />
     <Compile Include="ContractsEx\ContractStatement.cs" />
     <Compile Include="ContractsEx\ContractStatementExtensions.cs" />
@@ -109,6 +111,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\AttributeExtensions.cs" />
     <Compile Include="Utilities\ClassLikeDeclarationExtensions.cs" />
+    <Compile Include="Utilities\CSharpContextActionDataProviderExtensions.cs" />
     <Compile Include="Utilities\ExpressionEx.cs" />
     <Compile Include="Utilities\Extensions.cs" />
     <Compile Include="Utilities\MethodDeclarationEx.cs" />

@@ -17,7 +17,6 @@ using ReSharper.ContractExtensions.ContractUtils;
 using ReSharper.ContractExtensions.Utilities;
 
 namespace ReSharper.ContractExtensions.ContextActions
-
 {
     [ContextAction(Name = Name, Group = "Contracts", Description = Description, Priority = 100)]
     public class EnsuresContextAction : ContextActionBase

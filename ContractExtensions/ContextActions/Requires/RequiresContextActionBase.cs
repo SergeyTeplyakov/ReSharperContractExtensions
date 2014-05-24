@@ -37,7 +37,10 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         {
             Contract.Assert(_requiresAvailability.IsAvailable);
 
-            var executor = new RequiresExecutor(_requiresAvailability, _provider, _isGeneric);
+            var executor = new RequiresExecutor(_provider, _isGeneric, 
+                _requiresAvailability.FunctionToInsertPrecondition, 
+                _requiresAvailability.SelectedParameterName);
+
             executor.ExecuteTransaction(solution, progress);
 
             return null;

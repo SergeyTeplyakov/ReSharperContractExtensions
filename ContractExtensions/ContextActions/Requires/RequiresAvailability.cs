@@ -1,16 +1,10 @@
-﻿using System;
-using System.Diagnostics.Contracts;
+﻿using System.Diagnostics.Contracts;
 using System.Linq;
 using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
-using JetBrains.ReSharper.Feature.Services.Html;
-using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Tree;
-using JetBrains.ReSharper.Psi.Util;
-using ReSharper.ContractExtensions.ContextActions.ContractsFor;
 using ReSharper.ContractExtensions.ContractsEx;
 using ReSharper.ContractExtensions.ContractUtils;
-using ReSharper.ContractExtensions.Utilities;
 
 namespace ReSharper.ContractExtensions.ContextActions.Requires
 {
@@ -20,8 +14,8 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
     public sealed class RequiresAvailability
     {
         private readonly ICSharpContextActionDataProvider _provider;
-        private readonly IParameterDeclaration _parameterDeclaration;
-        private readonly ICSharpFunctionDeclaration _functionDeclaration;
+        private readonly string _parameterName;
+        private readonly ICSharpFunctionDeclaration _functionToInsertPrecondition;
 
         public readonly static RequiresAvailability Unavailable = new RequiresAvailability {IsAvailable = false};
 
@@ -34,21 +28,52 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
 
             _provider = provider;
 
-            _parameterDeclaration = GetSelectedParameterDeclaration();
-            _functionDeclaration = GetSelectedFunctionDeclaration();
-            IsAvailable = IsActionAvailable();
+            if (ParameterSupportRequires(out _parameterName) &&
+                FunctionSupportRequiers(_parameterName, out _functionToInsertPrecondition))
+            {
+                IsAvailable = true;
+            }
+        }
+
+        [Pure]
+        private bool ParameterSupportRequires(out string parameterName)
+        {
+            var parameterDeclaration = ParameterRequiresAvailability.Create(_provider);
+            if (!parameterDeclaration.IsAvailable)
+            {
+                parameterName = parameterDeclaration.ParameterName;
+                return true;
+            }
+
+            parameterName = null;
+            return false;
+        }
+
+        [Pure]
+        private bool FunctionSupportRequiers(string parameterName, out ICSharpFunctionDeclaration functionDeclaration)
+        {
+            functionDeclaration = null;
+
+            var selectedFunction = GetSelectedFunctionDeclaration();
+
+            var functionToInsertPrecondition = selectedFunction.GetContractFunction();
+
+            if (!IsFunctionWellDefined(functionToInsertPrecondition))
+                return false;
+
+            if (ArgumentIsAlreadyVerifiedByArgCheckOrRequires(functionToInsertPrecondition, parameterName))
+                return false;
+
+            functionDeclaration = functionToInsertPrecondition;
+            return true;
         }
 
         [ContractInvariantMethod]
         private void ObjectInvariant()
         {
             Contract.Invariant(!IsAvailable || _provider != null);
-            Contract.Invariant(!IsAvailable || _parameterDeclaration != null);
-            Contract.Invariant(!IsAvailable || _parameterDeclaration.DeclaredElement != null);
-            Contract.Invariant(!IsAvailable || SelectedParameter != null);
-            Contract.Invariant(!IsAvailable || !SelectedParameterName.IsNullOrEmpty());
-            Contract.Invariant(!IsAvailable || _functionDeclaration != null);
-            Contract.Invariant(!IsAvailable || FunctionToInsertPrecondition != null);
+            Contract.Invariant(!IsAvailable || _parameterName != null);
+            Contract.Invariant(!IsAvailable || _functionToInsertPrecondition != null);
         }
 
         public static RequiresAvailability Create(ICSharpContextActionDataProvider provider)
@@ -57,82 +82,13 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         }
 
         public bool IsAvailable { get; private set; }
-        public IParameterDeclaration SelectedParameter { get { return _parameterDeclaration; } }
-        public ICSharpFunctionDeclaration FunctionDeclaration { get { return _functionDeclaration; } }
-        public ICSharpFunctionDeclaration FunctionToInsertPrecondition { get; private set; }
-        public string SelectedParameterName { get { return _parameterDeclaration.DeclaredName; } }
+        public ICSharpFunctionDeclaration FunctionToInsertPrecondition { get { return _functionToInsertPrecondition; } }
+        public string SelectedParameterName { get { return _parameterName; } }
 
-        private IParameterDeclaration GetSelectedParameterDeclaration()
-        {
-            // If the carret is on the parameter _parameterDeclaration,
-            // GetSelectedElement will return not-null value
-            var parameterDeclaration = _provider.GetSelectedElement<IParameterDeclaration>(true, true);
-            if (parameterDeclaration != null)
-                return parameterDeclaration;
-
-            // But parameter could be selected inside method body
-            var selectedDeclaration = _provider.GetSelectedElement<IReferenceExpression>(true, true)
-                .With(x => x.Reference)
-                .With(x => x.Resolve())
-                .With(x => x.DeclaredElement)
-                .With(x => x.GetDeclarations().FirstOrDefault())
-                .Return(x => x as IParameterDeclaration);
-
-            
-            if (selectedDeclaration == null)
-                return null;
-
-            var currentFunction = 
-                _provider.GetSelectedElement<IFunctionDeclaration>(true, true);
-
-            if (currentFunction == null)
-                return null;
-
-            bool isArgument =
-                currentFunction.DeclaredElement.Parameters
-                .SelectMany(pm => pm.GetDeclarations())
-                .Select(pm => pm as IParameterDeclaration)
-                .Where(pm => pm != null)
-                .Contains(selectedDeclaration);
-
-            return isArgument ? selectedDeclaration : null;
-        }
-
+        [Pure]
         private ICSharpFunctionDeclaration GetSelectedFunctionDeclaration()
         {
             return _provider.GetSelectedElement<ICSharpFunctionDeclaration>(true, true);
-        }
-
-        private bool IsActionAvailable()
-        {
-            if (!IsParameterDeclarationWellDefined())
-                return false;
-
-            if (IsOutputParameter())
-                return false;
-
-            if (ArgumentIsDefaultedToNull())
-                return false;
-
-            if (ParameterIsValueType() && !IsNullableValueType())
-                return false;
-
-            var functionToInsertPrecondition = _functionDeclaration.GetContractFunction();
-
-            if (!IsFunctionWellDefined(functionToInsertPrecondition))
-                return false;
-
-            if (ArgumentIsAlreadyVerifiedByArgCheckOrRequires(functionToInsertPrecondition))
-                return false;
-
-            FunctionToInsertPrecondition = functionToInsertPrecondition;
-            return true;
-        }
-
-        [Pure]
-        private bool IsParameterDeclarationWellDefined()
-        {
-            return _parameterDeclaration != null && _parameterDeclaration.DeclaredElement != null;
         }
 
         [Pure]
@@ -143,46 +99,16 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
                 && functionDeclaration.DeclaredElement != null;
         }
 
-        [System.Diagnostics.Contracts.Pure]
-        private bool IsOutputParameter()
-        {
-            return _parameterDeclaration.DeclaredElement.Kind == ParameterKind.OUTPUT;
-        }
-
         [Pure]
-        private bool ArgumentIsAlreadyVerifiedByArgCheckOrRequires(ICSharpFunctionDeclaration functionDeclaration)
+        private bool ArgumentIsAlreadyVerifiedByArgCheckOrRequires(
+            ICSharpFunctionDeclaration functionDeclaration, string parameterName)
         {
-            Contract.Requires(functionDeclaration != null);
-
             var requiresStatements = functionDeclaration.GetRequires().ToList();
 
-            return requiresStatements.Any(rs => rs.ArgumentName == _parameterDeclaration.DeclaredName);
+            return requiresStatements.Any(rs => rs.ArgumentName == parameterName);
         }
 
-        [Pure]
-        private bool ArgumentIsDefaultedToNull()
-        {
-            var defaultValue = _parameterDeclaration.DeclaredElement.GetDefaultValue();
 
-            // TODO: not sure that GetDefaultValue could return null!
-            return _parameterDeclaration.DeclaredElement.IsOptional
-                   && (defaultValue == null
-                       || defaultValue.ConstantValue == null
-                       || defaultValue.ConstantValue.Value == null);
-        }
-
-        [Pure]
-        private bool IsNullableValueType()
-        {
-            return _parameterDeclaration.Type.IsNullable();
-        }
-
-        [Pure]
-        private bool ParameterIsValueType()
-        {
-            var declaredElement = _parameterDeclaration.DeclaredElement;
-            return declaredElement.Type.IsValueType() && !declaredElement.Type.IsNullable();
-        }
 
     }
 }

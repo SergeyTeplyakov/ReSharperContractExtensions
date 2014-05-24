@@ -14,7 +14,6 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
 {
     internal sealed class RequiresExecutor
     {
-        private readonly RequiresAvailability _requiresAvailability;
         private readonly string _parameterName;
 
         private readonly ICSharpContextActionDataProvider _provider;
@@ -24,30 +23,31 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         private readonly ICSharpFile _currentFile;
         private readonly ICSharpFunctionDeclaration _functionDeclaration;
 
-        public RequiresExecutor(RequiresAvailability requiresAvailability, 
-            ICSharpContextActionDataProvider provider, bool shouldBeGeneric)
+        public RequiresExecutor(ICSharpContextActionDataProvider provider, bool shouldBeGeneric, 
+            ICSharpFunctionDeclaration functionDeclaration, string parameterName)
         {
-            Contract.Requires(requiresAvailability != null);
-            Contract.Requires(requiresAvailability.IsAvailable);
             Contract.Requires(provider != null);
+            Contract.Requires(functionDeclaration != null);
+            Contract.Requires(parameterName != null);
 
-            _requiresAvailability = requiresAvailability;
             _provider = provider;
             _shouldBeGeneric = shouldBeGeneric;
-            _parameterName = _requiresAvailability.SelectedParameterName;
+            _functionDeclaration = functionDeclaration;
+            _parameterName = parameterName;
 
-            _functionDeclaration = _requiresAvailability.FunctionToInsertPrecondition;
-            _factory = CSharpElementFactory.GetInstance(provider.PsiModule);
-            _currentFile = (ICSharpFile)requiresAvailability.SelectedParameter.GetContainingFile();
+            _factory = _provider.ElementFactory;
+            _currentFile = (ICSharpFile)_functionDeclaration.GetContainingFile();
+
         }
 
         [ContractInvariantMethod]
         private void ObjectInvariant()
         {
-            Contract.Invariant(_requiresAvailability != null);
+            Contract.Invariant(_parameterName != null);
             Contract.Invariant(_provider != null);
             Contract.Invariant(_currentFile != null);
             Contract.Invariant(_factory != null);
+            Contract.Invariant(_functionDeclaration != null);
         }
 
         public void ExecuteTransaction(ISolution solution, IProgressIndicator progress)
@@ -105,23 +105,15 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
                 .Select(p => p.ShortName).TakeWhile(paramName => paramName != _parameterName)
                 .Reverse().ToList();
 
-            //return _functionDeclaration.GetRequires().LastOrDefault(s => s.ArgumentName == )
             var requiresStatements = _functionDeclaration.GetRequires().ToLookup(x => x.ArgumentName, x => x);
             
-
-            //var requiresStatements = _functionDeclaration.GetRequires().ToDictionary(x => x.ArgumentName, x => x);
-
-            // Looking for the last requires
+            // Looking for the last usage of the parameters in the requires statements
             foreach (var p in parameters)
             {
                 if (requiresStatements.Contains(p))
                 {
                     return requiresStatements[p].Select(x => x.Statement).LastOrDefault();
                 }
-                //if (requiresStatements.ContainsKey(p))
-                //{
-                //    return requiresStatements[p].Statement;
-                //}
             }
 
             return null;

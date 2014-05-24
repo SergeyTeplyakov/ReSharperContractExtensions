@@ -102,6 +102,7 @@ namespace ReSharper.ContractExtensions.ContractsEx
 
                 _message = message,
             };
+
             // small hack: trigering object invariant
             result.CheckObjectInvariant();
 
