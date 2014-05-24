@@ -89,6 +89,7 @@
     <Compile Include="ContextActions\Invariants\InvariantAvailability.cs" />
     <Compile Include="ContextActions\Invariants\InvariantContextAction.cs" />
     <Compile Include="ContextActions\EnsuresContextAction.cs" />
+    <Compile Include="ContextActions\Requires\ComboRequiresAvailability.cs" />
     <Compile Include="ContractUtils\InvariantUtils.cs" />
     <Compile Include="ContractsEx\ContractStatement.cs" />
     <Compile Include="ContractsEx\ContractStatementExtensions.cs" />
