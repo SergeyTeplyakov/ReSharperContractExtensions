@@ -105,15 +105,23 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
                 .Select(p => p.ShortName).TakeWhile(paramName => paramName != _parameterName)
                 .Reverse().ToList();
 
-            var requiresStatements = _functionDeclaration.GetRequires().ToDictionary(x => x.ArgumentName, x => x);
+            //return _functionDeclaration.GetRequires().LastOrDefault(s => s.ArgumentName == )
+            var requiresStatements = _functionDeclaration.GetRequires().ToLookup(x => x.ArgumentName, x => x);
+            
+
+            //var requiresStatements = _functionDeclaration.GetRequires().ToDictionary(x => x.ArgumentName, x => x);
 
             // Looking for the last requires
             foreach (var p in parameters)
             {
-                if (requiresStatements.ContainsKey(p))
+                if (requiresStatements.Contains(p))
                 {
-                    return requiresStatements[p].Statement;
+                    return requiresStatements[p].Select(x => x.Statement).LastOrDefault();
                 }
+                //if (requiresStatements.ContainsKey(p))
+                //{
+                //    return requiresStatements[p].Statement;
+                //}
             }
 
             return null;

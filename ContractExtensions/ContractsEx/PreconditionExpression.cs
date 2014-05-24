@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using JetBrains.ReSharper.Daemon.CSharp.Errors;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Tree;
 using ReSharper.ContractExtensions.Utilities;
@@ -28,6 +29,24 @@ namespace ReSharper.ContractExtensions.ContractsEx
     /// </remarks>
     internal struct PreconditionExpression
     {
+        private bool _isValid;
+        private PreconditionType? _preconditionType;
+        private string _predicateArgument;
+        private string _message;
+        private IReferenceExpression _predicateLeftSide;
+        private EqualityExpressionType _predicateEqualityType;
+        private ILiteralExpression _predicateRightSide;
+
+
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(!IsValid || PredicateArgument != null);
+            Contract.Invariant(!IsValid || PredicateLeftSide != null);
+            Contract.Invariant(!IsValid || PredicateRightSide != null);
+            Contract.Invariant(!IsValid || PreconditionType != null);
+        }
+
         public static PreconditionExpression Parse(IInvocationExpression invocationExpression)
         {
             // TODO: potential enhancement: simplify condition first and convert !(result == null)
@@ -58,16 +77,35 @@ namespace ReSharper.ContractExtensions.ContractsEx
 
             string message = ExtractMessage(invocationExpression);
 
-            return new PreconditionExpression()
+            string predicateArgument = null;
+            if (isValid)
             {
-                IsValid = isValid,
-                
-                PredicateLeftSide = left,
-                PredicateEqualityType = expression.EqualityType,
-                PredicateRightSide = expression.Return(x => x.RightOperand as ILiteralExpression),
+                // The problem is, that for "person.Name != null" and
+                // for "person != null" I should get "person"
+                var qualifierReference = left.QualifierExpression
+                    .With(x => x as IReferenceExpression);
 
-                Message = message,
+                predicateArgument = (qualifierReference ?? left).NameIdentifier.Name;
+            }
+
+            var result = new PreconditionExpression()
+            {
+                _isValid = isValid,
+                
+                _preconditionType = preconditionType,
+
+                _predicateArgument = predicateArgument,
+
+                _predicateLeftSide = left,
+                _predicateEqualityType = expression.EqualityType,
+                _predicateRightSide = expression.Return(x => x.RightOperand as ILiteralExpression),
+
+                _message = message,
             };
+            // small hack: trigering object invariant
+            result.CheckObjectInvariant();
+
+            return result;
         }
 
         private static PreconditionType? GetPreconditionType(IInvocationExpression invocationExpression)
@@ -102,19 +140,48 @@ namespace ReSharper.ContractExtensions.ContractsEx
             return message;
         }
 
-        public bool IsValid { get; private set; }
+        public bool IsValid
+        {
+            get { return _isValid; }
+        }
 
-        public PreconditionType? PreconditionType { get; private set; }
-        public string PredicateArgument { get { return PredicateLeftSide.NameIdentifier.Name; } }
-        public string Message { get; private set; }
+        public PreconditionType? PreconditionType
+        {
+            get { return _preconditionType; }
+        }
 
-        private IReferenceExpression PredicateLeftSide { get; set; }
-        private EqualityExpressionType PredicateEqualityType { get; set; }
-        private ILiteralExpression PredicateRightSide { get; set; }
+        public string PredicateArgument
+        {
+            get { return _predicateArgument; }
+        }
+
+        //public string PredicateArgument { get { return PredicateLeftSide.NameIdentifier.Name; } }
+        public string Message
+        {
+            get { return _message; }
+        }
+
+        private IReferenceExpression PredicateLeftSide
+        {
+            get { return _predicateLeftSide; }
+        }
+
+        private EqualityExpressionType PredicateEqualityType
+        {
+            get { return _predicateEqualityType; }
+        }
+
+        private ILiteralExpression PredicateRightSide
+        {
+            get { return _predicateRightSide; }
+        }
 
         private static PreconditionExpression CreateInvalid()
         {
-            return new PreconditionExpression() { IsValid = false };
+            return new PreconditionExpression() { _isValid = false };
         }
+
+        internal void CheckObjectInvariant()
+        { }
     }
 }
