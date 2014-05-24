@@ -16,7 +16,7 @@ namespace ReSharper.ContractExtensions.ContractUtils
         }
 
         [CanBeNull]
-        public static IClassLikeDeclaration GetContractClassDeclaration(this IClassLikeDeclaration classLikeDeclaration)
+        public static IClassDeclaration GetContractClassDeclaration(this IClassLikeDeclaration classLikeDeclaration)
         {
             Contract.Requires(classLikeDeclaration != null);
             Contract.Requires(classLikeDeclaration.DeclaredElement != null);
@@ -38,7 +38,7 @@ namespace ReSharper.ContractExtensions.ContractUtils
                 .With(x => x.Resolve())
                 .With(x => x.DeclaredElement)
                 .With(x => x.GetDeclarations().FirstOrDefault())
-                .Return(x => x as IClassLikeDeclaration);
+                .Return(x => x as IClassDeclaration);
         }
 
         /// <summary>

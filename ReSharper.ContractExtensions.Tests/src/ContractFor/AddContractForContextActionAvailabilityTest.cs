@@ -18,6 +18,8 @@ namespace ReSharper.ContractExtensions.Tests.ContractFor
         [TestCase("03_UnavailableOnInterface")]
         [TestCase("04_UnavailableOnAbstractClass")]
         [TestCase("05_UnavailableOnConcreteClass")]
+        [TestCase("06_AvailableOnPartiallyDefinedContractForInterface")]
+        [TestCase("07_AvailableOnPartiallyDefinedContractForClass")]
         public void TestSimpleAvailability(string testSrc)
         {
             DoOneTest(testSrc);

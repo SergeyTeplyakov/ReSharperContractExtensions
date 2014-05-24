@@ -18,7 +18,9 @@ namespace ReSharper.ContractExtensions.Tests.ContractFor
         [TestCase("ExecutionForEmptyInterface")]
         [TestCase("ExecutionForClass")]
         [TestCase("ExecutionForEmptyClass")]
-        [Test]
+
+        [TestCase("ExecutionForPartiallyDefinedClass")]
+        [TestCase("ExecutionForPartiallyDefinedInterface")]
         public void TestExecution(string testSrc)
         {
             DoOneTest(testSrc);

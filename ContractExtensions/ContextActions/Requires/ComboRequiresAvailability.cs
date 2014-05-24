@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics.Contracts;
 using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
+using JetBrains.ReSharper.Psi.CSharp.Tree;
 using ReSharper.ContractExtensions.ContextActions.ContractsFor;
+using ReSharper.ContractExtensions.Utilities;
 
 namespace ReSharper.ContractExtensions.ContextActions.Requires
 {
@@ -26,11 +28,25 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             Contract.Requires(provider != null);
             _provider = provider;
 
-            if (IsRequiresAvailableFor(out _parameterName) && 
-                (IsContractClassGenerationAvailable(out _addContractForAvailability)))
+            if (IsAbstractClassOrInterface() 
+                && IsRequiresAvailableFor(out _parameterName) 
+                && (IsContractClassGenerationAvailable(out _addContractForAvailability)))
             {
                 IsAvailable = true;
             }
+        }
+
+        private bool IsAbstractClassOrInterface()
+        {
+            if (_provider.IsSelected<IInterfaceDeclaration>())
+                return true;
+
+            var classDeclaration = _provider.GetSelectedElement<IClassDeclaration>(true, true);
+
+            if (classDeclaration == null)
+                return false; // disabling if outside the class declaration
+            
+            return classDeclaration.IsAbstract;
         }
 
         [ContractInvariantMethod]

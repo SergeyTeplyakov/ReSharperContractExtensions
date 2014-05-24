@@ -129,7 +129,7 @@ namespace ReSharper.ContractExtensions.ContextActions.ContractsFor
         public bool IsInterface { get { return InterfaceDeclaration != null; } }
         public bool IsAbstractClass { get { return ClassDeclaration != null; } }
 
-        public ICSharpTypeDeclaration TypeDeclaration
+        public IClassLikeDeclaration TypeDeclaration
         {
             get
             {

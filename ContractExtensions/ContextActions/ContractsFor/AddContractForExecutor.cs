@@ -10,6 +10,7 @@ using JetBrains.ReSharper.Psi.CSharp;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.Util;
+using ReSharper.ContractExtensions.ContractUtils;
 
 namespace ReSharper.ContractExtensions.ContextActions.ContractsFor
 {
@@ -40,11 +41,7 @@ namespace ReSharper.ContractExtensions.ContextActions.ContractsFor
 
         public void Execute(ISolution solution, IProgressIndicator progress)
         {
-            string contractClassName = CreateContractClassName();
-
-            AddContractClassAttribute(contractClassName);
-
-            IClassDeclaration contractClass = GenerateContractClassDeclaration(contractClassName);
+            var contractClass = GetOrCreateContractClass();
 
             AddContractClassForAttributeTo(contractClass);
 
@@ -52,6 +49,20 @@ namespace ReSharper.ContractExtensions.ContextActions.ContractsFor
                 AddToPhysicalDeclarationAfter(contractClass);
 
             ImplementInterfaceOrBaseClass(physicalContractClassDeclaration);
+        }
+
+        private IClassDeclaration GetOrCreateContractClass()
+        {
+            string contractClassName = CreateContractClassName();
+
+            var contractClass = _addContractForAvailability.TypeDeclaration.GetContractClassDeclaration();
+            if (contractClass != null)
+                return contractClass;
+
+            AddContractClassAttribute(contractClassName);
+
+            IClassDeclaration newContractClass = GenerateContractClassDeclaration(contractClassName);
+            return newContractClass;
         }
 
         private void AddContractClassForAttributeTo(IClassDeclaration contractClass)
