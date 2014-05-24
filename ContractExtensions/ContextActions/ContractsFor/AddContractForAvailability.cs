@@ -12,16 +12,19 @@ namespace ReSharper.ContractExtensions.ContextActions.ContractsFor
         public static readonly AddContractForAvailability Unavailable = new AddContractForAvailability {IsAvailable = false};
 
         private readonly ICSharpContextActionDataProvider _provider;
+        private readonly bool _enableInsideClassLikeDeclaration;
 
         private AddContractForAvailability()
         {}
 
-        public AddContractForAvailability(ICSharpContextActionDataProvider provider)
+        public AddContractForAvailability(ICSharpContextActionDataProvider provider,
+            bool enableInsideClassLikeDeclaration)
         {
             Contract.Requires(provider != null);
             Contract.Requires(provider.SelectedElement != null);
 
             _provider = provider;
+            _enableInsideClassLikeDeclaration = enableInsideClassLikeDeclaration;
 
             IsAvailable = ComputeIsAvailable();
             if (IsAvailable)
@@ -52,8 +55,18 @@ namespace ReSharper.ContractExtensions.ContextActions.ContractsFor
 
         private bool ComputeIsAvailable()
         {
-            if (!IsInterfaceDeclarationSelected() && !IsAbstractClassDeclarationSelected())
-                return false;
+            if (_enableInsideClassLikeDeclaration)
+            {
+                // In this case action should be enabled even if the caret
+                // is inside class-like declaration (i.e. inside class or interface)
+                if (!_provider.IsSelected<IClassLikeDeclaration>())
+                    return false;
+            }
+            else
+            {
+                if (!IsInterfaceDeclarationSelected() && !IsAbstractClassDeclarationSelected())
+                    return false;
+            }
 
             if (ContractClassAlreadyDefined())
                 return false;

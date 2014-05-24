@@ -46,7 +46,7 @@ namespace ReSharper.ContractExtensions.ContextActions.ContractsFor
 
         public override bool IsAvailable(IUserDataHolder cache)
         {
-            _addContractForAvailability = new AddContractForAvailability(_provider);
+            _addContractForAvailability = new AddContractForAvailability(_provider, false);
             return _addContractForAvailability.IsAvailable;
         }
     }

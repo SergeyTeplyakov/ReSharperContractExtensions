@@ -1,0 +1,17 @@
+using System.Diagnostics.Contracts;
+
+[ContractClass(typeof (IAContract))]
+interface IA
+{
+  void EnabledOnAbstractMethod(string s{caret});
+}
+
+[ContractClassFor(typeof (IA))]
+abstract class IAContract : IA
+{
+  void IA.EnabledOnAbstractMethod(string s)
+  {
+    Contract.Requires(s != null);
+    throw new System.NotImplementedException();
+  }
+}

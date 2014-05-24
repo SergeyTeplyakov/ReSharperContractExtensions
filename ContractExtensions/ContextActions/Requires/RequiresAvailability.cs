@@ -8,6 +8,73 @@ using ReSharper.ContractExtensions.ContractUtils;
 
 namespace ReSharper.ContractExtensions.ContextActions.Requires
 {
+    internal sealed class FunctionRequiresAvailability
+    {
+        private readonly ICSharpContextActionDataProvider _provider;
+        private readonly ICSharpFunctionDeclaration _functionDeclaration;
+
+        public FunctionRequiresAvailability(ICSharpContextActionDataProvider provider, string parameterName)
+        {
+            Contract.Requires(provider != null);
+            Contract.Requires(parameterName != null);
+
+            _provider = provider;
+            IsAvailable = FunctionSupportRequiers(parameterName, out _functionDeclaration);
+        }
+
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(!IsAvailable || _provider != null);
+            Contract.Invariant(!IsAvailable || _functionDeclaration != null);
+        }
+
+        public bool IsAvailable { get; private set; }
+        public ICSharpFunctionDeclaration FunctionDeclaration { get { return _functionDeclaration; } }
+
+        [Pure]
+        private bool FunctionSupportRequiers(string parameterName, out ICSharpFunctionDeclaration functionDeclaration)
+        {
+            functionDeclaration = null;
+
+            var selectedFunction = GetSelectedFunctionDeclaration();
+
+            var functionToInsertPrecondition = selectedFunction.GetContractFunction();
+
+            if (!IsFunctionWellDefined(functionToInsertPrecondition))
+                return false;
+
+            if (ArgumentIsAlreadyVerifiedByArgCheckOrRequires(functionToInsertPrecondition, parameterName))
+                return false;
+
+            functionDeclaration = functionToInsertPrecondition;
+            return true;
+        }
+
+        [Pure]
+        private ICSharpFunctionDeclaration GetSelectedFunctionDeclaration()
+        {
+            return _provider.GetSelectedElement<ICSharpFunctionDeclaration>(true, true);
+        }
+
+        [Pure]
+        private bool IsFunctionWellDefined(ICSharpFunctionDeclaration functionDeclaration)
+        {
+            return functionDeclaration != null
+                && functionDeclaration.Body != null
+                && functionDeclaration.DeclaredElement != null;
+        }
+
+        [Pure]
+        private bool ArgumentIsAlreadyVerifiedByArgCheckOrRequires(
+            ICSharpFunctionDeclaration functionDeclaration, string parameterName)
+        {
+            var requiresStatements = functionDeclaration.GetRequires().ToList();
+
+            return requiresStatements.Any(rs => rs.ArgumentName == parameterName);
+        }
+    }
+
     /// <summary>
     /// Shows whether "Add Requires" action is available or not.
     /// </summary>
@@ -52,20 +119,15 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         [Pure]
         private bool FunctionSupportRequiers(string parameterName, out ICSharpFunctionDeclaration functionDeclaration)
         {
+            var func = new FunctionRequiresAvailability(_provider, _parameterName);
+            if (func.IsAvailable)
+            {
+                functionDeclaration = func.FunctionDeclaration;
+                return true;
+            }
+
             functionDeclaration = null;
-
-            var selectedFunction = GetSelectedFunctionDeclaration();
-
-            var functionToInsertPrecondition = selectedFunction.GetContractFunction();
-
-            if (!IsFunctionWellDefined(functionToInsertPrecondition))
-                return false;
-
-            if (ArgumentIsAlreadyVerifiedByArgCheckOrRequires(functionToInsertPrecondition, parameterName))
-                return false;
-
-            functionDeclaration = functionToInsertPrecondition;
-            return true;
+            return false;
         }
 
         [ContractInvariantMethod]
@@ -84,31 +146,5 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         public bool IsAvailable { get; private set; }
         public ICSharpFunctionDeclaration FunctionToInsertPrecondition { get { return _functionToInsertPrecondition; } }
         public string SelectedParameterName { get { return _parameterName; } }
-
-        [Pure]
-        private ICSharpFunctionDeclaration GetSelectedFunctionDeclaration()
-        {
-            return _provider.GetSelectedElement<ICSharpFunctionDeclaration>(true, true);
-        }
-
-        [Pure]
-        private bool IsFunctionWellDefined(ICSharpFunctionDeclaration functionDeclaration)
-        {
-            return functionDeclaration != null 
-                && functionDeclaration.Body != null 
-                && functionDeclaration.DeclaredElement != null;
-        }
-
-        [Pure]
-        private bool ArgumentIsAlreadyVerifiedByArgCheckOrRequires(
-            ICSharpFunctionDeclaration functionDeclaration, string parameterName)
-        {
-            var requiresStatements = functionDeclaration.GetRequires().ToList();
-
-            return requiresStatements.Any(rs => rs.ArgumentName == parameterName);
-        }
-
-
-
     }
 }
