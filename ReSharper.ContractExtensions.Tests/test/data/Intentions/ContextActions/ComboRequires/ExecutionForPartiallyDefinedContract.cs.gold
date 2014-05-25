@@ -1,12 +1,12 @@
 using System.Diagnostics.Contracts;
 
-[ContractClass(typeof(AContract))]
+[ContractClass(typeof (AContract))]
 abstract class A
 {
   public abstract void EnabledOnAbstractMethod(string s{caret});
 }
 
-[ContractClassFor(typeof(A))]
+[ContractClassFor(typeof (A))]
 abstract class AContract : A
 {
   public override void EnabledOnAbstractMethod(string s)

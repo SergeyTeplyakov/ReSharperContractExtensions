@@ -61,8 +61,6 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
 
         private bool ComputeIsAvailable()
         {
-            Contract.Assert(_parameterDeclaration != null);
-
             if (!IsParameterDeclarationWellDefined())
                 return false;
 

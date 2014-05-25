@@ -11,17 +11,18 @@ using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.Util;
 using ReSharper.ContractExtensions.ContractUtils;
+using ReSharper.ContractExtensions.Utilities;
 
 namespace ReSharper.ContractExtensions.ContextActions.ContractsFor
 {
-    internal sealed class AddContractForExecutor
+    internal sealed class AddContractExecutor
     {
-        private readonly AddContractForAvailability _addContractForAvailability;
+        private readonly AddContractAvailability _addContractForAvailability;
         private readonly ICSharpContextActionDataProvider _provider;
         private readonly CSharpElementFactory _factory;
         private readonly ICSharpFile _currentFile;
 
-        public AddContractForExecutor(AddContractForAvailability addContractForAvailability,
+        public AddContractExecutor(AddContractAvailability addContractForAvailability,
             ICSharpContextActionDataProvider provider)
         {
             Contract.Requires(addContractForAvailability != null);
@@ -41,25 +42,32 @@ namespace ReSharper.ContractExtensions.ContextActions.ContractsFor
 
         public void Execute(ISolution solution, IProgressIndicator progress)
         {
-            var contractClass = GetOrCreateContractClass();
+            // If contract class already exists we can assume that it already "physical"
+            // And we can implement it freely.
 
-            AddContractClassForAttributeTo(contractClass);
+            IClassDeclaration contractClass = TryGetExistedContractClass();
 
-            var physicalContractClassDeclaration = 
-                AddToPhysicalDeclarationAfter(contractClass);
+            if (contractClass == null)
+            {
+                var newContractClass = CreateContractClass();
 
-            ImplementInterfaceOrBaseClass(physicalContractClassDeclaration);
+                AddContractClassAttribute(newContractClass.DeclaredName);
+                AddContractClassForAttributeTo(newContractClass);
+
+                contractClass = AddToPhysicalDeclaration(newContractClass);
+            }
+
+            ImplementInterfaceOrBaseClass(contractClass);
         }
 
-        private IClassDeclaration GetOrCreateContractClass()
+        private IClassDeclaration TryGetExistedContractClass()
+        {
+            return _addContractForAvailability.TypeDeclaration.GetContractClassDeclaration();
+        }
+
+        private IClassDeclaration CreateContractClass()
         {
             string contractClassName = CreateContractClassName();
-
-            var contractClass = _addContractForAvailability.TypeDeclaration.GetContractClassDeclaration();
-            if (contractClass != null)
-                return contractClass;
-
-            AddContractClassAttribute(contractClassName);
 
             IClassDeclaration newContractClass = GenerateContractClassDeclaration(contractClassName);
             return newContractClass;
@@ -95,13 +103,8 @@ namespace ReSharper.ContractExtensions.ContextActions.ContractsFor
                 // So I'm trying to find required elements myself.
 
                 var membersInOrder =
-                    GenerateUtil.GetOverridableMembersOrder(contractClass.DeclaredElement, false)
-                        .Where(e => e.DeclaringType.GetClrName().FullName ==
-                                    abstractClass.DeclaredElement.GetClrName().FullName)
-                        .Select(x => x)
+                    contractClass.GetMissingMembersOf(abstractClass)
                         .Select(x => new GeneratorDeclaredElement<IOverridableMember>(x.Member, x.Substitution))
-                        // This code provides two elements for property! So I'm trying to remove another instance!
-                        .Where(x => !x.DeclaredElement.ShortName.StartsWith("get_"))
                         .ToList();
 
                 workflow.Context.InputElements.Clear();
@@ -162,7 +165,7 @@ namespace ReSharper.ContractExtensions.ContextActions.ContractsFor
         /// This method is absolutely crucial, because all R# "generate workflows" works correcntly
         /// only if TreeNode.IsPhysical() returns true.
         /// </remarks>
-        private IClassDeclaration AddToPhysicalDeclarationAfter(IClassDeclaration contractClass)
+        private IClassDeclaration AddToPhysicalDeclaration(IClassDeclaration contractClass)
         {
             var holder = CSharpTypeAndNamespaceHolderDeclarationNavigator.GetByTypeDeclaration(
                 _addContractForAvailability.TypeDeclaration);

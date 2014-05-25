@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using System.Linq;
+using JetBrains.ReSharper.Feature.Services.Generate;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 
@@ -17,6 +21,78 @@ namespace ReSharper.ContractExtensions.Utilities
             var clrAttribute = new ClrTypeName(attributeType.FullName);
             return classLikeDeclaration.DeclaredElement.HasAttributeInstance(
                 new ClrTypeName(attributeType.FullName), inherit: true);
+        }
+
+        public static bool Overrides(this IClassLikeDeclaration classLikeDeclaration,
+            ICSharpFunctionDeclaration baseFunctionDeclaration)
+        {
+            Contract.Requires(classLikeDeclaration != null);
+            Contract.Requires(baseFunctionDeclaration != null);
+
+            Func<IMethodDeclaration, bool> isOverridesCurrentFunction =
+                md => md.DeclaredElement.GetAllSuperMembers()
+                    .Any(overridable => overridable.Member.Equals(baseFunctionDeclaration.DeclaredElement));
+
+            return classLikeDeclaration
+                .With(x => x.Body)
+                .Return(x => x.Methods.FirstOrDefault(isOverridesCurrentFunction)) != null;
+        }
+
+        /// <summary>
+        /// Return list of members from the <paramref name="declaration"/>, that overridable from its base class 
+        /// (<paramref name="baseDeclaration"/>).
+        /// </summary>
+        public static List<OverridableMemberInstance> GetMissingMembersOf(
+            this IClassLikeDeclaration declaration,
+            IClassLikeDeclaration baseDeclaration)
+        {
+            Contract.Requires(declaration != null);
+            Contract.Requires(declaration.DeclaredElement != null);
+            Contract.Requires(baseDeclaration != null);
+            Contract.Requires(baseDeclaration.DeclaredElement != null);
+
+            Contract.Ensures(Contract.Result<List<OverridableMemberInstance>>() != null);
+
+            var potentialOverrides =
+                GenerateUtil.GetOverridableMembersOrder(declaration.DeclaredElement, false)
+                    .Where(e => e.DeclaringType.GetClrName().FullName ==
+                            baseDeclaration.DeclaredElement.GetClrName().FullName)
+                    // This code provides two elements for property! So I'm trying to remove another instance!
+                    .Where(x => !x.Member.ShortName.StartsWith("get_"))
+                    .ToList();
+
+            var alreadyOverriden = new HashSet<OverridableMemberInstance>();
+
+            foreach (IOverridableMember member in declaration.DeclaredElement.GetMembers().OfType<IOverridableMember>())
+            {
+                if (member.IsExplicitImplementation)
+                {
+                    foreach (IExplicitImplementation implementation in member.ExplicitImplementations)
+                    {
+                        OverridableMemberInstance element = implementation.Resolve();
+                        if (element != null)
+                        {
+                            alreadyOverriden.Add(element);
+                        }
+                    }
+                }
+                else if (member.IsOverride)
+                {
+                    foreach (OverridableMemberInstance isntance in new OverridableMemberInstance(member).GetImmediateOverride())
+                    {
+                        alreadyOverriden.Add(isntance);
+                    }
+                }
+            }
+
+            var notOverridenMembers = new List<OverridableMemberInstance>();
+            foreach (var member in potentialOverrides)
+            {
+                if (!alreadyOverriden.Contains(member))
+                    notOverridenMembers.Add(member);
+            }
+
+            return notOverridenMembers;
         }
     }
 }

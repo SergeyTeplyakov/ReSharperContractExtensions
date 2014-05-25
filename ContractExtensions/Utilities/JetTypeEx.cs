@@ -4,7 +4,7 @@ using JetBrains.ReSharper.Psi.Util;
 
 namespace ReSharper.ContractExtensions.Utilities
 {
-    internal static class TypeEx
+    internal static class JetTypeEx
     {
         public static bool IsReferenceOrNullableType(this IType type)
         {

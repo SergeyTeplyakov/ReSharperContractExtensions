@@ -18,7 +18,8 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
     {
         private readonly ICSharpContextActionDataProvider _provider;
         private readonly string _parameterName;
-        private readonly AddContractForAvailability _addContractForAvailability;
+        private readonly ICSharpFunctionDeclaration _selectedAbstractMethod;
+        private readonly AddContractAvailability _addContractAvailability;
 
         private ComboRequiresAvailability()
         {}
@@ -28,13 +29,36 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             Contract.Requires(provider != null);
             _provider = provider;
 
+            _selectedAbstractMethod = GetSelectedMethod();
+
             if (IsAbstractClassOrInterface() 
                 && IsRequiresAvailableFor(out _parameterName) 
-                && (IsContractClassGenerationAvailable(out _addContractForAvailability)))
+                && CanAddContractForSelectedMethod(out _addContractAvailability))
             {
                 IsAvailable = true;
             }
         }
+
+        private bool CanAddContractForSelectedMethod(out AddContractAvailability addContractAvailability)
+        {
+            addContractAvailability = AddContractAvailability.IsAvailableForSelectedMethod(_provider);
+            return addContractAvailability.IsAvailable;
+        }
+
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(!IsAvailable || _provider != null);
+            Contract.Invariant(!IsAvailable || _parameterName != null);
+            Contract.Invariant(!IsAvailable || _selectedAbstractMethod != null);
+        }
+
+        public bool IsAvailable { get; private set; }
+        public string ParameterName { get { return _parameterName; } }
+        public ICSharpFunctionDeclaration SelectedFunction { get { return _selectedAbstractMethod; } }
+        public AddContractAvailability AddContractAvailability { get { return _addContractAvailability; } }
+
+        public static readonly ComboRequiresAvailability Unavailable = new ComboRequiresAvailability { IsAvailable = false };
 
         private bool IsAbstractClassOrInterface()
         {
@@ -49,27 +73,18 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             return classDeclaration.IsAbstract;
         }
 
-        [ContractInvariantMethod]
-        private void ObjectInvariant()
+        private ICSharpFunctionDeclaration GetSelectedMethod()
         {
-            Contract.Invariant(!IsAvailable || _provider != null);
-            Contract.Invariant(!IsAvailable || _parameterName != null);
-            Contract.Invariant(!IsAvailable || _addContractForAvailability != null);
+            return _provider.GetSelectedElement<ICSharpFunctionDeclaration>(true, true);
         }
 
-        public bool IsAvailable { get; private set; }
-        public string ParameterName { get { return _parameterName; } }
-        public AddContractForAvailability AddContractAvailability { get { return _addContractForAvailability; } }
-
-
-        public static readonly ComboRequiresAvailability Unavailable = new ComboRequiresAvailability {IsAvailable = false};
-
-        private bool IsContractClassGenerationAvailable(out AddContractForAvailability availability)
+        private bool CanGenerateContractFor(ICSharpFunctionDeclaration selectedAbstractMethod)
         {
-            availability = new AddContractForAvailability(_provider, true);
-            return availability.IsAvailable;
+            // I don't know right now when I can't generate contract for abstract method or interface.
+            // The only case: this function should exists!
+            return selectedAbstractMethod != null;
         }
-
+      
         private bool IsRequiresAvailableFor(out string parameterName)
         {
             parameterName = null;

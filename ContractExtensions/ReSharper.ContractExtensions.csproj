@@ -76,9 +76,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ContextActions\ContractsFor\AddContractForAvailability.cs" />
-    <Compile Include="ContextActions\ContractsFor\AddContractForContextAction.cs" />
-    <Compile Include="ContextActions\ContractsFor\AddContractForExecutor.cs" />
+    <Compile Include="ContextActions\ContractsFor\AddContractAvailability.cs" />
+    <Compile Include="ContextActions\ContractsFor\AddContractContextAction.cs" />
+    <Compile Include="ContextActions\ContractsFor\AddContractExecutor.cs" />
     <Compile Include="ContextActions\ContractsFor\Generator\ContractClassActionWorkflow.cs" />
     <Compile Include="ContextActions\ContractsFor\Generator\ContractClassBuilder.cs" />
     <Compile Include="ContextActions\ContractsFor\Generator\ContractClassGenerator.cs" />
@@ -116,7 +116,7 @@
     <Compile Include="Utilities\Monadic.cs" />
     <Compile Include="Utilities\StringExtensions.cs" />
     <Compile Include="Utilities\TreeNodeExtensions.cs" />
-    <Compile Include="Utilities\TypeEx.cs" />
+    <Compile Include="Utilities\JetTypeEx.cs" />
     <Compile Include="Utilities\TypeExtensions.cs" />
   </ItemGroup>
   <ItemGroup>

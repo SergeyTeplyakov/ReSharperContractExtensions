@@ -11,15 +11,15 @@ internal interface ISomeInterface{off}
 [ContractClassFor(typeof(ISomeInterface))]
 internal class ISomeInterfaceClassContract : ISomeInterface
 {
-    public void MethodWithPrecondition(string s)
+    void ISomeInterface.MethodWithPrecondition(string s)
     {
         throw new System.NotImplementedException();
     }
 
-    public string MethodWithPostcondition()
+    string ISomeInterface.MethodWithPostcondition()
     {
         throw new System.NotImplementedException();
     }
 
-    public string PropertyWithPostcondition { get; private set; }
+    string ISomeInterface.PropertyWithPostcondition { get; private set; }
 }

@@ -6,7 +6,7 @@ using ReSharper.ContractExtensions.ContextActions.ContractsFor;
 namespace ReSharper.ContractExtensions.Tests.ContractFor
 {
     [TestFixture]
-    public class AddContractForContextActionExecuteTest : CSharpContextActionExecuteTestBase<AddContractForContextAction>
+    public class AddContractForContextActionExecuteTest : CSharpContextActionExecuteTestBase<AddContractContextAction>
     {
 
         protected override string ExtraPath

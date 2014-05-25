@@ -44,7 +44,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         {
             Contract.Assert(_availability.IsAvailable);
 
-            var addContractExecutor = new AddContractForExecutor(_availability.AddContractAvailability, _provider);
+            var addContractExecutor = new AddContractExecutor(_availability.AddContractAvailability, _provider);
             addContractExecutor.Execute(solution, progress);
 
             var functionDeclaration = GetFunctionForContract();

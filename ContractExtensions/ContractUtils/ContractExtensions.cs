@@ -62,7 +62,7 @@ namespace ReSharper.ContractExtensions.ContractUtils
         }
 
         [System.Diagnostics.Contracts.Pure]
-        private static ICSharpFunctionDeclaration GetContractMethodForAbstractFunction(ICSharpFunctionDeclaration functionDeclaration)
+        public static ICSharpFunctionDeclaration GetContractMethodForAbstractFunction(this ICSharpFunctionDeclaration functionDeclaration)
         {
             Contract.Requires(functionDeclaration != null);
             
