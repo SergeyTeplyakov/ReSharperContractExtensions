@@ -51,7 +51,7 @@ namespace ReSharper.ContractExtensions.ContextActions.ContractsFor
             {
                 var newContractClass = CreateContractClass();
 
-                AddContractClassAttribute(newContractClass.DeclaredName);
+                AddContractClassAttributeIfNeeded(newContractClass.DeclaredName);
                 AddContractClassForAttributeTo(newContractClass);
 
                 contractClass = AddToPhysicalDeclaration(newContractClass);
@@ -67,7 +67,7 @@ namespace ReSharper.ContractExtensions.ContextActions.ContractsFor
 
         private IClassDeclaration CreateContractClass()
         {
-            string contractClassName = CreateContractClassName();
+            string contractClassName = GenerateUniqueContractClassName();
 
             IClassDeclaration newContractClass = GenerateContractClassDeclaration(contractClassName);
             return newContractClass;
@@ -191,8 +191,9 @@ namespace ReSharper.ContractExtensions.ContextActions.ContractsFor
         }
 
         [Pure]
-        private string CreateContractClassName()
+        private string GenerateUniqueContractClassName()
         {
+            // TODO: will be implemented later. Don't know how to find type in the namespace!
             return _addContractForAvailability.TypeDeclaration.DeclaredName + "Contract";
         }
 
@@ -235,10 +236,13 @@ namespace ReSharper.ContractExtensions.ContextActions.ContractsFor
             return attribute;
         }
 
-        private void AddContractClassAttribute(string contractClassName)
+        private void AddContractClassAttributeIfNeeded(string contractClassName)
         {
-            var attribute = CreateContractClassAttribute(contractClassName);
-            _addContractForAvailability.TypeDeclaration.AddAttributeAfter(attribute, null);
+            if (!_addContractForAvailability.TypeDeclaration.HasAttribute(typeof (ContractClassAttribute)))
+            {
+                var attribute = CreateContractClassAttribute(contractClassName);
+                _addContractForAvailability.TypeDeclaration.AddAttributeAfter(attribute, null);
+            }
         }
     }
 }

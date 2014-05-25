@@ -84,11 +84,14 @@
     <Compile Include="ContextActions\ContractsFor\Generator\ContractClassGenerator.cs" />
     <Compile Include="ContextActions\ContractsFor\Generator\ContractClassItemProvider.cs" />
     <Compile Include="ContextActions\ContractsFor\Generator\ContractClassProvider.cs" />
+    <Compile Include="ContextActions\Ensures\EnsuresAvailability.cs" />
+    <Compile Include="ContextActions\Ensures\EnsuresExecutor.cs" />
+    <Compile Include="ContextActions\Ensures\ReturnTypeEnsuresAvailability.cs" />
     <Compile Include="ContextActions\Invariants\FieldOrPropertyDeclaration.cs" />
     <Compile Include="ContextActions\Invariants\InvariantActionExecutor.cs" />
     <Compile Include="ContextActions\Invariants\InvariantAvailability.cs" />
     <Compile Include="ContextActions\Invariants\InvariantContextAction.cs" />
-    <Compile Include="ContextActions\EnsuresContextAction.cs" />
+    <Compile Include="ContextActions\Ensures\EnsuresContextAction.cs" />
     <Compile Include="ContextActions\Requires\ComboRequiresAvailability.cs" />
     <Compile Include="ContextActions\Requires\ComboRequiresContextAction.cs" />
     <Compile Include="ContextActions\Requires\ParameterRequiresAvailability.cs" />
@@ -122,6 +125,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\JetBrains.ReSharper.SDK.8.2.1158\build\JetBrains.ReSharper.SDK.Targets" Condition="Exists('..\packages\JetBrains.ReSharper.SDK.8.2.1158\build\JetBrains.ReSharper.SDK.Targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
