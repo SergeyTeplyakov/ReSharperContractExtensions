@@ -4,6 +4,7 @@ using System.Diagnostics.Contracts;
 interface IA
 {
   void EnabledOnAbstractMethod(string s{caret});
+  void AnotherMethod(string s);
 }
 
 [ContractClassFor(typeof (IA))]

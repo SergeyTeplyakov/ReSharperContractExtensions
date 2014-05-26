@@ -30,7 +30,8 @@ namespace ReSharper.ContractExtensions.ContextActions.Ensures
 
         public void Execute(ISolution solution, IProgressIndicator progress)
         {
-            var addContractExecutor = new AddContractExecutor(_provider, _addContractAvailability);
+            var addContractExecutor = new AddContractExecutor(_provider, _addContractAvailability, 
+                _selectedFunctionDeclaration);
             addContractExecutor.Execute(solution, progress);
 
             var addEnsuresExecutor = new EnsuresExecutor(_provider, _selectedFunctionDeclaration);

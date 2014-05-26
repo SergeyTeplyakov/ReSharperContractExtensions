@@ -21,8 +21,10 @@ namespace ReSharper.ContractExtensions.ContextActions.ContractsFor
         private readonly ICSharpContextActionDataProvider _provider;
         private readonly CSharpElementFactory _factory;
         private readonly ICSharpFile _currentFile;
+        private readonly ICSharpFunctionDeclaration _requiredFunction;
 
-        public AddContractExecutor(ICSharpContextActionDataProvider provider, AddContractAvailability addContractForAvailability)
+        public AddContractExecutor(ICSharpContextActionDataProvider provider, AddContractAvailability addContractForAvailability, 
+            ICSharpFunctionDeclaration requiredFunction = null)
         {
             Contract.Requires(provider != null);
             Contract.Requires(addContractForAvailability != null);
@@ -30,6 +32,7 @@ namespace ReSharper.ContractExtensions.ContextActions.ContractsFor
 
             _addContractForAvailability = addContractForAvailability;
             _provider = provider;
+            _requiredFunction = requiredFunction;
 
             _factory = _provider.ElementFactory;
             // TODO: look at this class CSharpStatementNavigator
@@ -101,15 +104,24 @@ namespace ReSharper.ContractExtensions.ContextActions.ContractsFor
 
                 // So I'm trying to find required elements myself.
 
-                var membersInOrder =
-                    contractClass.GetMissingMembersOf(abstractClass)
+                var missingMembers = contractClass.GetMissingMembersOf(abstractClass);
+
+                if (_requiredFunction != null)
+                {
+                    missingMembers = 
+                        missingMembers.Where(x => x.Member.Equals(_requiredFunction.DeclaredElement))
+                            .ToList();
+                }
+
+                var membersToOverride =
+                    missingMembers
                         .Select(x => new GeneratorDeclaredElement<IOverridableMember>(x.Member, x.Substitution))
                         .ToList();
 
                 workflow.Context.InputElements.Clear();
 
                 workflow.Context.ProvidedElements.Clear();
-                workflow.Context.ProvidedElements.AddRange(membersInOrder);
+                workflow.Context.ProvidedElements.AddRange(membersToOverride);
 
                 workflow.Context.InputElements.AddRange(workflow.Context.ProvidedElements);
 
@@ -137,9 +149,27 @@ namespace ReSharper.ContractExtensions.ContextActions.ContractsFor
                     CSharpBuilderOptions.ImplementationKind,
                     CSharpBuilderOptions.ImplementationKindExplicit);
 
-                workflow.Context.InputElements.Clear();
+                // In some cases we need to implement only selected members,
+                // so for this case we're computing those members manually.
+                if (_requiredFunction != null)
+                {
+                    var membersToOverride = contractClass.GetMissingMembersOf(interfaceDeclaration)
+                        .Where(x => x.Member.Equals(_requiredFunction.DeclaredElement))
+                        .Select(x => new GeneratorDeclaredElement<IOverridableMember>(x.Member, x.Substitution))
+                        .ToList();
 
-                workflow.Context.InputElements.AddRange(workflow.Context.ProvidedElements);
+                    workflow.Context.InputElements.Clear();
+
+                    workflow.Context.ProvidedElements.Clear();
+                    workflow.Context.ProvidedElements.AddRange(membersToOverride);
+
+                    workflow.Context.InputElements.AddRange(workflow.Context.ProvidedElements);
+                }
+                else
+                {
+                    workflow.Context.InputElements.Clear();
+                    workflow.Context.InputElements.AddRange(workflow.Context.ProvidedElements);
+                }
 
                 workflow.GenerateAndFinish("Generate contract class", NullProgressIndicator.Instance);
             }
