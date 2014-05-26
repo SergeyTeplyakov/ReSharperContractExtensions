@@ -14,9 +14,9 @@ namespace ReSharper.ContractExtensions.ContextActions.ContractsFor
     public sealed class AddContractContextAction : ContextActionBase
     {
         private readonly ICSharpContextActionDataProvider _provider;
-        private const string MenuTextFormat = "Add Contract Invariant for '{0}'";
-        private const string Name = "Add Contract Invariant";
-        private const string Description = "Add Contract Invariant for selected interface or abstract class.";
+        private const string MenuTextFormat = "Add Contract Class for '{0}'";
+        private const string Name = "Add Contract Class";
+        private const string Description = "Add Contract Class for selected interface or abstract class.";
 
         private AddContractAvailability _addContractForAvailability = AddContractAvailability.Unavailable;
 
@@ -29,7 +29,7 @@ namespace ReSharper.ContractExtensions.ContextActions.ContractsFor
 
         protected override Action<ITextControl> ExecutePsiTransaction(ISolution solution, IProgressIndicator progress)
         {
-            var executor = new AddContractExecutor(_addContractForAvailability, _provider);
+            var executor = new AddContractExecutor(_provider, _addContractForAvailability);
             executor.Execute(solution, progress);
 
             return null;

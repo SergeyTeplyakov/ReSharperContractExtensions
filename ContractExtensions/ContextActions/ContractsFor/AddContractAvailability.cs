@@ -16,18 +16,20 @@ namespace ReSharper.ContractExtensions.ContextActions.ContractsFor
 
         private readonly ICSharpContextActionDataProvider _provider;
         private readonly bool _contractForSelectedMethod;
+        private readonly ICSharpFunctionDeclaration _selectedFunctionDeclaration;
 
         private AddContractAvailability()
         {}
 
         private AddContractAvailability(ICSharpContextActionDataProvider provider,
-            bool contractForSelectedMethod)
+            bool contractForSelectedMethod, ICSharpFunctionDeclaration selectedFunctionDeclaration)
         {
             Contract.Requires(provider != null);
             Contract.Requires(provider.SelectedElement != null);
 
             _provider = provider;
             _contractForSelectedMethod = contractForSelectedMethod;
+            _selectedFunctionDeclaration = selectedFunctionDeclaration ?? GetSelectedFunction();
 
             IsAvailable = ComputeIsAvailable();
             if (IsAvailable)
@@ -51,15 +53,15 @@ namespace ReSharper.ContractExtensions.ContextActions.ContractsFor
             Contract.Requires(provider != null);
             Contract.Ensures(Contract.Result<AddContractAvailability>() != null);
 
-            return new AddContractAvailability(provider, false);
+            return new AddContractAvailability(provider, false, null);
         }
 
-        public static AddContractAvailability IsAvailableForSelectedMethod(ICSharpContextActionDataProvider provider)
+        public static AddContractAvailability IsAvailableForSelectedMethod(ICSharpContextActionDataProvider provider, ICSharpFunctionDeclaration selectedFunction = null)
         {
             Contract.Requires(provider != null);
             Contract.Ensures(Contract.Result<AddContractAvailability>() != null);
 
-            return new AddContractAvailability(provider, true);
+            return new AddContractAvailability(provider, true, selectedFunction);
         }
 
         private void ComputeSelectedDeclarationMember()
@@ -101,20 +103,23 @@ namespace ReSharper.ContractExtensions.ContextActions.ContractsFor
             return true;
         }
 
-        private bool IsSelectedFunctionOverridable()
+        [Pure] private ICSharpFunctionDeclaration GetSelectedFunction()
         {
-            var selectedFunction = _provider.GetSelectedElement<ICSharpFunctionDeclaration>(true, true);
-            if (selectedFunction == null)
-                return false;
-            return selectedFunction.IsAbstract;
+            return _provider.GetSelectedElement<ICSharpFunctionDeclaration>(true, true);
         }
 
-        private bool SelectedMethodAlreadyHasContract()
+        [Pure] private bool IsSelectedFunctionOverridable()
         {
-            var selectedMethod = _provider.GetSelectedElement<ICSharpFunctionDeclaration>(true, true);
-            Contract.Assert(selectedMethod != null);
+            if (_selectedFunctionDeclaration == null)
+                return false;
+            return _selectedFunctionDeclaration.IsAbstract;
+        }
 
-            return selectedMethod.GetContractMethodForAbstractFunction() != null;
+        [Pure] private bool SelectedMethodAlreadyHasContract()
+        {
+            Contract.Assert(_selectedFunctionDeclaration != null);
+
+            return _selectedFunctionDeclaration.GetContractMethodForAbstractFunction() != null;
         }
 
         private bool ContractClassAlreadyFullyDefined()

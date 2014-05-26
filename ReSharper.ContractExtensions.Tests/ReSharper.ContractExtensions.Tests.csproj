@@ -45,6 +45,8 @@
     <Compile Include="src\ContractFor\AddContractForContextActionAvailabilityTest.cs" />
     <Compile Include="src\ContractFor\AddContractForContextActionExecuteTest.cs" />
     <Compile Include="src\ContractFor\Generators\ContractClassGeneratorTest.cs" />
+    <Compile Include="src\Ensures\ComboEnsuresContextActionAvailabilityTest.cs" />
+    <Compile Include="src\Ensures\ComboEnsuresContextActionExecuteTest.cs" />
     <Compile Include="src\Invariants\InvariantActionAvailabilityTest.cs" />
     <Compile Include="src\Invariants\InvariantContextActionExecuteTest.cs" />
     <Compile Include="src\Logic\RequresStatementTest.cs" />

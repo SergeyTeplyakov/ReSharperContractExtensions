@@ -3,7 +3,7 @@ using System;
 
 abstract class A
 {
-  public strin{on}g DisabledInsideMethod()
+  public strin{on}g EnabledInsideMethod()
   {
       var f = "";
       return "foo";

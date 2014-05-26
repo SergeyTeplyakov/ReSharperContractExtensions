@@ -1,17 +1,17 @@
 using System.Diagnostics.Contracts;
 
-[ContractClass(typeof(AContract))]
-abstract class A
+[ContractClass(typeof(IAContract))]
+interface IA
 {
   public abstract void EnabledOnAbstractMethodWithoutContract(string s{on});
 
   public abstract void DisabledOnAbstractMethod(string s{off});
 }
 
-[ContractClassFor(typeof(A))]
-abstract class AContract : A
+[ContractClassFor(typeof(IA))]
+abstract class IAContract : IA
 {
-  public override void DisabledOnAbstractMethod(string s)
+  public void DisabledOnAbstractMethod(string s)
   {
   }
 }

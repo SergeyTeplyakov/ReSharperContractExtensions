@@ -84,6 +84,9 @@
     <Compile Include="ContextActions\ContractsFor\Generator\ContractClassGenerator.cs" />
     <Compile Include="ContextActions\ContractsFor\Generator\ContractClassItemProvider.cs" />
     <Compile Include="ContextActions\ContractsFor\Generator\ContractClassProvider.cs" />
+    <Compile Include="ContextActions\Ensures\ComboEnsuresAvailability.cs" />
+    <Compile Include="ContextActions\Ensures\ComboEnsuresContextAction.cs" />
+    <Compile Include="ContextActions\Ensures\ComboEnsuresExecutor.cs" />
     <Compile Include="ContextActions\Ensures\EnsuresAvailability.cs" />
     <Compile Include="ContextActions\Ensures\EnsuresExecutor.cs" />
     <Compile Include="ContextActions\Ensures\ReturnTypeEnsuresAvailability.cs" />

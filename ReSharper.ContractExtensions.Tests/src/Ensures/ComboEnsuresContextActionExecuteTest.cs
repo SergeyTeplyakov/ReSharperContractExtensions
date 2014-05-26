@@ -1,11 +1,11 @@
 ﻿using JetBrains.ReSharper.Intentions.CSharp.Test;
 using NUnit.Framework;
-using ReSharper.ContractExtensions.ContextActions.Requires;
+using ReSharper.ContractExtensions.ContextActions.Ensures;
 
-namespace ReSharper.ContractExtensions.Tests.Preconditions
+namespace ReSharper.ContractExtensions.Tests.Postconditions
 {
     [TestFixture]
-    public class ComboRequiresContextActionExecuteTest : CSharpContextActionExecuteTestBase<ComboRequiresContextAction>
+    public class ComboEnsuresContextActionExecuteTest : CSharpContextActionExecuteTestBase<ComboEnsuresContextAction>
     {
         protected override string ExtraPath
         {
@@ -19,5 +19,6 @@ namespace ReSharper.ContractExtensions.Tests.Preconditions
         {
             DoOneTest(testSrc);
         }
+
     }
 }

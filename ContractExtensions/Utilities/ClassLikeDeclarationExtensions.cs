@@ -61,9 +61,28 @@ namespace ReSharper.ContractExtensions.Utilities
                     .Where(x => !x.Member.ShortName.StartsWith("get_"))
                     .ToList();
 
-            var alreadyOverriden = new HashSet<OverridableMemberInstance>();
+            var alreadyOverriden = new HashSet<OverridableMemberInstance>(
+                declaration.GetOverridenMembers());
 
-            foreach (IOverridableMember member in declaration.DeclaredElement.GetMembers().OfType<IOverridableMember>())
+            var notOverridenMembers = new List<OverridableMemberInstance>();
+            foreach (var member in potentialOverrides)
+            {
+                if (!alreadyOverriden.Contains(member))
+                    notOverridenMembers.Add(member);
+            }
+
+            return notOverridenMembers;
+        }
+
+        public static IEnumerable<OverridableMemberInstance> GetOverridenMembers(
+            this IClassLikeDeclaration classLikeDeclaration)
+        {
+            Contract.Requires(classLikeDeclaration != null);
+            Contract.Ensures(Contract.Result<IEnumerable<OverridableMemberInstance>>() != null);
+
+            var alreadyOverriden = new List<OverridableMemberInstance>();
+
+            foreach (IOverridableMember member in classLikeDeclaration.DeclaredElement.GetMembers().OfType<IOverridableMember>())
             {
                 if (member.IsExplicitImplementation)
                 {
@@ -85,14 +104,7 @@ namespace ReSharper.ContractExtensions.Utilities
                 }
             }
 
-            var notOverridenMembers = new List<OverridableMemberInstance>();
-            foreach (var member in potentialOverrides)
-            {
-                if (!alreadyOverriden.Contains(member))
-                    notOverridenMembers.Add(member);
-            }
-
-            return notOverridenMembers;
+            return alreadyOverriden;
         }
     }
 }

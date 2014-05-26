@@ -1,15 +1,16 @@
 ﻿using JetBrains.ReSharper.Intentions.CSharp.Test;
 using NUnit.Framework;
-using ReSharper.ContractExtensions.ContextActions.Requires;
+using ReSharper.ContractExtensions.ContextActions;
+using ReSharper.ContractExtensions.ContextActions.Ensures;
 
-namespace ReSharper.ContractExtensions.Tests.Preconditions
+namespace ReSharper.ContractExtensions.Tests.Postconditions
 {
-    public class ComboRequiresContextActionAvailabilityTest : 
-        CSharpContextActionAvailabilityTestBase<ComboRequiresContextAction>
+    [TestFixture]
+    public class ComboEnsuresContextActionAvailabilityTest : CSharpContextActionAvailabilityTestBase<ComboEnsuresContextAction>
     {
         protected override string ExtraPath
         {
-            get { return "ComboRequires"; }
+            get { return "ComboEnsures"; }
         }
 
         [TestCase("Availability")]
@@ -22,10 +23,10 @@ namespace ReSharper.ContractExtensions.Tests.Preconditions
         [TestCase("AvailabilityForInterface")]
         [TestCase("AvailabilityWhenContractClassExists")]
         [TestCase("AvailabilityWhenContractClassForInterfaceExists")]
-        public void TestFullAvailability(string testSrc)
+        public void TestOtherAvailability(string testSrc)
         {
             DoOneTest(testSrc);
         }
-
     }
+
 }

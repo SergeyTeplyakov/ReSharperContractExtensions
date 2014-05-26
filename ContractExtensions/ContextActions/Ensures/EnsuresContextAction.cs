@@ -37,8 +37,8 @@ namespace ReSharper.ContractExtensions.ContextActions
         {
             Contract.Assert(_ensuresAvailability.IsAvailable);
 
-            var executor = new EnsuresExecutor(_provider, _ensuresAvailability);
-            executor.ExecuteTransaction(solution, progress);
+            var executor = new EnsuresExecutor(_provider, _ensuresAvailability.SelectedFunction);
+            executor.Execute(solution, progress);
 
             return null;
         }

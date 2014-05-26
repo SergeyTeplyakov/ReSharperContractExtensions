@@ -22,12 +22,11 @@ namespace ReSharper.ContractExtensions.ContextActions.ContractsFor
         private readonly CSharpElementFactory _factory;
         private readonly ICSharpFile _currentFile;
 
-        public AddContractExecutor(AddContractAvailability addContractForAvailability,
-            ICSharpContextActionDataProvider provider)
+        public AddContractExecutor(ICSharpContextActionDataProvider provider, AddContractAvailability addContractForAvailability)
         {
+            Contract.Requires(provider != null);
             Contract.Requires(addContractForAvailability != null);
             Contract.Requires(addContractForAvailability.IsAvailable);
-            Contract.Requires(provider != null);
 
             _addContractForAvailability = addContractForAvailability;
             _provider = provider;

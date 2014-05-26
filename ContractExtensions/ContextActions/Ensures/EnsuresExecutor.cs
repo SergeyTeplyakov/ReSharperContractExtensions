@@ -15,23 +15,20 @@ namespace ReSharper.ContractExtensions.ContextActions.Ensures
     internal sealed class EnsuresExecutor
     {
         private readonly ICSharpContextActionDataProvider _provider;
-        private readonly EnsuresAvailability _availability;
         private readonly ICSharpFunctionDeclaration _selectedFunction;
 
 
-        public EnsuresExecutor(ICSharpContextActionDataProvider provider, EnsuresAvailability availability)
+        public EnsuresExecutor(ICSharpContextActionDataProvider provider, ICSharpFunctionDeclaration selectedFunction)
         {
             Contract.Requires(provider != null);
-            Contract.Requires(availability != null);
-            Contract.Requires(availability.IsAvailable);
+            Contract.Requires(selectedFunction != null);
 
             _provider = provider;
-            _availability = availability;
 
-            _selectedFunction = _availability.SelectedFunction;
+            _selectedFunction = selectedFunction;
         }
 
-        public void ExecuteTransaction(ISolution solution, IProgressIndicator progress)
+        public void Execute(ISolution solution, IProgressIndicator progress)
         {
             var functionDeclaration = _selectedFunction;
 
