@@ -148,7 +148,7 @@ namespace ReSharper.ContractExtensions.ContextActions.ContractsFor
                 return false;
 
             // See the comment at IsInterfaceDeclarationSelected method.
-            if (!_provider.IsSelected<IIdentifier>() || !(_provider.SelectedElement.PrevSibling is IIdentifier))
+            if (!_provider.IsSelected<IIdentifier>() && !(_provider.SelectedElement.PrevSibling is IIdentifier))
                 return false;
 
             return classDeclartion.IsAbstract;

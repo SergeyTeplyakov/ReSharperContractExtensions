@@ -14,7 +14,9 @@ namespace ReSharper.ContractExtensions.Tests.ContractFor
         }
 
         [TestCase("01_AvailableOnInterface")]
+        [TestCase("015_AvailableOnTheMiddleOfInterface")]
         [TestCase("02_AvailableOnAbstractClass")]
+        [TestCase("025_AvailableOnTheMiddleOfAbstractClass")]
         [TestCase("03_UnavailableOnInterface")]
         [TestCase("04_UnavailableOnAbstractClass")]
         [TestCase("05_UnavailableOnConcreteClass")]
