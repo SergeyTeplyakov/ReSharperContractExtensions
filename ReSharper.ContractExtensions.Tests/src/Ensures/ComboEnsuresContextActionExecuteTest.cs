@@ -9,7 +9,7 @@ namespace ReSharper.ContractExtensions.Tests.Postconditions
     {
         protected override string ExtraPath
         {
-            get { return "ComboRequires"; }
+            get { return "ComboEnsures"; }
         }
 
         [TestCase("ExecutionForAbstractMethod")]

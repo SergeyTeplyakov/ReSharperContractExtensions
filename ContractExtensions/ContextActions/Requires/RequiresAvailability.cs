@@ -71,7 +71,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         {
             var requiresStatements = functionDeclaration.GetRequires().ToList();
 
-            return requiresStatements.Any(rs => rs.ArgumentName == parameterName);
+            return requiresStatements.SelectMany(rs => rs.ArgumentNames).Any(rs => rs == parameterName);
         }
     }
 

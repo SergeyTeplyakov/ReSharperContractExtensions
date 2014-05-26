@@ -23,6 +23,7 @@ namespace ReSharper.ContractExtensions.Tests.Preconditions
         [TestCase("ExecutionWithSpecifiedOrder")]
         [TestCase("ExecutionWithSpecifiedOrder2")]
         [TestCase("ExecutionWithSpecifiedOrder3")]
+        [TestCase("ExecutionWithSpecifiedOrder4")]
         public void TestSimpleExecution(string testSrc)
         {
             DoOneTest(testSrc);

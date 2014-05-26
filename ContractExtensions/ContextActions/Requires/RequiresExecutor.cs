@@ -105,7 +105,12 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
                 .Select(p => p.ShortName).TakeWhile(paramName => paramName != _parameterName)
                 .Reverse().ToList();
 
-            var requiresStatements = _functionDeclaration.GetRequires().ToLookup(x => x.ArgumentName, x => x);
+            // Creating lookup where key is argument name, and the value is statements.
+            var requiresStatements = 
+                _functionDeclaration
+                    .GetRequires()
+                    .SelectMany(x => x.ArgumentNames.Select(a => new {Statement = x, ArgumentName = a}))
+                    .ToLookup(x => x.ArgumentName, x => x.Statement);
             
             // Looking for the last usage of the parameters in the requires statements
             foreach (var p in parameters)

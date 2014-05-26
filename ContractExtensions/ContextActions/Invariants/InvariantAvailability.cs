@@ -116,7 +116,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Invariants
             if (invariantMethod == null)
                 return false;
 
-            return invariantMethod.GetInvariants().Any(s => s.ArgumentName == selectedName);
+            return invariantMethod.GetInvariants().SelectMany(x => x.ArgumentNames).Any(s => s == selectedName);
         }
 
         public bool IsAvailable { get; private set; }

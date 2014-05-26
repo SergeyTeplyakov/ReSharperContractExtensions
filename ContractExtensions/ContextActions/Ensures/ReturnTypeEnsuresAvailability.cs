@@ -63,6 +63,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Ensures
             if (_provider.SelectedElement == null)
                 return false;
 
+            var parameter = _provider.GetSelectedElement<IParameterDeclaration>(true, true);
             // Disable on parameters
             if (_provider.IsSelected<IParameterDeclaration>())
                 return false;

@@ -14,8 +14,13 @@ namespace ReSharper.ContractExtensions.Tests.Preconditions
         }
 
         [TestCase("Availability")]
-        [Test]
         public void TestSimpleAvailability(string testSrc)
+        {
+            DoOneTest(testSrc);
+        }
+
+        [TestCase("AvailabilityCornerCases")]
+        public void Test_Corner_Cases(string testSrc)
         {
             DoOneTest(testSrc);
         }
@@ -24,7 +29,6 @@ namespace ReSharper.ContractExtensions.Tests.Preconditions
         [TestCase("AvailabilityOnAbstractClass")]
         [TestCase("AvailabilityOnInterface")]
         [TestCase("AvailabilityOnStaticClass")]
-        [Test]
         public void TestFullAvailability(string testSrc)
         {
             DoOneTest(testSrc);

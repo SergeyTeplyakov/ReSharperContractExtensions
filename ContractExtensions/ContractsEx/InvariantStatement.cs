@@ -1,4 +1,8 @@
-﻿using System.Diagnostics.Contracts;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics.Contracts;
+using System.Linq;
+using JetBrains.ReSharper.Daemon.CSharp.Errors;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 
 namespace ReSharper.ContractExtensions.ContractsEx
@@ -11,14 +15,15 @@ namespace ReSharper.ContractExtensions.ContractsEx
         {
             Contract.Requires(preconditionExpression.IsValid);
 
-            ArgumentName = preconditionExpression.PredicateArgument;
+            ArgumentNames = preconditionExpression.PreconditionExpressions.Select(x => x.ArgumentName).ToList();
             Message = preconditionExpression.Message;
         }
 
         [ContractInvariantMethod]
         private void ObjectInvariant()
         {
-            Contract.Invariant(ArgumentName != null);
+            Contract.Invariant(ArgumentNames != null);
+            Contract.Invariant(ArgumentNames.Count != 0);
         }
 
         public static InvariantStatement TryCreate(ICSharpStatement statement)
@@ -35,7 +40,7 @@ namespace ReSharper.ContractExtensions.ContractsEx
             return new InvariantStatement(statement, preconditionExpression);
         }
 
-        public string ArgumentName { get; private set; }
+        public IList<string> ArgumentNames { get; private set; }
         public string Message { get; private set; }
     }
 }

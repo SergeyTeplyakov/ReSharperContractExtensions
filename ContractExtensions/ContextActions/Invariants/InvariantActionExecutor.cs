@@ -94,19 +94,34 @@ namespace ReSharper.ContractExtensions.ContextActions.Invariants
             var members = fields.ToList();
             members.AddRange(properties);
 
-            var membersInInvariants =
+            // Creating lookup where key is argument name, and the value is statements.
+            var requiresStatements =
                 _classDeclaration.GetInvariants()
-                .Where(i => members.Any(f => i.ArgumentName == f.DeclaredName))
-                .ToDictionary(x => x.ArgumentName, x => x);
+                    .SelectMany(x => x.ArgumentNames.Select(a => new { Statement = x, ArgumentName = a }))
+                    .ToLookup(x => x.ArgumentName, x => x.Statement);
 
-            // Looking for "previous" members backwards: 
-            foreach (var previousField in members.TakeWhile(fd => fd.DeclaredName != declaration.Name).Reverse())
+            // Looking for the last usage of the parameters in the requires statements
+            foreach (var p in members.Select(m => m.DeclaredName))
             {
-                if (membersInInvariants.ContainsKey(previousField.DeclaredName))
+                if (requiresStatements.Contains(p))
                 {
-                    return membersInInvariants[previousField.DeclaredName].Statement;
+                    return requiresStatements[p].Select(x => x.Statement).LastOrDefault();
                 }
             }
+
+            //var membersInInvariants =
+            //    _classDeclaration.GetInvariants()
+            //    .Where(i => members.Any(f => i.ArgumentName == f.DeclaredName))
+            //    .ToDictionary(x => x.ArgumentName, x => x);
+
+            // Looking for "previous" members backwards: 
+            //foreach (var previousField in members.TakeWhile(fd => fd.DeclaredName != declaration.Name).Reverse())
+            //{
+            //    if (membersInInvariants.ContainsKey(previousField.DeclaredName))
+            //    {
+            //        return membersInInvariants[previousField.DeclaredName].Statement;
+            //    }
+            //}
 
             return null;
         }
