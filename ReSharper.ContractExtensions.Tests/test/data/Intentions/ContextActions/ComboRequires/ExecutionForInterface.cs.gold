@@ -15,4 +15,9 @@ abstract class IAContract : IA
     Contract.Requires(s != null);
     throw new System.NotImplementedException();
   }
+
+  void IA.AnotherMethod(string s)
+  {
+    throw new System.NotImplementedException();
+  }
 }

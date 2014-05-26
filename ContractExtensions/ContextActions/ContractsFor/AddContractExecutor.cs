@@ -149,27 +149,8 @@ namespace ReSharper.ContractExtensions.ContextActions.ContractsFor
                     CSharpBuilderOptions.ImplementationKind,
                     CSharpBuilderOptions.ImplementationKindExplicit);
 
-                // In some cases we need to implement only selected members,
-                // so for this case we're computing those members manually.
-                if (_requiredFunction != null)
-                {
-                    var membersToOverride = contractClass.GetMissingMembersOf(interfaceDeclaration)
-                        .Where(x => x.Member.Equals(_requiredFunction.DeclaredElement))
-                        .Select(x => new GeneratorDeclaredElement<IOverridableMember>(x.Member, x.Substitution))
-                        .ToList();
-
-                    workflow.Context.InputElements.Clear();
-
-                    workflow.Context.ProvidedElements.Clear();
-                    workflow.Context.ProvidedElements.AddRange(membersToOverride);
-
-                    workflow.Context.InputElements.AddRange(workflow.Context.ProvidedElements);
-                }
-                else
-                {
-                    workflow.Context.InputElements.Clear();
-                    workflow.Context.InputElements.AddRange(workflow.Context.ProvidedElements);
-                }
+                workflow.Context.InputElements.Clear();
+                workflow.Context.InputElements.AddRange(workflow.Context.ProvidedElements);
 
                 workflow.GenerateAndFinish("Generate contract class", NullProgressIndicator.Instance);
             }
