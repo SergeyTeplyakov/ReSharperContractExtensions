@@ -30,7 +30,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         private const string Name = "Combo Contract.Requires";
         private const string Description = "Add Contract.Requires on potentially nullable argument.";
 
-        private const string Format = "Add contract class and requires '{0}' is not null";
+        private const string Format = "Add requires '{0}' is not null in contract class";
 
         private ComboRequiresAvailability _availability = ComboRequiresAvailability.Unavailable;
 

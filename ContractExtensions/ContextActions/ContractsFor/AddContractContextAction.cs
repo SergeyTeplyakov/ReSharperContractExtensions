@@ -14,7 +14,7 @@ namespace ReSharper.ContractExtensions.ContextActions.ContractsFor
     public sealed class AddContractContextAction : ContextActionBase
     {
         private readonly ICSharpContextActionDataProvider _provider;
-        private const string MenuTextFormat = "Add Contract Class for '{0}'";
+        private const string MenuTextFormat = "Add or Update Contract Class for '{0}'";
         private const string Name = "Add Contract Class";
         private const string Description = "Add Contract Class for selected interface or abstract class.";
 

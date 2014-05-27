@@ -13,7 +13,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Ensures
     [ContextAction(Name = Name, Group = "Contracts", Description = Description, Priority = 100)]
     public class ComboEnsuresContextAction : ContextActionBase
     {
-        private const string MenuText = "Add Contract Class and Ensures result is not null";
+        private const string MenuText = "Add Ensures result is not null in contract class";
         private const string Name = "Combo Add Contract.Ensures";
         private const string Description = "Add Contract Class and ensures that result is not null.";
 

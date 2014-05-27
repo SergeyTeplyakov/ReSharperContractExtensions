@@ -148,7 +148,8 @@ namespace ReSharper.ContractExtensions.ContextActions.ContractsFor
                 return false;
 
             // See the comment at IsInterfaceDeclarationSelected method.
-            if (!_provider.IsSelected<IIdentifier>() && !(_provider.SelectedElement.PrevSibling is IIdentifier))
+            if ((!_provider.IsSelected<IIdentifier>() && !(_provider.SelectedElement.PrevSibling is IIdentifier)) 
+                || _provider.IsSelected<IClassBody>()) // not inside class or interface declarations!
                 return false;
 
             return classDeclartion.IsAbstract;
@@ -162,7 +163,8 @@ namespace ReSharper.ContractExtensions.ContextActions.ContractsFor
             // Caret could be on the middle of the identifier: interface f{caret}oo {}
             // or at the end of it: interface foo{caret} {}.
             // In second case _provider.IsSelected<IIdentifier>() will be false
-            if (_provider.IsSelected<IIdentifier>() || _provider.SelectedElement.PrevSibling is IIdentifier)
+            if ((_provider.IsSelected<IIdentifier>() || _provider.SelectedElement.PrevSibling is IIdentifier)
+                && !_provider.IsSelected<IClassBody>()) // not inside class declaration!
                 return true;
             
             return false;
