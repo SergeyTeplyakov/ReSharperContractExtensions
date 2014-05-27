@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>ReSharper.ContractExtensions</id>
+    <version>0.5.0</version>
+    <!-- update plugin ver in AssemblyInfo.cs plz -->
+    <title>Code Contract editing extensions</title>
+    <authors>Sergey Teplyakov</authors>
+    <owners>SergeyTeplyakov</owners>
+    <projectUrl>https://github.com/SergeyTeplyakov/ReSharperContractExtensions</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>
+      Simplifies adding preconditions, postconditions and object invariant during day-to-day activities.
+    </description>
+    <releaseNotes>
+Initial release of the tool.
+Supported features:
+1. Add preconditions that argument is not null for reference and nullable value types (if they're not defaulted to null).
+2. Add postconditions result is not null for reference and nullable value type return types.
+(supported for methods and properties).
+3. Add object invariant that field or property is not null for fields and properties.
+4. Add contract class for interface and abstract class.
+5. Combo 1: add contract class and precondition/postcondition for abstract members in abstract classes.
+6. Combo 2: add contract class and precondition/postcondition for interfaces.
+
+    </releaseNotes>
+    <dependencies>
+      <dependency id="ReSharper" version="8.2" />
+    </dependencies>
+    <tags>code contracts design by contract</tags>
+  </metadata>
+  <files>
+    <file src="ContractExtensions\bin.R82\" target="ReSharper\v8.2\plugins\" />
+  </files>
+</package>
