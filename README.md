@@ -7,7 +7,7 @@ Are you using Code Contracts library in your project? Do you want to simplify so
 
 Currently supported ReSharper versions are 8.2
 
-This plugin is available for download in [ReSharper extensions gallery](https://resharper-plugins.jetbrains.com/packages/ReSharper.ContractExtensions/0.5.0);
+This plugin is available for download in [ReSharper extensions gallery](https://resharper-plugins.jetbrains.com/packages/ReSharper.ContractExtensions/0.5.1);
 
 ### Basic use cases
 
