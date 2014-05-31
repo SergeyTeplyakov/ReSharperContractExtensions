@@ -20,6 +20,7 @@ namespace ReSharper.ContractExtensions.Tests.Invariants
         }
 
         [TestCase("ExecutionAddAnotherInvariant")]
+        [TestCase("ExecutionAddAnotherInvariant2")]
         [TestCase("ExecutionWhenInvariantMethodAlreadyExists")]
         [TestCase("AddInvariantForPropertyWithExistingFields")]
         [TestCase("ExecutionAddAnotherInvariantComplex")]

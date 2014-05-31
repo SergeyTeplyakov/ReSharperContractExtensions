@@ -100,28 +100,21 @@ namespace ReSharper.ContractExtensions.ContextActions.Invariants
                     .SelectMany(x => x.ArgumentNames.Select(a => new { Statement = x, ArgumentName = a }))
                     .ToLookup(x => x.ArgumentName, x => x.Statement);
 
+            // We should consider only members, declared previously to current member
+            var previousInvariants =
+                members
+                    .Select(p => p.DeclaredName)
+                    .TakeWhile(paramName => paramName != _invariantAvailability.SelectedMemberName)
+                    .Reverse().ToList();
+
             // Looking for the last usage of the parameters in the requires statements
-            foreach (var p in members.Select(m => m.DeclaredName))
+            foreach (var p in previousInvariants)
             {
                 if (requiresStatements.Contains(p))
                 {
                     return requiresStatements[p].Select(x => x.Statement).LastOrDefault();
                 }
             }
-
-            //var membersInInvariants =
-            //    _classDeclaration.GetInvariants()
-            //    .Where(i => members.Any(f => i.ArgumentName == f.DeclaredName))
-            //    .ToDictionary(x => x.ArgumentName, x => x);
-
-            // Looking for "previous" members backwards: 
-            //foreach (var previousField in members.TakeWhile(fd => fd.DeclaredName != declaration.Name).Reverse())
-            //{
-            //    if (membersInInvariants.ContainsKey(previousField.DeclaredName))
-            //    {
-            //        return membersInInvariants[previousField.DeclaredName].Statement;
-            //    }
-            //}
 
             return null;
         }
