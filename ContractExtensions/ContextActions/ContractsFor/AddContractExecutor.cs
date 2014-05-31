@@ -1,4 +1,7 @@
-﻿using System.Diagnostics.Contracts;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using JetBrains.Application.Progress;
 using JetBrains.ProjectModel;
@@ -105,11 +108,12 @@ namespace ReSharper.ContractExtensions.ContextActions.ContractsFor
                 // So I'm trying to find required elements myself.
 
                 var missingMembers = contractClass.GetMissingMembersOf(abstractClass);
-
+                
                 if (_requiredFunction != null)
                 {
+                    var requiredDeclaration = _requiredFunction.DeclaredElement;
                     missingMembers = 
-                        missingMembers.Where(x => x.Member.Equals(_requiredFunction.DeclaredElement))
+                        missingMembers.Where(x => GetMembers(x).Any(m => m.Equals(requiredDeclaration)))
                             .ToList();
                 }
 
@@ -117,6 +121,8 @@ namespace ReSharper.ContractExtensions.ContextActions.ContractsFor
                     missingMembers
                         .Select(x => new GeneratorDeclaredElement<IOverridableMember>(x.Member, x.Substitution))
                         .ToList();
+
+                Contract.Assert(membersToOverride.Count != 0, "Should be at least one method to add!");
 
                 workflow.Context.InputElements.Clear();
 
@@ -126,6 +132,24 @@ namespace ReSharper.ContractExtensions.ContextActions.ContractsFor
                 workflow.Context.InputElements.AddRange(workflow.Context.ProvidedElements);
 
                 workflow.GenerateAndFinish("Generate contract class", NullProgressIndicator.Instance);
+            }
+        }
+
+        private IEnumerable<IOverridableMember> GetMembers(OverridableMemberInstance overridableMember)
+        {
+            // For properties we should compare IProperty.Getter and IProperty.Setter with 
+            // _requiredFunction.DeclaredElement
+            if (overridableMember.Member is IProperty)
+            {
+                var property = (IProperty) overridableMember.Member;
+                if (property.Getter != null)
+                    yield return property.Getter;
+                if (property.Setter != null)
+                    yield return property.Setter;
+            }
+            else
+            {
+                yield return overridableMember.Member;
             }
         }
 

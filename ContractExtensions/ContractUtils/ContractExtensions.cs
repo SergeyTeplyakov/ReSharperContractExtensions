@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using JetBrains.Annotations;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
+using JetBrains.ReSharper.Psi.Tree;
 using ReSharper.ContractExtensions.Utilities;
 
 namespace ReSharper.ContractExtensions.ContractUtils
@@ -61,6 +63,13 @@ namespace ReSharper.ContractExtensions.ContractUtils
             return functionDeclaration;
         }
 
+        /// <summary>
+        /// Returns contract method for specified <paramref name="functionDeclaration"/>.
+        /// </summary>
+        /// <remarks>
+        /// This helper method works correctly for both: abstract member functions and for
+        /// abstract property getters or setters.
+        /// </remarks>
         [System.Diagnostics.Contracts.Pure]
         public static ICSharpFunctionDeclaration GetContractMethodForAbstractFunction(this ICSharpFunctionDeclaration functionDeclaration)
         {
@@ -73,14 +82,88 @@ namespace ReSharper.ContractExtensions.ContractUtils
 
             var contractClassDeclaration = currentClass.GetContractClassDeclaration();
 
-            Func<IMethodDeclaration, bool> isOverridesCurrentFunction =
-                md => md.DeclaredElement.GetAllSuperMembers()
-                    .Any(overridable => overridable.Member.Equals(functionDeclaration.DeclaredElement));
+            if (contractClassDeclaration == null || contractClassDeclaration.Body == null)
+                return null;
 
-            return contractClassDeclaration
-                .With(x => x.Body)
-                .Return(x => x.Methods.FirstOrDefault(isOverridesCurrentFunction));
+            // Get all "function declarations": methods and property accessors
+            var functionDeclarations =
+                contractClassDeclaration.Body.Methods.OfType<ICSharpFunctionDeclaration>()
+                    .Concat(
+                        contractClassDeclaration.Body.Properties
+                            .SelectMany(pd => pd.AccessorDeclarations)
+                    );
+
+            // Function declaration contains IFunction as DeclaredElement, but we need IOverridableMember
+            // instead to get all super members
+            Func<ICSharpFunctionDeclaration, bool> isOverridesCurrentFunction =
+                md => md.DeclaredElement.With(x => x as IOverridableMember)
+                    .Return(x => x.GetAllSuperMembers(), Enumerable.Empty<OverridableMemberInstance>())
+                    .SelectMany(GetMembers)
+                    .Any(overridable => overridable.Equals(functionDeclaration.DeclaredElement));
+
+            return functionDeclarations.FirstOrDefault(isOverridesCurrentFunction);
+
+            //Func<IMethodDeclaration, bool> isOverridesCurrentFunction =
+            //    md => md.DeclaredElement.GetAllSuperMembers()
+            //        .SelectMany(GetMembers)
+            //        .Any(overridable => overridable.Equals(functionDeclaration.DeclaredElement));
+
+            //Func<IPropertyDeclaration, bool> isOverridesCurrentProperty =
+            //    pd => pd.DeclaredElement.GetAllSuperMembers()
+            //        .SelectMany(GetMembers)
+            //        .Any(overridable => overridable.Equals(functionDeclaration.DeclaredElement));
+
+            ////IPropertyDeclaration pd = null;
+            ////var rrr = pd.DeclaredElement.Getter as ICSharpFunctionDeclaration;
+            //IMethodDeclaration met = null;
+            //IPropertyDeclaration pppd = null;
+            //IClassMemberDeclaration ccm = met;
+            //IAccessorDeclaration ad = null;
+            //var function = contractClassDeclaration
+            //    .With(x => x.Body)
+            //    .Return(x => x.Methods.FirstOrDefault(isOverridesCurrentFunction));
+            //if (function != null)
+            //    return function;
+
+            //var selectedProperty = contractClassDeclaration.With(x => x.Body)
+            //    .Return(x => x.Properties.FirstOrDefault(isOverridesCurrentProperty));
+            //return selectedProperty.AccessorDeclarations.FirstOrDefault();
+            ////var rrr = selectedProperty.DeclaredElement.Getter as ICSharpFunctionDeclaration;
+            //return null;
+            ////return selectedProperty.DeclaredElement;
         }
 
+
+        private static IEnumerable<IMethod> GetMethodsAndProperties(IClassBody classBody)
+        {
+            var methods = classBody.Methods.Select(m => m.DeclaredElement);
+
+            var properties =
+                classBody.Properties
+                    .SelectMany(p => new[] {p.DeclaredElement.Getter, p.DeclaredElement.Setter})
+                    .Where(m => m != null);
+
+            return methods.Concat(properties);
+        }
+
+        
+
+        private static IEnumerable<IOverridableMember> GetMembers(OverridableMemberInstance overridableMember)
+        {
+            // For properties we should compare IProperty.Getter and IProperty.Setter with 
+            // _requiredFunction.DeclaredElement
+            if (overridableMember.Member is IProperty)
+            {
+                var property = (IProperty)overridableMember.Member;
+                if (property.Getter != null)
+                    yield return property.Getter;
+                if (property.Setter != null)
+                    yield return property.Setter;
+            }
+            else
+            {
+                yield return overridableMember.Member;
+            }
+        }
     }
 }

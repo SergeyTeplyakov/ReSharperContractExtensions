@@ -33,6 +33,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Ensures
             var functionDeclaration = _selectedFunction;
 
             var contractFunction = functionDeclaration.GetContractFunction();
+            Contract.Assert(contractFunction != null);
 
             var factory = _provider.ElementFactory;
 
