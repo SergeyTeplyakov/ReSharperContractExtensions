@@ -7,6 +7,7 @@ using ReSharper.ContractExtensions.Utilities;
 
 namespace ReSharper.ContractExtensions.ContextActions.Requires
 {
+    
     /// <summary>
     /// Checkes that Contract.Requires should be available based on parameter declaration.
     /// </summary>
@@ -15,7 +16,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
     /// the need of this check out of the main requires availability check.
     /// For example, this stuff is needed by <see cref="ComboRequiresAvailability"/> class as well.
     /// </remarks>
-    internal sealed class ParameterRequiresAvailability
+    internal class ParameterRequiresAvailability
     {
         private readonly IParameterDeclaration _parameterDeclaration;
 

@@ -6,6 +6,7 @@ internal interface ISomeInterface{caret}
   void MethodWithPrecondition(string s);
   string MethodWithPostcondition();
   string PropertyWithPostcondition { get; }
+  string MutableProperty { get; set; }
 }
 
 [ContractClassFor(typeof (ISomeInterface))]
@@ -24,5 +25,11 @@ abstract class ISomeInterfaceContract : ISomeInterface
   string ISomeInterface.PropertyWithPostcondition
   {
     get { throw new System.NotImplementedException(); }
+  }
+
+  string ISomeInterface.MutableProperty
+  {
+    get { throw new System.NotImplementedException(); }
+    set { throw new System.NotImplementedException(); }
   }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.Contracts;
 using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
+using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using ReSharper.ContractExtensions.ContextActions.ContractsFor;
 using ReSharper.ContractExtensions.Utilities;
@@ -29,20 +30,15 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             Contract.Requires(provider != null);
             _provider = provider;
 
-            _selectedAbstractMethod = GetSelectedMethod();
+            _selectedAbstractMethod = GetSelectedFunctionDeclaration();
 
-            if (IsAbstractClassOrInterface() 
+            if (_selectedAbstractMethod != null
+                && IsAbstractClassOrInterface() 
                 && IsRequiresAvailableFor(out _parameterName) 
-                && CanAddContractForSelectedMethod(out _addContractAvailability))
+                && CanAddContractForSelectedMethod(_selectedAbstractMethod, out _addContractAvailability))
             {
                 IsAvailable = true;
             }
-        }
-
-        private bool CanAddContractForSelectedMethod(out AddContractAvailability addContractAvailability)
-        {
-            addContractAvailability = AddContractAvailability.IsAvailableForSelectedMethod(_provider);
-            return addContractAvailability.IsAvailable;
         }
 
         [ContractInvariantMethod]
@@ -73,9 +69,29 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             return classDeclaration.IsAbstract;
         }
 
-        private ICSharpFunctionDeclaration GetSelectedMethod()
+        private bool CanAddContractForSelectedMethod(ICSharpFunctionDeclaration selectedFunction, 
+            out AddContractAvailability addContractAvailability)
         {
-            return _provider.GetSelectedElement<ICSharpFunctionDeclaration>(true, true);
+            addContractAvailability = AddContractAvailability.IsAvailableForSelectedMethod(_provider, selectedFunction);
+            return addContractAvailability.IsAvailable;
+        }
+
+        /// <summary>
+        /// Return selected function declaration (method declaration or property declaration)
+        /// </summary>
+        /// <returns></returns>
+        [Pure]
+        private ICSharpFunctionDeclaration GetSelectedFunctionDeclaration()
+        {
+            var selectedMethod = _provider.GetSelectedElement<ICSharpFunctionDeclaration>(true, true);
+            if (selectedMethod != null)
+                return selectedMethod;
+
+            var propertyDeclaration = _provider.GetSelectedElement<IPropertyDeclaration>(true, true);
+            if (propertyDeclaration == null || propertyDeclaration.IsAuto)
+                return null;
+
+            return propertyDeclaration.AccessorDeclarations.FirstOrDefault(a => a.Kind == AccessorKind.SETTER);
         }
 
         private bool CanGenerateContractFor(ICSharpFunctionDeclaration selectedAbstractMethod)
@@ -93,6 +109,13 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             if (parameterRequiresAvailability.IsAvailable)
             {
                 parameterName = parameterRequiresAvailability.ParameterName;
+                return true;
+            }
+
+            var propertySetterRequiresAvailability = new PropertySetterRequiresAvailability(_provider);
+            if (propertySetterRequiresAvailability.IsAvailable)
+            {
+                parameterName = "value";
                 return true;
             }
 

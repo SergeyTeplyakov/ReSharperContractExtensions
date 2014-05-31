@@ -49,7 +49,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
 
             addContractExecutor.Execute(solution, progress);
 
-            var functionForContract = GetFunctionForContract();
+            var functionForContract = GetFunctionForContract(_availability.SelectedFunction);
 
             var addRequiresExecutor = new RequiresExecutor(_provider, _isRequiesStatementGeneric,
                     functionForContract, _availability.ParameterName);
@@ -78,10 +78,9 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             return _availability.IsAvailable;
         }
 
-        private ICSharpFunctionDeclaration GetFunctionForContract()
+        private ICSharpFunctionDeclaration GetFunctionForContract(ICSharpFunctionDeclaration selectedFunction)
         {
-            var functionDeclaration = _provider.GetSelectedElement<ICSharpFunctionDeclaration>(true, true);
-            return functionDeclaration.GetContractFunction();
+            return selectedFunction.GetContractFunction();
         }
 
         public override IEnumerable<IntentionAction> CreateBulbItems()

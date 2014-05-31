@@ -16,6 +16,8 @@ namespace ReSharper.ContractExtensions.Tests.Preconditions
         [TestCase("Execution")]
 
         [TestCase("ExecutionForAbstractMethod")]
+
+        [TestCase("ExecutionOnPropertySetter")]
         [TestCase("ExecutionForInterface")]
 
         [TestCase("ExecutionWithExistingUsing")]

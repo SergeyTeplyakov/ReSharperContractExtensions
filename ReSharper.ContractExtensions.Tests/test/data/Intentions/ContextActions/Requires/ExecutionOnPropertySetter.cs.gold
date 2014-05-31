@@ -1,0 +1,7 @@
+﻿using System.Diagnostics.Contracts;
+
+class A
+{
+  public string AvailableOnTheDeclaration{caret} {set { Contract.Requires(value != null); }
+  }
+}

@@ -115,14 +115,14 @@ namespace ReSharper.ContractExtensions.ContextActions.ContractsFor
                     missingMembers = 
                         missingMembers.Where(x => GetMembers(x).Any(m => m.Equals(requiredDeclaration)))
                             .ToList();
+
+                    Contract.Assert(missingMembers.Count != 0, "Should be at least one method to add!");
                 }
 
                 var membersToOverride =
                     missingMembers
                         .Select(x => new GeneratorDeclaredElement<IOverridableMember>(x.Member, x.Substitution))
                         .ToList();
-
-                Contract.Assert(membersToOverride.Count != 0, "Should be at least one method to add!");
 
                 workflow.Context.InputElements.Clear();
 

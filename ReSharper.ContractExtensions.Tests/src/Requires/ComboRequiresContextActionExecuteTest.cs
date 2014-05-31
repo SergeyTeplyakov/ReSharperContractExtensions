@@ -14,6 +14,7 @@ namespace ReSharper.ContractExtensions.Tests.Preconditions
 
         [TestCase("ExecutionForAbstractMethod")]
         [TestCase("ExecutionForInterface")]
+        [TestCase("ExecutionForAbstractProperty")]
         [TestCase("ExecutionForPartiallyDefinedContract")]
         public void TestSimpleExecution(string testSrc)
         {

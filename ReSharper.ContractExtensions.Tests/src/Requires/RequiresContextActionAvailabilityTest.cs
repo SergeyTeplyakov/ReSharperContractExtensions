@@ -20,6 +20,7 @@ namespace ReSharper.ContractExtensions.Tests.Preconditions
         }
 
         [TestCase("AvailabilityCornerCases")]
+        [TestCase("AvailabilityOnPropertySetter")]
         public void Test_Corner_Cases(string testSrc)
         {
             DoOneTest(testSrc);

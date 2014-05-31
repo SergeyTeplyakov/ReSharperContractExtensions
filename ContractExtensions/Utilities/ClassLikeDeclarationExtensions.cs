@@ -59,6 +59,7 @@ namespace ReSharper.ContractExtensions.Utilities
                             baseDeclaration.DeclaredElement.GetClrName().FullName)
                     // This code provides two elements for property! So I'm trying to remove another instance!
                     .Where(x => !x.Member.ShortName.StartsWith("get_"))
+                    .Where(x => !x.Member.ShortName.StartsWith("set_"))
                     .ToList();
 
             var alreadyOverriden = new HashSet<OverridableMemberInstance>(

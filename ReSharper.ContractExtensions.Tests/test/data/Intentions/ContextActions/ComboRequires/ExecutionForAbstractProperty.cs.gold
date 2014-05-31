@@ -1,0 +1,20 @@
+using System.Diagnostics.Contracts;
+
+[ContractClass(typeof (AContract))]
+abstract class A
+{
+  public abstract string SomeProperty{caret} { set; }
+}
+
+[ContractClassFor(typeof (A))]
+abstract class AContract : A
+{
+  public override string SomeProperty
+  {
+    set
+    {
+      Contract.Requires(value != null);
+      throw new System.NotImplementedException();
+    }
+  }
+}

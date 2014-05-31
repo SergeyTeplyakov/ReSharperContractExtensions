@@ -99,7 +99,9 @@
     <Compile Include="ContextActions\Ensures\EnsuresContextAction.cs" />
     <Compile Include="ContextActions\Requires\ComboRequiresAvailability.cs" />
     <Compile Include="ContextActions\Requires\ComboRequiresContextAction.cs" />
+    <Compile Include="ContextActions\Requires\FunctionRequiresAvailability.cs" />
     <Compile Include="ContextActions\Requires\ParameterRequiresAvailability.cs" />
+    <Compile Include="ContextActions\Requires\PropertySetterRequiresAvailability.cs" />
     <Compile Include="ContractUtils\InvariantUtils.cs" />
     <Compile Include="ContractsEx\ContractStatement.cs" />
     <Compile Include="ContractsEx\ContractStatementExtensions.cs" />

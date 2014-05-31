@@ -1,80 +1,10 @@
 ﻿using System.Diagnostics.Contracts;
-using System.Linq;
 using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Tree;
-using ReSharper.ContractExtensions.ContractsEx;
-using ReSharper.ContractExtensions.ContractUtils;
 
 namespace ReSharper.ContractExtensions.ContextActions.Requires
 {
-    internal sealed class FunctionRequiresAvailability
-    {
-        private readonly ICSharpContextActionDataProvider _provider;
-        private readonly ICSharpFunctionDeclaration _functionDeclaration;
-
-        public FunctionRequiresAvailability(ICSharpContextActionDataProvider provider, string parameterName)
-        {
-            Contract.Requires(provider != null);
-            Contract.Requires(parameterName != null);
-
-            _provider = provider;
-            IsAvailable = FunctionSupportRequiers(parameterName, out _functionDeclaration);
-        }
-
-        [ContractInvariantMethod]
-        private void ObjectInvariant()
-        {
-            Contract.Invariant(!IsAvailable || _provider != null);
-            Contract.Invariant(!IsAvailable || _functionDeclaration != null);
-        }
-
-        public bool IsAvailable { get; private set; }
-        public ICSharpFunctionDeclaration FunctionDeclaration { get { return _functionDeclaration; } }
-
-        [Pure]
-        private bool FunctionSupportRequiers(string parameterName, out ICSharpFunctionDeclaration functionDeclaration)
-        {
-            functionDeclaration = null;
-
-            var selectedFunction = GetSelectedFunctionDeclaration();
-
-            var functionToInsertPrecondition = selectedFunction.GetContractFunction();
-
-            if (!IsFunctionWellDefined(functionToInsertPrecondition))
-                return false;
-
-            if (ArgumentIsAlreadyVerifiedByArgCheckOrRequires(functionToInsertPrecondition, parameterName))
-                return false;
-
-            functionDeclaration = functionToInsertPrecondition;
-            return true;
-        }
-
-        [Pure]
-        private ICSharpFunctionDeclaration GetSelectedFunctionDeclaration()
-        {
-            return _provider.GetSelectedElement<ICSharpFunctionDeclaration>(true, true);
-        }
-
-        [Pure]
-        private bool IsFunctionWellDefined(ICSharpFunctionDeclaration functionDeclaration)
-        {
-            return functionDeclaration != null
-                && functionDeclaration.Body != null
-                && functionDeclaration.DeclaredElement != null;
-        }
-
-        [Pure]
-        private bool ArgumentIsAlreadyVerifiedByArgCheckOrRequires(
-            ICSharpFunctionDeclaration functionDeclaration, string parameterName)
-        {
-            var requiresStatements = functionDeclaration.GetRequires().ToList();
-
-            return requiresStatements.SelectMany(rs => rs.ArgumentNames).Any(rs => rs == parameterName);
-        }
-    }
-
     /// <summary>
     /// Shows whether "Add Requires" action is available or not.
     /// </summary>
@@ -95,11 +25,32 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
 
             _provider = provider;
 
-            if (ParameterSupportRequires(out _parameterName) &&
-                FunctionSupportRequiers(_parameterName, out _functionToInsertPrecondition))
+            if (MethodSupportsRequires(out _parameterName, out _functionToInsertPrecondition)
+                || PropertySetterSupportRequires(out _parameterName, out _functionToInsertPrecondition))
             {
                 IsAvailable = true;
             }
+        }
+
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
+        {
+            Contract.Invariant(!IsAvailable || _provider != null);
+            Contract.Invariant(!IsAvailable || _parameterName != null);
+            Contract.Invariant(!IsAvailable || _functionToInsertPrecondition != null);
+        }
+
+        public static RequiresAvailability Create(ICSharpContextActionDataProvider provider)
+        {
+            return new RequiresAvailability(provider);
+        }
+
+        private bool MethodSupportsRequires(out string parameterName, out ICSharpFunctionDeclaration functionToInsertPrecondition)
+        {
+            functionToInsertPrecondition = null;
+
+            return ParameterSupportRequires(out parameterName) &&
+                   FunctionSupportRequiers(_parameterName, out functionToInsertPrecondition);
         }
 
         [Pure]
@@ -119,10 +70,10 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         [Pure]
         private bool FunctionSupportRequiers(string parameterName, out ICSharpFunctionDeclaration functionDeclaration)
         {
-            var func = new FunctionRequiresAvailability(_provider, _parameterName);
+            var func = new FunctionRequiresAvailability(_provider, parameterName);
             if (func.IsAvailable)
             {
-                functionDeclaration = func.FunctionDeclaration;
+                functionDeclaration = func.FunctionToInsertPrecondition;
                 return true;
             }
 
@@ -130,17 +81,26 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             return false;
         }
 
-        [ContractInvariantMethod]
-        private void ObjectInvariant()
+        private bool PropertySetterSupportRequires(out string parameterName, out ICSharpFunctionDeclaration functionToInsertPrecondition)
         {
-            Contract.Invariant(!IsAvailable || _provider != null);
-            Contract.Invariant(!IsAvailable || _parameterName != null);
-            Contract.Invariant(!IsAvailable || _functionToInsertPrecondition != null);
-        }
+            parameterName = null;
+            functionToInsertPrecondition = null;
 
-        public static RequiresAvailability Create(ICSharpContextActionDataProvider provider)
-        {
-            return new RequiresAvailability(provider);
+            var propertySetterAvailability = new PropertySetterRequiresAvailability(_provider);
+            if (!propertySetterAvailability.IsAvailable)
+                return false;
+
+            parameterName = "value";
+            var func = new FunctionRequiresAvailability(_provider, parameterName,
+                propertySetterAvailability.SelectedFunctionDeclaration);
+
+            if (func.IsAvailable)
+            {
+                functionToInsertPrecondition = func.FunctionToInsertPrecondition;
+                return true;
+            }
+
+            return false;
         }
 
         public bool IsAvailable { get; private set; }
