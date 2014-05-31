@@ -169,3 +169,4 @@ $RECYCLE.BIN/
 # Mac desktop service store files
 .DS_Store
 ContractExtensions.sln.ide
+/ContractExtensions/bin.R82/lib
