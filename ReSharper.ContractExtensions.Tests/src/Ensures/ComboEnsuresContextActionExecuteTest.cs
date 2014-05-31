@@ -16,6 +16,7 @@ namespace ReSharper.ContractExtensions.Tests.Postconditions
         [TestCase("ExecutionForInterface")]
         [TestCase("ExecutionForPartiallyDefinedContract")]
         [TestCase("ExecutionForAbstractProperty")]
+        [TestCase("ExecutionForPropertyInTheInterface")]
         public void TestSimpleExecution(string testSrc)
         {
             DoOneTest(testSrc);
