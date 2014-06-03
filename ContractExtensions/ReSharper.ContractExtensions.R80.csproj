@@ -81,11 +81,6 @@
     <Compile Include="ContextActions\ContractsFor\AddContractAvailability.cs" />
     <Compile Include="ContextActions\ContractsFor\AddContractContextAction.cs" />
     <Compile Include="ContextActions\ContractsFor\AddContractExecutor.cs" />
-    <Compile Include="ContextActions\ContractsFor\Generator\ContractClassActionWorkflow.cs" />
-    <Compile Include="ContextActions\ContractsFor\Generator\ContractClassBuilder.cs" />
-    <Compile Include="ContextActions\ContractsFor\Generator\ContractClassGenerator.cs" />
-    <Compile Include="ContextActions\ContractsFor\Generator\ContractClassItemProvider.cs" />
-    <Compile Include="ContextActions\ContractsFor\Generator\ContractClassProvider.cs" />
     <Compile Include="ContextActions\Ensures\ComboEnsuresAvailability.cs" />
     <Compile Include="ContextActions\Ensures\ComboEnsuresContextAction.cs" />
     <Compile Include="ContextActions\Ensures\ComboEnsuresExecutor.cs" />
@@ -97,12 +92,12 @@
     <Compile Include="ContextActions\Invariants\InvariantAvailability.cs" />
     <Compile Include="ContextActions\Invariants\InvariantContextAction.cs" />
     <Compile Include="ContextActions\Ensures\EnsuresContextAction.cs" />
-    <Compile Include="ContextActions\Requires\ComboMethodRequiresExecutor.cs" />	
+    <Compile Include="ContextActions\Requires\ComboMethodRequiresExecutor.cs" />
     <Compile Include="ContextActions\Requires\ComboRequiresAvailability.cs" />
     <Compile Include="ContextActions\Requires\ComboRequiresContextAction.cs" />
     <Compile Include="ContextActions\Requires\FunctionRequiresAvailability.cs" />
     <Compile Include="ContextActions\Requires\ComboMethodRequiresContextAction.cs" />
-    <Compile Include="ContextActions\Requires\ComboMethodRequiresAvailability.cs" />	
+    <Compile Include="ContextActions\Requires\ComboMethodRequiresAvailability.cs" />
     <Compile Include="ContextActions\Requires\ParameterRequiresAvailability.cs" />
     <Compile Include="ContextActions\Requires\PropertySetterRequiresAvailability.cs" />
     <Compile Include="ContractUtils\InvariantUtils.cs" />

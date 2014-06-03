@@ -47,7 +47,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="src\ContractFor\AddContractForContextActionAvailabilityTest.cs" />
     <Compile Include="src\ContractFor\AddContractForContextActionExecuteTest.cs" />
-    <Compile Include="src\ContractFor\Generators\ContractClassGeneratorTest.cs" />
     <Compile Include="src\CSharpContextActionAvailabilityTestBase.cs" />
     <Compile Include="src\CSharpContextActionExecuteTestBase.cs" />
     <Compile Include="src\Ensures\ComboEnsuresContextActionAvailabilityTest.cs" />
