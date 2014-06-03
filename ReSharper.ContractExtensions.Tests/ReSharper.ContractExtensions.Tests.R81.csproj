@@ -57,7 +57,9 @@
     <Compile Include="src\Ensures\EnsuresContextActionExecuteTest.cs" />
     <Compile Include="src\Requires\ComboRequiresContextActionAvailabilityTest.cs" />
     <Compile Include="src\Requires\ComboRequiresContextActionExecuteTest.cs" />
+    <Compile Include="src\Requires\ComboMethodRequiresContextActionAvailabilityTest.cs" />
     <Compile Include="src\Requires\RequiresContextActionAvailabilityTest.cs" />
+	<Compile Include="src\Requires\ComboMethodRequiresContextActionExecuteTest.cs" />
     <Compile Include="src\Requires\RequiresContextActionExecuteTest.cs" />
     <None Include="test\Samples\Invariants.cs" />
     <None Include="test\data\Intentions\ContextActions\Requires\Availability.cs" />

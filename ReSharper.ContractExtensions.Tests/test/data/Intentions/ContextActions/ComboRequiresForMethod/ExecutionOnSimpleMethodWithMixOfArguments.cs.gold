@@ -1,0 +1,11 @@
+using System.Diagnostics.Contracts;
+
+abstract class A
+{
+  public void EnableOnSimpleMethod{caret}(string s, string s2, int n, int? nn, string s3 = null)
+  {
+    Contract.Requires(s != null);
+    Contract.Requires(s2 != null);
+    Contract.Requires(nn != null);
+  }
+}

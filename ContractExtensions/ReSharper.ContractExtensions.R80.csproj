@@ -97,9 +97,12 @@
     <Compile Include="ContextActions\Invariants\InvariantAvailability.cs" />
     <Compile Include="ContextActions\Invariants\InvariantContextAction.cs" />
     <Compile Include="ContextActions\Ensures\EnsuresContextAction.cs" />
+    <Compile Include="ContextActions\Requires\ComboMethodRequiresExecutor.cs" />	
     <Compile Include="ContextActions\Requires\ComboRequiresAvailability.cs" />
     <Compile Include="ContextActions\Requires\ComboRequiresContextAction.cs" />
     <Compile Include="ContextActions\Requires\FunctionRequiresAvailability.cs" />
+    <Compile Include="ContextActions\Requires\ComboMethodRequiresContextAction.cs" />
+    <Compile Include="ContextActions\Requires\ComboMethodRequiresAvailability.cs" />	
     <Compile Include="ContextActions\Requires\ParameterRequiresAvailability.cs" />
     <Compile Include="ContextActions\Requires\PropertySetterRequiresAvailability.cs" />
     <Compile Include="ContractUtils\InvariantUtils.cs" />

@@ -45,17 +45,17 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             Contract.Invariant(!IsAvailable || ParameterName != null);
         }
 
-        public static ParameterRequiresAvailability Create(ICSharpContextActionDataProvider provider)
+        public static ParameterRequiresAvailability Create(ICSharpContextActionDataProvider provider,
+            IParameterDeclaration selectedParameter = null)
         {
             Contract.Requires(provider != null);
 
-            var selectedParameter = provider.GetSelectedParameterDeclaration();
+            selectedParameter = selectedParameter ?? provider.GetSelectedParameterDeclaration();
             if (selectedParameter == null)
                 return new ParameterRequiresAvailability {IsAvailable = false};
 
             return new ParameterRequiresAvailability(selectedParameter);
         }
-
 
         public bool IsAvailable { get; private set; }
         public string ParameterName { get; private set; }

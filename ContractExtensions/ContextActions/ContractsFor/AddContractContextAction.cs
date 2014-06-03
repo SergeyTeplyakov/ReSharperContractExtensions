@@ -30,7 +30,7 @@ namespace ReSharper.ContractExtensions.ContextActions.ContractsFor
         protected override Action<ITextControl> ExecutePsiTransaction(ISolution solution, IProgressIndicator progress)
         {
             var executor = new AddContractExecutor(_provider, _addContractForAvailability);
-            executor.Execute(solution, progress);
+            executor.Execute();
 
             return null;
         }

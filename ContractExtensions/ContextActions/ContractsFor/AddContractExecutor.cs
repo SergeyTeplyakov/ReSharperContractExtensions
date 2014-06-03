@@ -45,7 +45,7 @@ namespace ReSharper.ContractExtensions.ContextActions.ContractsFor
             _currentFile = (ICSharpFile)provider.SelectedElement.GetContainingFile();
         }
 
-        public void Execute(ISolution solution, IProgressIndicator progress)
+        public void Execute()
         {
             // If contract class already exists we can assume that it already "physical"
             // And we can implement it freely.

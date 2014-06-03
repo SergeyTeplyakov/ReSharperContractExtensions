@@ -57,7 +57,9 @@
     <Compile Include="src\Logic\RequresStatementTest.cs" />
     <Compile Include="src\Ensures\EnsuresContextActionAvailabilityTest.cs" />
     <Compile Include="src\Ensures\EnsuresContextActionExecuteTest.cs" />
+    <Compile Include="src\Requires\ComboMethodRequiresContextActionAvailabilityTest.cs" />
     <Compile Include="src\Requires\ComboRequiresContextActionAvailabilityTest.cs" />
+    <Compile Include="src\Requires\ComboMethodRequiresContextActionExecuteTest.cs" />
     <Compile Include="src\Requires\ComboRequiresContextActionExecuteTest.cs" />
     <Compile Include="src\Requires\RequiresContextActionAvailabilityTest.cs" />
     <Compile Include="src\Requires\RequiresContextActionExecuteTest.cs" />

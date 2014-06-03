@@ -2,18 +2,23 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>ReSharper.ContractExtensions</id>
-    <version>0.5.1</version>
+    <version>0.6.0</version>
     <!-- update plugin ver in AssemblyInfo.cs plz -->
     <title>Code Contract editing extensions</title>
     <authors>Sergey Teplyakov</authors>
     <owners>SergeyTeplyakov</owners>
     <projectUrl>https://github.com/SergeyTeplyakov/ReSharperContractExtensions</projectUrl>
+    <iconUrl>https://github.com/SergeyTeplyakov/ReSharperContractExtensions/raw/master/Content/DesignByContract.ico</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>
       Simplifies adding preconditions, postconditions and object invariant during day-to-day activities.
     </description>
     <releaseNotes>
-Added support for ReSharper 8.0 and 8.1
+New features
+- Added support for preconditions for property setters
+- Addes support for preconditions for property setters for abstract class and interfaces (Combo Requries)
+Bug fixes
+- Fixed issue with invalid order of Contract.Invariant statements in the object invariant method.
     </releaseNotes>
     <dependencies>
       <dependency id="ReSharper" version="8.0" />

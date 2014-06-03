@@ -1,0 +1,18 @@
+using System.Diagnostics.Contracts;
+
+[ContractClass(typeof (AContract))]
+abstract class A
+{
+  public abstract void EnabledOnAbstractMethodWithoutContract{caret}(string s, int? n);
+}
+
+[ContractClassFor(typeof (A))]
+abstract class AContract : A
+{
+  public override void EnabledOnAbstractMethodWithoutContract(string s, int? n)
+  {
+    Contract.Requires(s != null);
+    Contract.Requires(n != null);
+    throw new System.NotImplementedException();
+  }
+}

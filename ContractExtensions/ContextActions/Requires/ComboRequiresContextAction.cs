@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using JetBrains.Annotations;
 using JetBrains.Application;
 using JetBrains.Application.Progress;
 using JetBrains.ProjectModel;
@@ -44,19 +45,26 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         {
             Contract.Assert(_availability.IsAvailable);
 
-            var addContractExecutor = new AddContractExecutor(_provider, _availability.AddContractAvailability,
-                _availability.SelectedFunction);
+            var contractFunction = GetContractFunction();
+            if (contractFunction == null)
+            {
+                AddContractClass();
 
-            addContractExecutor.Execute(solution, progress);
+                contractFunction = GetContractFunction();
+                Contract.Assert(contractFunction != null);
+            }
 
-            var functionForContract = GetFunctionForContract(_availability.SelectedFunction);
-
-            var addRequiresExecutor = new RequiresExecutor(_provider, _isRequiesStatementGeneric,
-                    functionForContract, _availability.ParameterName);
-            addRequiresExecutor.ExecuteTransaction(solution, progress);
+            AddRequiresTo(contractFunction);
 
             return null;
         }
+
+        [CanBeNull, System.Diagnostics.Contracts.Pure]
+        private ICSharpFunctionDeclaration GetContractFunction()
+        {
+            return _availability.SelectedFunction.GetContractFunction();
+        }
+
 
         public override string Text
         {
@@ -65,8 +73,8 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
                 Contract.Assert(_availability.IsAvailable);
                 var result = string.Format(Format, _availability.ParameterName);
 
-                if (_isRequiesStatementGeneric)
-                    result += " (with ArgumentNullException)";
+                
+
                 return result;
             }
         }
@@ -78,9 +86,21 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             return _availability.IsAvailable;
         }
 
-        private ICSharpFunctionDeclaration GetFunctionForContract(ICSharpFunctionDeclaration selectedFunction)
+
+        private void AddContractClass()
         {
-            return selectedFunction.GetContractFunction();
+            var addContractExecutor = new AddContractExecutor(
+                _provider, _availability.AddContractAvailability,
+                _availability.SelectedFunction);
+
+            addContractExecutor.Execute();
+        }
+
+        private void AddRequiresTo(ICSharpFunctionDeclaration contractFunction)
+        {
+            var addRequiresExecutor = new RequiresExecutor(_provider, _isRequiesStatementGeneric,
+                contractFunction, _availability.ParameterName);
+            addRequiresExecutor.ExecuteTransaction();
         }
 
         public override IEnumerable<IntentionAction> CreateBulbItems()
@@ -104,10 +124,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
                 new IntentionAction(this, Text, BulbThemedIcons.ContextAction.Id, subMenuAnchor),
                 new IntentionAction(generic, generic.Text,
                     BulbThemedIcons.ContextAction.Id, subMenuAnchor),
-
             };
-
-
         }
     }
 }

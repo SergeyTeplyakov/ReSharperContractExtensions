@@ -51,7 +51,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
                 _requiresAvailability.FunctionToInsertPrecondition,
                 _requiresAvailability.SelectedParameterName);
 
-            executor.ExecuteTransaction(solution, progress);
+            executor.ExecuteTransaction();
 
             return null;
         }

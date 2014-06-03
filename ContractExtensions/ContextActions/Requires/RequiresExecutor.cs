@@ -50,7 +50,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             Contract.Invariant(_functionDeclaration != null);
         }
 
-        public void ExecuteTransaction(ISolution solution, IProgressIndicator progress)
+        public void ExecuteTransaction()
         {
             AddUsingContractNamespaceIfNecessary();
             var statement = CreateContractRequires();
