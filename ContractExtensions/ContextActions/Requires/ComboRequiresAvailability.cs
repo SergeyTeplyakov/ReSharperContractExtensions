@@ -93,13 +93,6 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
 
             return propertyDeclaration.AccessorDeclarations.FirstOrDefault(a => a.Kind == AccessorKind.SETTER);
         }
-
-        private bool CanGenerateContractFor(ICSharpFunctionDeclaration selectedAbstractMethod)
-        {
-            // I don't know right now when I can't generate contract for abstract method or interface.
-            // The only case: this function should exists!
-            return selectedAbstractMethod != null;
-        }
       
         private bool IsRequiresAvailableFor(out string parameterName)
         {

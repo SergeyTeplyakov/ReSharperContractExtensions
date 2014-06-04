@@ -61,6 +61,7 @@
     <Compile Include="src\Requires\ComboMethodRequiresContextActionExecuteTest.cs" />
     <Compile Include="src\Requires\RequiresContextActionExecuteTest.cs" />
     <None Include="test\Samples\Invariants.cs" />
+    <Compile Include="src\Requires\RequiresContextActionExecuteTestBase.cs" />
     <None Include="test\data\Intentions\ContextActions\Requires\Availability.cs" />
     <None Include="test\data\Intentions\ContextActions\Requires\AvailabilityFull.cs" />
     <None Include="test\data\Intentions\ContextActions\Requires\AvailabilityOnStaticClass.cs" />

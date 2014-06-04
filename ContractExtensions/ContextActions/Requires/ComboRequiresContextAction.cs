@@ -22,12 +22,8 @@ using ReSharper.ContractExtensions.ContractUtils;
 namespace ReSharper.ContractExtensions.ContextActions.Requires
 {
     [ContextAction(Name = Name, Group = "Contracts", Description = Description, Priority = 100)]
-    public class ComboRequiresContextAction : ContextActionBase
+    public class ComboRequiresContextAction : RequiresContextActionBase
     {
-        private bool _isRequiesStatementGeneric;
-        private readonly ICSharpContextActionDataProvider _provider;
-        private IUserDataHolder _cache;
-
         private const string Name = "Combo Contract.Requires";
         private const string Description = "Add Contract.Requires on potentially nullable argument.";
 
@@ -36,6 +32,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         private ComboRequiresAvailability _availability = ComboRequiresAvailability.Unavailable;
 
         public ComboRequiresContextAction(ICSharpContextActionDataProvider provider)
+            : base(provider)
         {
             Contract.Requires(provider != null);
             _provider = provider;
@@ -65,27 +62,21 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             return _availability.SelectedFunction.GetContractFunction();
         }
 
-
-        public override string Text
+        protected override string GetTextBase()
         {
-            get
-            {
-                Contract.Assert(_availability.IsAvailable);
-                var result = string.Format(Format, _availability.ParameterName);
+            return string.Format(Format, _availability.ParameterName);
+        }
 
-                
-
-                return result;
-            }
+        protected override RequiresContextActionBase CreateContextAction()
+        {
+            return new ComboRequiresContextAction(_provider);
         }
 
         public override bool IsAvailable(IUserDataHolder cache)
         {
-            _cache = cache;
             _availability = new ComboRequiresAvailability(_provider);
             return _availability.IsAvailable;
         }
-
 
         private void AddContractClass()
         {
@@ -98,33 +89,11 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
 
         private void AddRequiresTo(ICSharpFunctionDeclaration contractFunction)
         {
-            var addRequiresExecutor = new RequiresExecutor(_provider, _isRequiesStatementGeneric,
+            var addRequiresExecutor = new ArgumentRequiresExecutor(_provider, _requiresShouldBeGeneric,
                 contractFunction, _availability.ParameterName);
             addRequiresExecutor.ExecuteTransaction();
         }
 
-        public override IEnumerable<IntentionAction> CreateBulbItems()
-        {
-            var actions = base.CreateBulbItems().ToList();
-            if (Shell.Instance.IsTestShell)
-            {
-                return actions;
-            }
 
-            var generic = new ComboRequiresContextAction(_provider) {_isRequiesStatementGeneric = true};
-            generic.IsAvailable(_cache);
-
-            // TODO: add configuration to check, what action should be first: generic or not!
-            var subMenuAnchor = new ExecutableGroupAnchor(
-                actions[0].Anchor,
-                IntentionsAnchors.ContextActionsAnchorPosition);
-
-            return new List<IntentionAction>
-            {
-                new IntentionAction(this, Text, BulbThemedIcons.ContextAction.Id, subMenuAnchor),
-                new IntentionAction(generic, generic.Text,
-                    BulbThemedIcons.ContextAction.Id, subMenuAnchor),
-            };
-        }
     }
 }

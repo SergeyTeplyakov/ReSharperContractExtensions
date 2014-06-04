@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using JetBrains.Application.Progress;
-using JetBrains.ProjectModel;
 using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
 using JetBrains.ReSharper.Psi.CSharp;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
@@ -12,7 +10,7 @@ using ReSharper.ContractExtensions.Utilities;
 
 namespace ReSharper.ContractExtensions.ContextActions.Requires
 {
-    internal sealed class RequiresExecutor
+    internal sealed class ArgumentRequiresExecutor
     {
         private readonly string _parameterName;
 
@@ -23,7 +21,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         private readonly ICSharpFile _currentFile;
         private readonly ICSharpFunctionDeclaration _functionDeclaration;
 
-        public RequiresExecutor(ICSharpContextActionDataProvider provider, bool shouldBeGeneric, 
+        public ArgumentRequiresExecutor(ICSharpContextActionDataProvider provider, bool shouldBeGeneric, 
             ICSharpFunctionDeclaration functionDeclaration, string parameterName)
         {
             Contract.Requires(provider != null);

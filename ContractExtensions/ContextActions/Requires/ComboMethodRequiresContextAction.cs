@@ -1,18 +1,25 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using JetBrains.Application;
 using JetBrains.Application.Progress;
+using JetBrains.Application.Settings;
 using JetBrains.ProjectModel;
+using JetBrains.ReSharper.Daemon.Src.Bulbs.Resources;
 using JetBrains.ReSharper.Feature.Services.Bulbs;
 using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
 using JetBrains.ReSharper.Intentions.Extensibility;
+using JetBrains.ReSharper.Intentions.Extensibility.Menu;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.TextControl;
+using JetBrains.UI.BulbMenu;
 using JetBrains.Util;
 using ReSharper.ContractExtensions.ContextActions.ContractsFor;
 using ReSharper.ContractExtensions.ContractUtils;
+using ReSharper.ContractExtensions.Settings;
 using ReSharper.ContractExtensions.Utilities;
 
 namespace ReSharper.ContractExtensions.ContextActions.Requires
@@ -25,12 +32,8 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
     /// (i.e. all reference or nullable value types).
     /// </remarks>
     [ContextAction(Name = Name, Group = "Contracts", Description = Description, Priority = 100)]
-    public class ComboMethodRequiresContextAction : ContextActionBase
+    public sealed class ComboMethodRequiresContextAction : RequiresContextActionBase
     {
-        private bool _isRequiesStatementGeneric;
-        private readonly ICSharpContextActionDataProvider _provider;
-        private IUserDataHolder _cache;
-
         private const string Name = "Method Contract.Requires";
         private const string Description = "Add Contract.Requires for all method arguments.";
 
@@ -39,16 +42,19 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         private ComboMethodRequiresAvailability _availability = ComboMethodRequiresAvailability.Unavailable;
 
         public ComboMethodRequiresContextAction(ICSharpContextActionDataProvider provider)
+            : base(provider)
         {
-            Contract.Requires(provider != null);
-
-            _provider = provider;
         }
 
         [ContractInvariantMethod]
         private void ObjectInvariant()
         {
             Contract.Invariant(_availability != null);
+        }
+
+        protected override string GetTextBase()
+        {
+            return Format;
         }
 
         protected override Action<ITextControl> ExecutePsiTransaction(ISolution solution, IProgressIndicator progress)
@@ -69,6 +75,18 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             return null;
         }
 
+        protected override RequiresContextActionBase CreateContextAction()
+        {
+            return new ComboMethodRequiresContextAction(_provider);
+        }
+
+        public override bool IsAvailable(IUserDataHolder cache)
+        {
+            _availability = ComboMethodRequiresAvailability.Create(_provider);
+            return _availability.IsAvailable;
+        }
+
+
         private void AddRequiresTo(ICSharpFunctionDeclaration contractFunction)
         {
             var executors = _availability.ArgumentNames
@@ -80,30 +98,12 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             }
         }
 
-        private RequiresExecutor ArgumentCheckExecutor(string argumentName,
+        private ArgumentRequiresExecutor ArgumentCheckExecutor(string argumentName,
             ICSharpFunctionDeclaration functionWithContract)
         {
-            return new RequiresExecutor(_provider, _isRequiesStatementGeneric, functionWithContract, argumentName);
+            return new ArgumentRequiresExecutor(_provider, _requiresShouldBeGeneric, functionWithContract, argumentName);
         }
 
-        public override string Text
-        {
-            get
-            {
-                var result = Format;
-
-                if (_isRequiesStatementGeneric)
-                    result += " (with ArgumentNullException)";
-
-                return result;
-            }
-        }
-
-        public override bool IsAvailable(IUserDataHolder cache)
-        {
-            _availability = ComboMethodRequiresAvailability.Create(_provider);
-            return _availability.IsAvailable;
-        }
 
         private ICSharpFunctionDeclaration GetContractFunction()
         {

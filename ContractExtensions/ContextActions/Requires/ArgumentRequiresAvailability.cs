@@ -8,18 +8,18 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
     /// <summary>
     /// Shows whether "Add Requires" action is available or not.
     /// </summary>
-    public sealed class RequiresAvailability
+    public sealed class ArgumentRequiresAvailability
     {
         private readonly ICSharpContextActionDataProvider _provider;
         private readonly string _parameterName;
         private readonly ICSharpFunctionDeclaration _functionToInsertPrecondition;
 
-        public readonly static RequiresAvailability Unavailable = new RequiresAvailability {IsAvailable = false};
+        public readonly static ArgumentRequiresAvailability Unavailable = new ArgumentRequiresAvailability {IsAvailable = false};
 
-        private RequiresAvailability()
+        private ArgumentRequiresAvailability()
         {}
 
-        public RequiresAvailability(ICSharpContextActionDataProvider provider)
+        public ArgumentRequiresAvailability(ICSharpContextActionDataProvider provider)
         {
             Contract.Requires(provider != null);
 
@@ -40,9 +40,9 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             Contract.Invariant(!IsAvailable || _functionToInsertPrecondition != null);
         }
 
-        public static RequiresAvailability Create(ICSharpContextActionDataProvider provider)
+        public static ArgumentRequiresAvailability Create(ICSharpContextActionDataProvider provider)
         {
-            return new RequiresAvailability(provider);
+            return new ArgumentRequiresAvailability(provider);
         }
 
         private bool MethodSupportsRequires(out string parameterName, out ICSharpFunctionDeclaration functionToInsertPrecondition)

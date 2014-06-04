@@ -69,13 +69,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ContextActions\ContractsFor\AddContractAvailability.cs" />
@@ -100,21 +104,25 @@
     <Compile Include="ContextActions\Requires\ComboMethodRequiresAvailability.cs" />
     <Compile Include="ContextActions\Requires\ParameterRequiresAvailability.cs" />
     <Compile Include="ContextActions\Requires\PropertySetterRequiresAvailability.cs" />
+    <Compile Include="ContextActions\Requires\RequiresContextActionBase.cs" />
     <Compile Include="ContractUtils\InvariantUtils.cs" />
     <Compile Include="ContractsEx\ContractStatement.cs" />
     <Compile Include="ContractsEx\ContractStatementExtensions.cs" />
     <Compile Include="ContractsEx\InvariantStatement.cs" />
     <Compile Include="ContractsEx\Impl\InvocationVisitor.cs" />
     <Compile Include="ContractsEx\PreconditionExpression.cs" />
-    <Compile Include="ContextActions\Requires\RequiresAvailability.cs" />
+    <Compile Include="ContextActions\Requires\ArgumentRequiresAvailability.cs" />
     <Compile Include="ContractsEx\EnsureExpression.cs" />
     <Compile Include="ContractsEx\EnsuresStatement.cs" />
     <Compile Include="ContractsEx\RequiresExpression.cs" />
     <Compile Include="ContractsEx\RequiresStatement.cs" />
-    <Compile Include="ContextActions\Requires\RequiresContextAction.cs" />
-    <Compile Include="ContextActions\Requires\RequiresExecutor.cs" />
+    <Compile Include="ContextActions\Requires\ArgumentRequiresContextAction.cs" />
+    <Compile Include="ContextActions\Requires\ArgumentRequiresExecutor.cs" />
     <Compile Include="ContractUtils\ContractExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Settings\ContractExtensionsOptionsPage.xaml.cs" />
+    <Compile Include="Settings\ContractExtensionsOptionsViewModel.cs" />
+    <Compile Include="Settings\ContractExtensionsSettings.cs" />
     <Compile Include="Utilities\AttributeExtensions.cs" />
     <Compile Include="Utilities\ClassLikeDeclarationExtensions.cs" />
     <Compile Include="Utilities\CSharpContextActionDataProviderExtensions.cs" />
@@ -132,6 +140,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.R81.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Settings\ContractExtensionsOptionsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\JetBrains.ReSharper.SDK.8.1.555\build\JetBrains.ReSharper.SDK.Targets" Condition="Exists('..\packages\JetBrains.ReSharper.SDK.8.1.555\build\JetBrains.ReSharper.SDK.Targets')" />

@@ -5,7 +5,7 @@ using ReSharper.ContractExtensions.ContextActions.Requires;
 namespace ReSharper.ContractExtensions.Tests.Preconditions
 {
     [TestFixture]
-    public class ComboRequiresContextActionExecuteTest : CSharpContextActionExecuteTestBase<ComboRequiresContextAction>
+    public class ComboRequiresContextActionExecuteTest : RequiresContextActionExecuteTestBase<ComboRequiresContextAction>
     {
         protected override string ExtraPath
         {

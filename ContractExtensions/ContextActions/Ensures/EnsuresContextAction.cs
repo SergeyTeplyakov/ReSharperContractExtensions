@@ -11,7 +11,7 @@ using ReSharper.ContractExtensions.ContextActions.Ensures;
 
 namespace ReSharper.ContractExtensions.ContextActions
 {
-    [ContextAction(Name = Name, Group = "Contracts", Description = Description, Priority = 100)]
+    [ContextAction(Name = Name, Group = "Contracts", Description = Description, Priority = 90)]
     public class EnsuresContextAction : ContextActionBase
     {
         private const string MenuText = "Ensures result is not null";
