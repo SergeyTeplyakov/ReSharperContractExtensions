@@ -4,13 +4,14 @@ using JetBrains.Application.Settings.Store.Implementation;
 using JetBrains.DataFlow;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.Intentions.CSharp.Test;
-using JetBrains.ReSharper.Intentions.Extensibility;
+using NUnit.Framework;
+using ReSharper.ContractExtensions.ContextActions.Requires;
 using ReSharper.ContractExtensions.Settings;
 
 namespace ReSharper.ContractExtensions.Tests.Preconditions
 {
-    public abstract class RequiresContextActionExecuteTestBase<TContextAction> 
-        : CSharpContextActionExecuteTestBase<TContextAction> where TContextAction : class, IContextAction
+    [TestFixture]
+    public class RequiresContextActionExecuteTestForStringArg : CSharpContextActionExecuteTestBase<ArgumentRequiresContextAction>
     {
         protected override void DoTest(IProject testProject)
         {
@@ -23,12 +24,21 @@ namespace ReSharper.ContractExtensions.Tests.Preconditions
                 var context = ContextRange.ManuallyRestrictWritesToOneContext((_, contexts) => contexts.Empty);
                 var settings = settingsStore.BindToContextTransient(context);
 
-                settings.SetValue((ContractExtensionsSettings s) => s.UseGenericContractRequires, false);
-                settings.SetValue((ContractExtensionsSettings s) => s.CheckStringsForNullOrEmpty, false);
+                settings.SetValue((ContractExtensionsSettings s) => s.CheckStringsForNullOrEmpty, true);
 
                 base.DoTest(testProject);
             });
         }
 
+        protected override string ExtraPath
+        {
+            get { return "RequiresWithString"; }
+        }
+
+        [TestCase("ExecutionForStringArg")]
+        public void TestSimpleExecution(string testSrc)
+        {
+            DoOneTest(testSrc);
+        }
     }
 }

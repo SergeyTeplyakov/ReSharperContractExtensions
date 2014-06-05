@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using JetBrains.Application.Settings;
 using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
+using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Tree;
 using ReSharper.ContractExtensions.ContractsEx;
+using ReSharper.ContractExtensions.Settings;
 using ReSharper.ContractExtensions.Utilities;
 
 namespace ReSharper.ContractExtensions.ContextActions.Requires
@@ -13,6 +16,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
     internal sealed class ArgumentRequiresExecutor
     {
         private readonly string _parameterName;
+        private readonly IDeclaredType _propertyType;
 
         private readonly ICSharpContextActionDataProvider _provider;
         private readonly bool _shouldBeGeneric;
@@ -22,16 +26,18 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         private readonly ICSharpFunctionDeclaration _functionDeclaration;
 
         public ArgumentRequiresExecutor(ICSharpContextActionDataProvider provider, bool shouldBeGeneric, 
-            ICSharpFunctionDeclaration functionDeclaration, string parameterName)
+            ICSharpFunctionDeclaration functionDeclaration, string parameterName, IDeclaredType propertyType)
         {
             Contract.Requires(provider != null);
             Contract.Requires(functionDeclaration != null);
             Contract.Requires(parameterName != null);
+            Contract.Requires(propertyType != null);
 
             _provider = provider;
             _shouldBeGeneric = shouldBeGeneric;
             _functionDeclaration = functionDeclaration;
             _parameterName = parameterName;
+            _propertyType = propertyType;
 
             _factory = _provider.ElementFactory;
             _currentFile = (ICSharpFile)_functionDeclaration.GetContainingFile();
@@ -42,6 +48,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         private void ObjectInvariant()
         {
             Contract.Invariant(_parameterName != null);
+            Contract.Invariant(_propertyType != null);
             Contract.Invariant(_provider != null);
             Contract.Invariant(_currentFile != null);
             Contract.Invariant(_factory != null);
@@ -66,23 +73,47 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             }
         }
 
+        [Pure]
         private ICSharpStatement CreateContractRequires()
         {
+            Contract.Ensures(Contract.Result<ICSharpStatement>() != null);
+
+            string compareStatement = CreateCompareStatement();
+
             string stringStatement;
             if (_shouldBeGeneric)
             {
                 AddUsingArgumentNullExceptionsNamespaceIfNecessary();
-                stringStatement = string.Format("{0}.Requires<ArgumentNullException>({1} != null);",
-                    typeof(Contract).Name, _parameterName);
+                stringStatement = string.Format("{0}.Requires<ArgumentNullException>({1});",
+                    typeof(Contract).Name, compareStatement);
             }
             else
             {
-                stringStatement = string.Format("{0}.Requires({1} != null);",
-                    typeof (Contract).Name, _parameterName);
+                stringStatement = string.Format("{0}.Requires({1});",
+                    typeof (Contract).Name, compareStatement);
             }
 
             var statement = _factory.CreateStatement(stringStatement);
             return statement;
+        }
+
+        private string CreateCompareStatement()
+        {
+            if (_propertyType.GetClrName().FullName == typeof (string).FullName
+                && ShouldCheckStringsForNullOrEmpty())
+            {
+
+                return string.Format("!string.IsNullOrEmpty({0})", _parameterName);
+            }
+            return string.Format("{0} != null", _parameterName);
+        }
+
+        private bool ShouldCheckStringsForNullOrEmpty()
+        {
+            var settings = _provider.SourceFile.GetSettingsStore()
+                .GetKey<ContractExtensionsSettings>(SettingsOptimization.OptimizeDefault);
+
+            return settings.CheckStringsForNullOrEmpty;
         }
 
         private void AddUsingArgumentNullExceptionsNamespaceIfNecessary()

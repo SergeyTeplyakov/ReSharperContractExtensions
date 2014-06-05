@@ -114,7 +114,6 @@
     <Compile Include="ContextActions\Requires\ArgumentRequiresAvailability.cs" />
     <Compile Include="ContractsEx\EnsureExpression.cs" />
     <Compile Include="ContractsEx\EnsuresStatement.cs" />
-    <Compile Include="ContractsEx\RequiresExpression.cs" />
     <Compile Include="ContractsEx\RequiresStatement.cs" />
     <Compile Include="ContextActions\Requires\ArgumentRequiresContextAction.cs" />
     <Compile Include="ContextActions\Requires\ArgumentRequiresExecutor.cs" />

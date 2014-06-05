@@ -46,7 +46,8 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
 
             var executor = new ArgumentRequiresExecutor(_provider, _requiresShouldBeGeneric,
                 _argumentRequiresAvailability.FunctionToInsertPrecondition,
-                _argumentRequiresAvailability.SelectedParameterName);
+                _argumentRequiresAvailability.SelectedParameterName,
+                _argumentRequiresAvailability.SelectedParameterType);
 
             executor.ExecuteTransaction();
 

@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using JetBrains.Annotations;
 using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
+using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Tree;
 using ReSharper.ContractExtensions.ContextActions.ContractsFor;
@@ -11,6 +13,12 @@ using ReSharper.ContractExtensions.Utilities;
 
 namespace ReSharper.ContractExtensions.ContextActions.Requires
 {
+    internal struct ArgumentDescription
+    {
+        public string Name;
+        public IDeclaredType Type;
+    }
+
     /// <summary>
     /// Checks that combo actions that add requires for all method argument should be available.
     /// </summary>
@@ -19,7 +27,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         private readonly ICSharpContextActionDataProvider _provider;
         private readonly ICSharpFunctionDeclaration _selectedFunctionDeclaration;
         private readonly AddContractAvailability _addContractAvailability;
-        private readonly List<string> _argumentNames;
+        private readonly List<ArgumentDescription> _argumentNames;
 
         private ComboMethodRequiresAvailability()
         {}
@@ -58,13 +66,13 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         [CanBeNull]
         public AddContractAvailability AddContractAvailability { get { return _addContractAvailability; } }
         public bool IsAvailable { get; private set; }
-        public IList<string> ArgumentNames { get { return _argumentNames; } }
+        public IList<ArgumentDescription> ArgumentNames { get { return _argumentNames; } }
 
         [System.Diagnostics.Contracts.Pure]
-        private bool IsAvailableFor(out List<string> availableArguments, 
+        private bool IsAvailableFor(out List<ArgumentDescription> availableArguments, 
             out ICSharpFunctionDeclaration selectedFunction)
         {
-            availableArguments = new List<string>();
+            availableArguments = new List<ArgumentDescription>();
             selectedFunction = null;
 
             if (!MethodDeclarationSelected())
@@ -103,10 +111,10 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         }
 
         [System.Diagnostics.Contracts.Pure]
-        private List<string> GetArgumentsAvailableForRequiresCheck(ICSharpFunctionDeclaration selectedMethod)
+        private List<ArgumentDescription> GetArgumentsAvailableForRequiresCheck(ICSharpFunctionDeclaration selectedMethod)
         {
             Contract.Requires(selectedMethod != null);
-            Contract.Ensures(Contract.Result<List<string>>() != null);
+            Contract.Ensures(Contract.Result<List<ArgumentDescription>>() != null);
 
             var parameterRequiresAvailability =
                 selectedMethod.DeclaredElement.Parameters
@@ -122,15 +130,19 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             var contractFunction = selectedMethod.GetContractFunction();
             if (contractFunction == null)
             {
-                return parameterRequiresAvailability.Select(p => p.ParameterName).ToList();
+                return parameterRequiresAvailability.Select(p => 
+                    new ArgumentDescription {Name = p.ParameterName, Type = p.ParameterType})
+                    .ToList();
             }
+
+            Func<ParameterRequiresAvailability, bool> isFuncAvailable =
+                p => new FunctionRequiresAvailability(_provider, p.ParameterName, contractFunction).IsAvailable;
 
             var availableArguments =
                 parameterRequiresAvailability
-                    .Select(pa => new FunctionRequiresAvailability(_provider,
-                        pa.ParameterName, contractFunction))
-                    .Where(fa => fa.IsAvailable)
-                    .Select(fa => fa.ParameterName)
+                    .Where(isFuncAvailable)
+                    .Select(pa => 
+                        new ArgumentDescription {Name = pa.ParameterName, Type = pa.ParameterType})
                     .ToList();
 
             return availableArguments;

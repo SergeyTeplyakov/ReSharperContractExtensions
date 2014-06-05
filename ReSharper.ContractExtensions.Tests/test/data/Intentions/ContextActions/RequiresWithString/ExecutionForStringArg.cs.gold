@@ -1,0 +1,9 @@
+﻿using System.Diagnostics.Contracts;
+
+class A
+{
+  void Foo(string s{caret})
+  {
+    Contract.Requires(!string.IsNullOrEmpty(s));
+  }
+}

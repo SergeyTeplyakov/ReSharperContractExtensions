@@ -90,7 +90,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         private void AddRequiresTo(ICSharpFunctionDeclaration contractFunction)
         {
             var addRequiresExecutor = new ArgumentRequiresExecutor(_provider, _requiresShouldBeGeneric,
-                contractFunction, _availability.ParameterName);
+                contractFunction, _availability.ParameterName, _availability.ParameterType);
             addRequiresExecutor.ExecuteTransaction();
         }
 

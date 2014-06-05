@@ -7,4 +7,15 @@ abstract class A
   {
     Contract.Requires((s1 != null || s1.Length == 0) && s2 != null);
   }
+
+  public void DisableOnAlreadyCheckedByStringNullOrEmpty(string s{off})
+  {
+    Contract.Requires(!string.IsNullOrEmpty(s));
+  }
+
+  public void DisableOnAlreadyCheckedByStringNullOrWhiteSpace(string s{off})
+  {
+    Contract.Requires(!string.IsNullOrWhiteSpace(s));
+  }
+
 }

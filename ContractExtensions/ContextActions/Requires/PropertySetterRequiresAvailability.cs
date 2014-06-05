@@ -10,13 +10,14 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
     {
         private readonly ICSharpContextActionDataProvider _provider;
         private readonly ICSharpFunctionDeclaration _currentFunction;
+        private readonly IDeclaredType _propertyType;
 
         public PropertySetterRequiresAvailability(ICSharpContextActionDataProvider provider)
         {
             Contract.Requires(provider != null);
             _provider = provider;
 
-            IsAvailable = ComputeIsAvailable(out _currentFunction);
+            IsAvailable = ComputeIsAvailable(out _currentFunction, out _propertyType);
         }
 
         [ContractInvariantMethod]
@@ -24,14 +25,18 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         {
             Contract.Invariant(!IsAvailable || _provider != null);
             Contract.Invariant(!IsAvailable || _currentFunction != null);
+            Contract.Invariant(!IsAvailable || PropertyType != null);
         }
 
         public bool IsAvailable { get; private set; }
         public ICSharpFunctionDeclaration SelectedFunctionDeclaration { get { return _currentFunction; } }
+        public IDeclaredType PropertyType { get { return _propertyType; } }
 
-        private bool ComputeIsAvailable(out ICSharpFunctionDeclaration currentFunction)
+        private bool ComputeIsAvailable(out ICSharpFunctionDeclaration currentFunction,
+            out IDeclaredType propertyType)
         {
             currentFunction = null;
+            propertyType = null;
 
             var propertyDeclaration = _provider.GetSelectedElement<IPropertyDeclaration>(true, true);
             if (propertyDeclaration == null)
@@ -43,6 +48,8 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             currentFunction = propertyDeclaration.AccessorDeclarations.FirstOrDefault(a => a.Kind == AccessorKind.SETTER);
             if (currentFunction == null)
                 return false;
+
+            propertyType = propertyDeclaration.Type as IDeclaredType;
 
             return propertyDeclaration.Type.IsReferenceOrNullableType();
         }

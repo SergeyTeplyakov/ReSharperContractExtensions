@@ -90,7 +90,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         private void AddRequiresTo(ICSharpFunctionDeclaration contractFunction)
         {
             var executors = _availability.ArgumentNames
-                .Select(pn => ArgumentCheckExecutor(pn, contractFunction));
+                .Select(pn => ArgumentCheckExecutor(pn.Name, pn.Type, contractFunction));
 
             foreach (var executor in executors)
             {
@@ -98,10 +98,10 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             }
         }
 
-        private ArgumentRequiresExecutor ArgumentCheckExecutor(string argumentName,
+        private ArgumentRequiresExecutor ArgumentCheckExecutor(string argumentName, IDeclaredType argumentType,
             ICSharpFunctionDeclaration functionWithContract)
         {
-            return new ArgumentRequiresExecutor(_provider, _requiresShouldBeGeneric, functionWithContract, argumentName);
+            return new ArgumentRequiresExecutor(_provider, _requiresShouldBeGeneric, functionWithContract, argumentName, argumentType);
         }
 
 

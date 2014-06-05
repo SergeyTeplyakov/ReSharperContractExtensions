@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using JetBrains.ReSharper.Daemon.CSharp.Errors;
-using JetBrains.ReSharper.Daemon.VB.Errors;
+using JetBrains.ReSharper.Features.Browsing.Resources;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Tree;
@@ -19,7 +17,60 @@ namespace ReSharper.ContractExtensions.ContractsEx
         Invariant,
     }
 
-    internal struct PreconditionEqualityExpression
+    internal interface IPreconditionExpression
+    {
+        string ArgumentName { get; }
+        bool IsCheckForNull();
+    }
+
+    internal struct PreconditionMethodCallExpression : IPreconditionExpression
+    {
+        public IClrTypeName CallSiteType { get; private set; }
+        public string MethodName { get; private set; }
+        public string ArgumentName { get; private set; }
+
+        public bool IsCheckForNull()
+        {
+            return (CallSiteType.FullName == typeof (string).FullName &&
+                    (MethodName == "IsNullOrEmpty" || MethodName == "IsNullOrWhiteSpace"));
+        }
+
+        public static PreconditionMethodCallExpression? TryCreate(IUnaryOperatorExpression expression)
+        {
+            Contract.Requires(expression != null);
+
+            // Looking for constructs like !string.IsNullOrEmpty or !string.IsNullOrWhitespace
+            // TODO: add test case: (!(string.IsNullOrEmpty))
+
+            if (expression.UnaryOperatorType != UnaryOperatorType.EXCL)
+            {
+                return null;
+            }
+
+            var invocationExpression = expression.Operand as IInvocationExpression;
+            if (invocationExpression == null)
+                return null;
+
+            var callSiteType = invocationExpression.GetCallSiteType();
+            var method = invocationExpression.GetCalledMethod();
+            var argument = invocationExpression.Arguments.FirstOrDefault()
+                .With(x => x.Value as IReferenceExpression)
+                .With(x => x.NameIdentifier.Name);
+
+            if (callSiteType == null || method == null || argument == null)
+                return null;
+
+            return new PreconditionMethodCallExpression
+            {
+                CallSiteType = callSiteType,
+                MethodName = method,
+                ArgumentName = argument
+            };
+        }
+
+    }
+
+    internal struct PreconditionEqualityExpression : IPreconditionExpression
     {
         public string ArgumentName { get; private set; }
         public EqualityExpressionType EqualityType { get; private set; }
@@ -57,22 +108,34 @@ namespace ReSharper.ContractExtensions.ContractsEx
             };
         }
 
-        public static IEnumerable<PreconditionEqualityExpression> Process(IExpression expression)
+        public static IEnumerable<IPreconditionExpression> Process(IExpression expression)
         {
             Contract.Requires(expression != null);
-            Contract.Ensures(Contract.Result<IEnumerable<PreconditionEqualityExpression>>() != null);
+            Contract.Ensures(Contract.Result<IEnumerable<IPreconditionExpression>>() != null);
 
-            return GetAllExpressionsRecursively(expression)
-                .Select(e => TryCreate(e))
+            return TraverseEqualityExpressions(expression)
+                .Select(TryCreate)
                 .Where(e => e != null)
-                .Select(e => e.Value);
+                .Select(e => e.Value as IPreconditionExpression)
+                .Concat(
+                    TraverseUnaryExpressions(expression)
+                        .Select(PreconditionMethodCallExpression.TryCreate)
+                        .Where(e => e != null)
+                        .Select(e => e.Value as IPreconditionExpression));
         }
 
-        private static IEnumerable<IEqualityExpression> GetAllExpressionsRecursively(IExpression expression)
+        private static IEnumerable<IEqualityExpression> TraverseEqualityExpressions(IExpression expression)
         {
             var processor = new Procesor<IEqualityExpression>();
             expression.ProcessThisAndDescendants(processor);
             return processor.ProcessedNodes.OfType<IEqualityExpression>();
+        }
+
+        private static IEnumerable<IUnaryOperatorExpression> TraverseUnaryExpressions(IExpression expression)
+        {
+            var processor = new Procesor<IUnaryOperatorExpression>();
+            expression.ProcessThisAndDescendants(processor);
+            return processor.ProcessedNodes.OfType<IUnaryOperatorExpression>();
         }
 
         private class Procesor<T> : IRecursiveElementProcessor where T : IExpression
@@ -125,7 +188,7 @@ namespace ReSharper.ContractExtensions.ContractsEx
         //private string _predicateArgument;
         private string _message;
 
-        private List<PreconditionEqualityExpression> _preconditionExpressions;
+        private List<IPreconditionExpression> _preconditionExpressions;
         //private IReferenceExpression _predicateLeftSide;
         //private EqualityExpressionType _predicateEqualityType;
         //private ILiteralExpression _predicateRightSide;
@@ -175,54 +238,6 @@ namespace ReSharper.ContractExtensions.ContractsEx
             result.CheckObjectInvariant();
 
             return result;
-
-
-            //var expression = originalExpression as IEqualityExpression;
-            //if (expression == null)
-            //    return CreateInvalid();
-
-            //var left = expression.LeftOperand as IReferenceExpression;
-            
-            //var right = expression.RightOperand
-            //    .With(x => x as ICSharpLiteralExpression)
-            //    .With(x => x.Literal)
-            //    .Return(x => x.GetText());
-
-            //bool isValid = (left != null && right != null && right == "null" 
-            //    && expression.EqualityType == EqualityExpressionType.NE);
-
-            //string message = ExtractMessage(invocationExpression);
-
-            //string predicateArgument = null;
-            //if (isValid)
-            //{
-            //    // The problem is, that for "person.Name != null" and
-            //    // for "person != null" I should get "person"
-            //    var qualifierReference = left.QualifierExpression
-            //        .With(x => x as IReferenceExpression);
-
-            //    predicateArgument = (qualifierReference ?? left).NameIdentifier.Name;
-            //}
-
-            //var result = new PreconditionExpression()
-            //{
-            //    _isValid = isValid,
-                
-            //    _preconditionType = preconditionType,
-
-            //    _predicateArgument = predicateArgument,
-
-            //    _predicateLeftSide = left,
-            //    _predicateEqualityType = expression.EqualityType,
-            //    _predicateRightSide = expression.Return(x => x.RightOperand as ILiteralExpression),
-
-            //    _message = message,
-            //};
-
-            //// small hack: trigering object invariant
-            //result.CheckObjectInvariant();
-
-            //return result;
         }
 
         private static PreconditionType? GetPreconditionType(IInvocationExpression invocationExpression)
@@ -262,11 +277,11 @@ namespace ReSharper.ContractExtensions.ContractsEx
             get { return _isValid; }
         }
 
-        public ReadOnlyCollection<PreconditionEqualityExpression> PreconditionExpressions
+        public ReadOnlyCollection<IPreconditionExpression> PreconditionExpressions
         {
             get
             {
-                return new ReadOnlyCollection<PreconditionEqualityExpression>(_preconditionExpressions);
+                return new ReadOnlyCollection<IPreconditionExpression>(_preconditionExpressions);
             }
         }
 
@@ -275,31 +290,10 @@ namespace ReSharper.ContractExtensions.ContractsEx
             get { return _preconditionType; }
         }
 
-        //public string PredicateArgument
-        //{
-        //    get { return _predicateArgument; }
-        //}
-
-        //public string PredicateArgument { get { return PredicateLeftSide.NameIdentifier.Name; } }
         public string Message
         {
             get { return _message; }
         }
-
-        //private IReferenceExpression PredicateLeftSide
-        //{
-        //    get { return _predicateLeftSide; }
-        //}
-
-        //private EqualityExpressionType PredicateEqualityType
-        //{
-        //    get { return _predicateEqualityType; }
-        //}
-
-        //private ILiteralExpression PredicateRightSide
-        //{
-        //    get { return _predicateRightSide; }
-        //}
 
         private static PreconditionExpression CreateInvalid()
         {

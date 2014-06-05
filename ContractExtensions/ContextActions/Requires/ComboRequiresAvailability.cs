@@ -19,6 +19,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
     {
         private readonly ICSharpContextActionDataProvider _provider;
         private readonly string _parameterName;
+        private readonly IDeclaredType _parameterType;
         private readonly ICSharpFunctionDeclaration _selectedAbstractMethod;
         private readonly AddContractAvailability _addContractAvailability;
 
@@ -34,7 +35,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
 
             if (_selectedAbstractMethod != null
                 && IsAbstractClassOrInterface() 
-                && IsRequiresAvailableFor(out _parameterName) 
+                && IsRequiresAvailableFor(out _parameterName, out _parameterType) 
                 && CanAddContractForSelectedMethod(_selectedAbstractMethod, out _addContractAvailability))
             {
                 IsAvailable = true;
@@ -46,11 +47,13 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         {
             Contract.Invariant(!IsAvailable || _provider != null);
             Contract.Invariant(!IsAvailable || _parameterName != null);
+            Contract.Invariant(!IsAvailable || _parameterType != null);
             Contract.Invariant(!IsAvailable || _selectedAbstractMethod != null);
         }
 
         public bool IsAvailable { get; private set; }
         public string ParameterName { get { return _parameterName; } }
+        public IDeclaredType ParameterType { get { return _parameterType; } }
         public ICSharpFunctionDeclaration SelectedFunction { get { return _selectedAbstractMethod; } }
         public AddContractAvailability AddContractAvailability { get { return _addContractAvailability; } }
 
@@ -94,14 +97,16 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             return propertyDeclaration.AccessorDeclarations.FirstOrDefault(a => a.Kind == AccessorKind.SETTER);
         }
       
-        private bool IsRequiresAvailableFor(out string parameterName)
+        private bool IsRequiresAvailableFor(out string parameterName, out IDeclaredType parameterType)
         {
             parameterName = null;
+            parameterType = null;
 
             var parameterRequiresAvailability = ParameterRequiresAvailability.Create(_provider);
             if (parameterRequiresAvailability.IsAvailable)
             {
                 parameterName = parameterRequiresAvailability.ParameterName;
+                parameterType = parameterRequiresAvailability.ParameterType;
                 return true;
             }
 
@@ -109,6 +114,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             if (propertySetterRequiresAvailability.IsAvailable)
             {
                 parameterName = "value";
+                parameterType = propertySetterRequiresAvailability.PropertyType;
                 return true;
             }
 

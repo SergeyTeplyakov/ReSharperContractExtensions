@@ -35,6 +35,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             if (IsAvailable)
             {
                 ParameterName = _parameterDeclaration.DeclaredName;
+                ParameterType = _parameterDeclaration.Type as IDeclaredType;
             }
         }
 
@@ -43,6 +44,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         {
             Contract.Invariant(!IsAvailable || _parameterDeclaration != null);
             Contract.Invariant(!IsAvailable || ParameterName != null);
+            Contract.Invariant(!IsAvailable || ParameterType != null);
         }
 
         public static ParameterRequiresAvailability Create(ICSharpContextActionDataProvider provider,
@@ -59,6 +61,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
 
         public bool IsAvailable { get; private set; }
         public string ParameterName { get; private set; }
+        public IDeclaredType ParameterType { get; private set; }
 
         private bool ComputeIsAvailable()
         {
