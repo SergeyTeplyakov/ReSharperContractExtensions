@@ -98,6 +98,9 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         [System.Diagnostics.Contracts.Pure]
         private bool MethodDeclarationSelected()
         {
+            if (_provider.IsSelected<IParameterDeclaration>())
+                return false;
+
             // This combo is available only if constructor or method declaration is selected
             return _provider.IsSelected<IIdentifier>() &&
                    (_provider.IsSelected<IFunctionDeclaration>() ||
