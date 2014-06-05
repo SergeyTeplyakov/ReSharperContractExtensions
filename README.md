@@ -11,6 +11,13 @@ This plugin is available for download in [ReSharper extensions gallery](https://
 
 ### Basic use cases
 
+#### Add preconditions for all arguments (new in v.0.7)
+![](https://github.com/SergeyTeplyakov/ReSharperContractExtensions/raw/master/Content/07_MethodCombo.gif)
+
+#### Check string arguments with string.IsNullOrEmpty (new in v.0.7)
+(Note, this feature should be turned on at plug-in settings page, available at R# Options)
+![](https://github.com/SergeyTeplyakov/ReSharperContractExtensions/raw/master/Content/08_StringCheck.gif)
+
 #### Add preconditions
 
 ![](https://raw.githubusercontent.com/SergeyTeplyakov/ReSharperContractExtensions/master/Content/Requires_avi.gif)
