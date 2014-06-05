@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>ReSharper.ContractExtensions</id>
-    <version>0.6.0</version>
+    <version>0.7.0</version>
     <!-- update plugin ver in AssemblyInfo.cs plz -->
     <title>Code Contract editing extensions</title>
     <authors>Sergey Teplyakov</authors>
@@ -14,7 +14,13 @@
       Simplifies adding preconditions, postconditions and object invariant during day-to-day activities.
     </description>
     <releaseNotes>
-New features
+New features (v.7.0)
+- Added combo actions that will add Contract.Requires for all method arguments
+- Added Plug-in Settings (available at R# Options page):
+  * Use generic Contract.Requires&lt;ArgumentNullException&gt; by default
+  * Check string arguments with Contract.Requires(!string.IsNullOrEmpty(arg)) by default for string arguments
+
+New features (v.6.0)
 - Added support for preconditions for property setters
 - Addes support for preconditions for property setters for abstract class and interfaces (Combo Requries)
 Bug fixes
