@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
@@ -17,7 +16,7 @@ using ReSharper.ContractExtensions.Utilities;
 
 namespace ReSharper.ContractExtensions.ContextActions.Invariants
 {
-    class InvariantActionExecutor
+    internal sealed class InvariantActionExecutor
     {
         private readonly InvariantAvailability _invariantAvailability;
         private readonly ICSharpContextActionDataProvider _provider;
@@ -145,6 +144,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Invariants
             method.AddAttributeBefore(attribute, null);
         }
 
+        [System.Diagnostics.Contracts.Pure]
         private IMethodDeclaration CreateAndAddObjectInvariantMethod()
         {
             Contract.Ensures(Contract.Result<IMethodDeclaration>() != null);
@@ -153,12 +153,29 @@ namespace ReSharper.ContractExtensions.ContextActions.Invariants
                 string.Format("private void {0}() {{}}", InvariantUtils.InvariantMethodName),
                 EmptyArray<object>.Instance);
 
-            var lastConstructor = _classDeclaration.ConstructorDeclarations.LastOrDefault();
+            var anchor = GetAnchorForObjectInvariantMethod();
 
-            _classDeclaration.AddClassMemberDeclarationAfter(method, lastConstructor);
+            _classDeclaration.AddClassMemberDeclarationAfter(method, anchor);
 
             // To enable method modification, method from class declaration should be returned.
             return _classDeclaration.GetInvariantMethod();
+        }
+
+        /// <summary>
+        /// Returns "acnhor" for contract method: declaration after which ObjectInvariant should be added.
+        /// </summary>
+        /// <remarks>
+        /// ObjectInvariant method should be added after last contructor or after last field declaration.
+        /// </remarks>
+        [CanBeNull]
+        private IClassMemberDeclaration GetAnchorForObjectInvariantMethod()
+        {
+            var lastConstructor = _classDeclaration.ConstructorDeclarations.LastOrDefault();
+            if (lastConstructor != null)
+                return lastConstructor;
+
+            return _classDeclaration.MemberDeclarations
+                .LastOrDefault(md => md is IFieldDeclaration) as IClassMemberDeclaration;
         }
 
         private ICSharpStatement CreateInvariantStatement()

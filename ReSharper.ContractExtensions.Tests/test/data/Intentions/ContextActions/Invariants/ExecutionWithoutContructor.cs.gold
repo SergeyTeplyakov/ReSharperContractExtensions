@@ -1,0 +1,12 @@
+﻿using System.Diagnostics.Contracts;
+
+class A
+{
+  private string _shouldNotBeNull{caret} = "";
+
+  [ContractInvariantMethod]
+  private void ObjectInvariant()
+  {
+    Contract.Invariant(_shouldNotBeNull != null);
+  }
+}

@@ -19,6 +19,8 @@ namespace ReSharper.ContractExtensions.Tests.Invariants
             DoOneTest(testSrc);
         }
 
+        [TestCase("ExecutionWithoutContructor")]
+
         [TestCase("ExecutionAddAnotherInvariant")]
         [TestCase("ExecutionAddAnotherInvariant2")]
         [TestCase("ExecutionWhenInvariantMethodAlreadyExists")]

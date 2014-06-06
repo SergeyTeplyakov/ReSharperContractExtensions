@@ -1,20 +1,12 @@
-﻿0. ToDo's
-Rename Ensure Expression to Ensure
-Rename RequiresExpression to Requires
+﻿Analyzers + Other Quick Fixes
 
-Add inner class for EnsuresContextAction and RequiresContextAction that will managed internal state 
-and simplify contracts.
-
+1. Con
 
 1. Preconditions
  - Disable for output parameters! +
  - Generate text into the Contract.Requires(arg shall not be null)
  - Context action for switching from if throw to Contract.Requires
  - Warning on public types (add configuration) if public method does not contains an argument validation.
-
- - Preconditions on abstract methods.
-   Should be disabled right now.
-   Later will add an action that will create contract for the interface or abstract class.
 
  *- Add the same logic on every usage of the argument, not only on the declaration in the method header!!*
  2. Вставлять Contract.Requires в зависимости от наличия других statement-ов проверки 
