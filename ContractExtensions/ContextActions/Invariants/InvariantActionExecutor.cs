@@ -94,10 +94,10 @@ namespace ReSharper.ContractExtensions.ContextActions.Invariants
             members.AddRange(properties);
 
             // Creating lookup where key is argument name, and the value is statements.
-            var requiresStatements =
-                _classDeclaration.GetInvariants()
-                    .SelectMany(x => x.ArgumentNames.Select(a => new { Statement = x, ArgumentName = a }))
-                    .ToLookup(x => x.ArgumentName, x => x.Statement);
+            var assertions = _classDeclaration.GetInvariantAssertions().ToList();
+                //_classDeclaration.GetInvariants()
+                    //.SelectMany(x => x.ArgumentNames.Select(a => new { Statement = x, ArgumentName = a }))
+                    //.ToLookup(x => x.ArgumentName, x => x.Statement);
 
             // We should consider only members, declared previously to current member
             var previousInvariants =
@@ -109,10 +109,15 @@ namespace ReSharper.ContractExtensions.ContextActions.Invariants
             // Looking for the last usage of the parameters in the requires statements
             foreach (var p in previousInvariants)
             {
-                if (requiresStatements.Contains(p))
+                var assertion = assertions.LastOrDefault(a => a.ChecksForNull(p));
+                if (assertion != null)
                 {
-                    return requiresStatements[p].Select(x => x.Statement).LastOrDefault();
+                    return assertion.Statement;
                 }
+                //if (requiresStatements.Contains(p))
+                //{
+                //    return requiresStatements[p].Select(x => x.Statement).LastOrDefault();
+                //}
             }
 
             return null;

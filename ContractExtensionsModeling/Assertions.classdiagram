@@ -1,0 +1,387 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<logicalClassDesignerModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm4="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/ModelStore" dslVersion="1.0.0.0" Id="24e4ca16-264c-4778-acef-b9ca8620410f" name="Assertions" linkedPackageId="b79721b4-9ff3-4f63-9de8-ee09c701dd80" xmlns="http://schemas.microsoft.com/dsltools/LogicalClassDesigner">
+  <ownedCommentsInternal>
+    <comment Id="f7fa62a5-6fe5-4de0-ad39-ce0789af70bb">
+      <elementDefinition Id="03fbf0da-61b7-4c3f-b1d7-716278517275" />
+      <body>Name is slightly misleading, but this class is for Contract.Assert</body>
+      <annotatedElements>
+        <classMoniker Id="e84d0886-94a8-4de2-a496-a6d14b5e0b0e" LastKnownName="CodeAssertion" />
+      </annotatedElements>
+    </comment>
+  </ownedCommentsInternal>
+  <packagedElements>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="22c624fb-1757-4542-9d68-1dcc3096785b" name="ContractAssertion" isAbstract="true" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="d6493495-6b4a-4046-8429-c2711c0580ec" />
+        <targetEnds>
+          <association Id="57d5324c-9981-4bed-8d07-3b1df94e4b52" isDerived="false" sourceEndRoleName="AssertionType" targetEndRoleName="AssertionType" isLeaf="false" isAbstract="false">
+            <enumerationMoniker Id="28a529c4-0fd6-49c4-abd2-b4423718c992" LastKnownName="AssertionType" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="0b7e5f50-18b5-49d1-8d7c-c554b2d2088c" name="AssertionType" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="Composite" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="b37a5113-6b7a-485f-b794-762f4db3afc2" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="35e31c31-dab0-4ce5-9d8f-27472d7ea367" name="AssertionType" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="true">
+                  <elementDefinition Id="53af4bb0-5951-4466-9117-869b5ed4207e" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="cfd366d0-42da-44f3-8f26-8f1dfdbb9076" />
+          </association>
+        </targetEnds>
+        <ownedAttributesInternal>
+          <property Id="f97be12c-1a9a-43cd-a4a3-11d8f1db57c4" name="AssertionType" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="66fefb8e-d9d6-4109-83e6-a30ac7d3aa43" />
+          </property>
+        </ownedAttributesInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <enumeration Id="28a529c4-0fd6-49c4-abd2-b4423718c992" name="AssertionType" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="78a4b5bd-c8f0-4dc1-9ab7-d2a7b3a21702" />
+        <ownedLiterals>
+          <enumerationLiteral Id="3081e175-3389-4fdc-aba2-7ccab4e09608" name="Precondition">
+            <elementDefinition Id="ade32b6d-3428-4efd-b401-dc76611edc54" />
+          </enumerationLiteral>
+          <enumerationLiteral Id="efaf09ef-af6e-466a-ab9a-06cd1f213bdf" name="Postcondition">
+            <elementDefinition Id="d75acca9-1c77-4276-bf67-356f42114932" />
+          </enumerationLiteral>
+          <enumerationLiteral Id="a40f4531-39e5-4863-beb6-d036925ffead" name="Assertion">
+            <elementDefinition Id="0c691e80-3920-4040-a533-eb8ec403dcab" />
+          </enumerationLiteral>
+          <enumerationLiteral Id="b118a395-e9c4-4030-b779-1eba634374a0" name="Invariant">
+            <elementDefinition Id="d6e25307-5d7f-4732-9c6e-198516726fb8" />
+          </enumerationLiteral>
+        </ownedLiterals>
+      </enumeration>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="7bfffa69-ea1e-4b4c-a83a-5a8e53146dde" name="PreconditionAssertion" isAbstract="true" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="e54bdc16-7d3a-455e-a701-39927a59228a" />
+        <generalsInternal>
+          <generalization Id="09e3a47f-c062-48e8-86ff-3c39907625bb" isSubstitutable="false">
+            <classMoniker Id="22c624fb-1757-4542-9d68-1dcc3096785b" LastKnownName="ContractAssertion" />
+            <elementDefinition Id="dd5931fa-42d9-42a4-ac51-0a1ffaac2cbc" />
+          </generalization>
+        </generalsInternal>
+        <ownedOperationsInternal>
+          <operation Id="473d9830-6841-424e-8dba-910e600bb944" name="IsNullCheck" isLeaf="false" isStatic="false" isAbstract="true" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="9174d738-0647-455a-9251-1fb8e5695604" />
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter Id="da8cdc16-e2a9-492c-bf8d-a809898e030d" name="argumentName" direction="In" isUnique="false">
+                  <elementDefinition Id="bf12600b-9f99-4cae-b0fc-33f2d555a725" />
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+        </ownedOperationsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="97fc7363-9bb8-491b-848d-197ddad3dffd" name="InvariantAssertion" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="902093a2-7cd8-4cd0-8adb-a666146d3a0e" />
+        <generalsInternal>
+          <generalization Id="49d5347b-5c24-4b3b-bdf0-d36217d32f51" isSubstitutable="false">
+            <classMoniker Id="22c624fb-1757-4542-9d68-1dcc3096785b" LastKnownName="ContractAssertion" />
+            <elementDefinition Id="8d58bc8a-5880-42c3-bd44-1288741c83fc" />
+          </generalization>
+        </generalsInternal>
+        <targetEnds>
+          <association Id="c1e285b1-2112-4a22-a927-f139feff2e01" isDerived="false" sourceEndRoleName="InvariantAssertion" targetEndRoleName="ContractAssertionExpression" isLeaf="false" isAbstract="false">
+            <classMoniker Id="ae42d297-c575-4eb4-8f34-9fd0b1301ad5" LastKnownName="ContractAssertionExpression" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="4853aa8e-ea1b-49b3-9e6a-63504d4eb15d" name="InvariantAssertion" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="Composite" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="af26a66d-88e4-412f-a96a-e4338f6a3df4" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="5dff1345-21e4-480e-be5a-99390ef73577" name="ContractAssertionExpression" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="true">
+                  <elementDefinition Id="46cca223-4c95-45c1-a9e5-f5e4ffca46c8" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="0d270e83-d975-4a0c-86c4-dc45b816b9f7" />
+          </association>
+        </targetEnds>
+        <ownedOperationsInternal>
+          <operation Id="cfd0eb01-624f-4804-b987-f5c4db181f94" name="IsNullCheck" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="18496486-d066-4e7e-83c3-09b9ce7fe970" />
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter Id="471d8519-733e-40b4-a619-5c4a7958b8b8" name="name" direction="In" isUnique="false">
+                  <elementDefinition Id="526ec3f1-e0e8-44a6-90f6-9f93ba8cdacd" />
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+        </ownedOperationsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="e84d0886-94a8-4de2-a496-a6d14b5e0b0e" name="CodeAssertion" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="7ef978f3-d513-4e8b-ae75-38c70eec2f21" />
+        <generalsInternal>
+          <generalization Id="c22377a6-2d01-4a99-a080-766454ee236b" isSubstitutable="false">
+            <classMoniker Id="22c624fb-1757-4542-9d68-1dcc3096785b" LastKnownName="ContractAssertion" />
+            <elementDefinition Id="3863571a-fa17-4b96-9bff-cccbe711dd54" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="9c1c44b2-0e19-4d25-adec-d96c217126d1" name="AssumeAssertion" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="4017eb18-6a2c-456b-85ee-ef415bbf86de" />
+        <generalsInternal>
+          <generalization Id="655c870c-7692-47f8-9ceb-f5340c906c5c" isSubstitutable="false">
+            <classMoniker Id="22c624fb-1757-4542-9d68-1dcc3096785b" LastKnownName="ContractAssertion" />
+            <elementDefinition Id="79b36076-44b6-46ba-8e11-d03542973b9a" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="a526f8ac-6bf4-4243-ba75-7cd8ac640f75" name="ContractRequiresAssertion" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="926c03c0-db09-4a50-9a1d-b1ed44597639" />
+        <generalsInternal>
+          <generalization Id="33596411-619c-4aa7-b6f2-418a0745fbc3" isSubstitutable="false">
+            <classMoniker Id="7bfffa69-ea1e-4b4c-a83a-5a8e53146dde" LastKnownName="PreconditionAssertion" />
+            <elementDefinition Id="9298fa4a-af85-441c-a669-65ad0139ea34" />
+          </generalization>
+        </generalsInternal>
+        <targetEnds>
+          <association Id="9b8d453e-9fdd-40fb-adf5-2bb7cf94e1d8" isDerived="false" sourceEndRoleName="ContractRequiresAssertion" targetEndRoleName="ContractAssertionExpression" isLeaf="false" isAbstract="false">
+            <classMoniker Id="ae42d297-c575-4eb4-8f34-9fd0b1301ad5" LastKnownName="ContractAssertionExpression" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="9644472b-4d66-4cca-8969-79dcf473774b" name="ContractRequiresAssertion" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="Composite" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="8e5328c8-2285-4396-ad18-74b66513a9d6" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="f9a9ca58-3bd7-4dbb-9b43-51ef0fb46143" name="ContractAssertionExpression" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="true">
+                  <elementDefinition Id="f2ed34d9-bed7-4fdc-a567-f33d8ffed1ca" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="052af5c3-462b-40b7-b8f6-f6da562be0ac" />
+          </association>
+        </targetEnds>
+        <ownedAttributesInternal>
+          <property Id="98acd8a4-76cd-49d0-8eff-a20137cb61a5" name="IsGeneric" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="c597cfb4-b98f-4d01-8d27-a85c66545351" />
+            <type_NamedElement>
+              <referencedTypeMoniker Id="9bb5dad2-1b5d-4c56-83c8-fc3c4d967430" LastKnownName="bool" />
+            </type_NamedElement>
+          </property>
+        </ownedAttributesInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <packageHasNamedElement>
+      <referencedType Id="9bb5dad2-1b5d-4c56-83c8-fc3c4d967430" name="bool" isAbstract="false" isLeaf="false" cachedFullName="bool">
+        <elementDefinition Id="266ca334-3d71-42f8-a9a0-51f0d596cb1c" />
+      </referencedType>
+    </packageHasNamedElement>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="79668300-4565-4234-b7fe-3b9039d09012" name="IfThrowAssertion" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="7757dc5d-1d1a-407b-ae6e-a29c79e8d338" />
+        <generalsInternal>
+          <generalization Id="d0fb3f33-a538-4b92-9286-94e2cc0db8fe" isSubstitutable="false">
+            <classMoniker Id="7bfffa69-ea1e-4b4c-a83a-5a8e53146dde" LastKnownName="PreconditionAssertion" />
+            <elementDefinition Id="1cd86406-cc01-4f3f-abae-e2f5da804662" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <Interface Id="c5f3ddf8-0494-415d-b74f-45ede34a874c" name="IPredicateCheck" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="ab354c26-587c-4a37-8f2d-596211f87958" />
+        <ownedAttributes>
+          <property Id="3deb9706-a009-4c18-8229-f474c2ac85a9" name="Arguments" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="4085a6b5-57e1-44c9-90cf-fdd3fe8642a7" />
+          </property>
+        </ownedAttributes>
+        <ownedOperations>
+          <operation Id="09131040-27cb-4215-9cad-0a0a602bac42" name="IsNullCheck" isLeaf="false" isStatic="false" isAbstract="true" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="ccfedb0a-a5ef-4690-b594-fc7c53d6465d" />
+          </operation>
+        </ownedOperations>
+      </Interface>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="e21a05e4-d3a2-4504-a14a-286a9984bd1c" name="ExpressionCheck" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="0b67656a-e940-473c-afc6-c5b85c27e3d5" />
+        <suppliersInternal>
+          <interfaceRealization Id="4446fa95-2bf8-4482-a463-82a394cd63ec">
+            <interfaceMoniker Id="c5f3ddf8-0494-415d-b74f-45ede34a874c" LastKnownName="IPredicateCheck" />
+            <elementDefinition Id="fae72aa5-97c7-44f6-9b71-10b147b1a036" />
+          </interfaceRealization>
+        </suppliersInternal>
+        <ownedOperationsInternal>
+          <operation Id="ffdae6b0-89c6-4909-ac68-0abf4de93de5" name="IsNullCheck" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="37e2884d-5e4b-4039-a7e9-4110abde07ee" />
+          </operation>
+        </ownedOperationsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="3bcd80ff-c8c0-4ab4-a882-8e32a828a259" name="MethodCallCheck" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="40c4e26d-91f6-42e5-806c-b7e643688682" />
+        <suppliersInternal>
+          <interfaceRealization Id="d62a0bc4-afb0-4d72-b1a8-1a2235f90f83">
+            <interfaceMoniker Id="c5f3ddf8-0494-415d-b74f-45ede34a874c" LastKnownName="IPredicateCheck" />
+            <elementDefinition Id="ad8f48d3-6094-4083-b974-39f5baab9421" />
+          </interfaceRealization>
+        </suppliersInternal>
+        <ownedOperationsInternal>
+          <operation Id="2fa0b4d8-602f-4795-9063-464d004df900" name="IsNullCheck" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="0f09f816-75e3-4620-98a7-7ca246101776" />
+          </operation>
+        </ownedOperationsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="3ee01c24-70f3-42a0-9309-dfb0e8ececa2" name="PostconditionAssertion" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="770e3afb-2383-4a5d-b9f9-89d83588ce2e" />
+        <generalsInternal>
+          <generalization Id="f52d285d-439e-47fd-8aea-aa9d3fc7c65e" isSubstitutable="false">
+            <classMoniker Id="22c624fb-1757-4542-9d68-1dcc3096785b" LastKnownName="ContractAssertion" />
+            <elementDefinition Id="01b10639-8022-4018-91cf-2a513c319574" />
+          </generalization>
+        </generalsInternal>
+        <targetEnds>
+          <association Id="800d99a4-fbd6-4661-943c-3c67ccf8adb4" isDerived="false" sourceEndRoleName="PostconditionAssertion" targetEndRoleName="ContractEnsuresExpression" isLeaf="false" isAbstract="false">
+            <classMoniker Id="63c0cf4d-a581-450a-9976-7d019e1d4d57" LastKnownName="ContractEnsuresExpression" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="5dbaa527-08ac-4c4d-8242-e2011050d982" name="PostconditionAssertion" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="Composite" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="e1889e05-c1db-4c6f-9b28-d5c066c10a45" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="eee0ce3b-9821-40e1-9200-db604596ae99" name="ContractEnsuresExpression" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="true">
+                  <elementDefinition Id="1635049c-8e99-403b-9f6e-f497a8bd1ee8" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="00552480-5929-4a94-ba05-fa8cb90ddb98" />
+          </association>
+        </targetEnds>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="51ab471e-f974-489c-b4ec-59a88e186a3b" name="ContractAssertionExpressionBase" isAbstract="true" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="64f1bd94-e6ee-488c-9bf9-90bbee28e291" />
+        <ownedAttributesInternal>
+          <property Id="7a48004c-06ce-4779-95c7-faf6ae28a396" name="AssertionType" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="7f88eeea-df18-423f-b06c-6a49949c7a22" />
+            <type_NamedElement>
+              <referencedTypeMoniker Id="8a759a03-3dc2-44fb-980b-4847c867126a" LastKnownName="AssertionType" />
+            </type_NamedElement>
+          </property>
+          <property Id="242c69b1-c879-41f4-9af3-a8b6100818db" name="Message" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="aa8219d4-b136-4ba8-9f2d-079888185728" />
+            <type_NamedElement>
+              <referencedTypeMoniker Id="25aef6b1-f2c8-4e25-9c55-18b9a5850ff1" LastKnownName="string" />
+            </type_NamedElement>
+          </property>
+        </ownedAttributesInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <packageHasNamedElement>
+      <referencedType Id="8a759a03-3dc2-44fb-980b-4847c867126a" name="AssertionType" isAbstract="false" isLeaf="false" cachedFullName="ContractExtensionsModeling::AssertionType">
+        <elementDefinition Id="78a4b5bd-c8f0-4dc1-9ab7-d2a7b3a21702" />
+      </referencedType>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <referencedType Id="25aef6b1-f2c8-4e25-9c55-18b9a5850ff1" name="string" isAbstract="false" isLeaf="false" cachedFullName="string">
+        <elementDefinition Id="18e98c3d-df53-40af-bb9e-9ac378faa69c" />
+      </referencedType>
+    </packageHasNamedElement>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="ae42d297-c575-4eb4-8f34-9fd0b1301ad5" name="ContractAssertionExpression" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="9d2f6952-08e6-4dc0-8ab0-ebf94c520e23" />
+        <generalsInternal>
+          <generalization Id="bad168f7-a25e-4b5a-be2c-f4d2290657ee" isSubstitutable="false">
+            <classMoniker Id="51ab471e-f974-489c-b4ec-59a88e186a3b" LastKnownName="ContractAssertionExpressionBase" />
+            <elementDefinition Id="a9f3043e-8d5e-4ed2-9b34-1a69625c623d" />
+          </generalization>
+        </generalsInternal>
+        <targetEnds>
+          <association Id="d0d3dacb-aeee-4784-8579-8b327d8dc1a5" isDerived="false" sourceEndRoleName="ContractAssertionExpression" targetEndRoleName="IPredicateCheck" isLeaf="false" isAbstract="false">
+            <interfaceMoniker Id="c5f3ddf8-0494-415d-b74f-45ede34a874c" LastKnownName="IPredicateCheck" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="c8dc2134-74b0-4cf5-9230-7ae027a83df0" name="ContractAssertionExpression" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="Composite" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="f21d8b76-6da4-4171-a063-0863b6128d77" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="5327d001-65a0-467b-8644-1de74794d0f0" name="IPredicateCheck" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="true">
+                  <elementDefinition Id="fe92c1bc-bc7f-4297-97bb-35e162fa574e" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="e0ae54ba-47a1-45a5-bd71-17be7130912d" />
+          </association>
+        </targetEnds>
+        <ownedOperationsInternal>
+          <operation Id="08f035eb-a13c-4016-ab1d-ddfd551920c2" name="IsNullCheck" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="5e4884d5-2cb0-4df9-9d0b-e66396100e3b" />
+            <ownedParameters>
+              <operationHasOwnedParameters>
+                <parameter Id="4dd0c234-af9b-44f3-b1a1-8e1dc56f6333" name="name" direction="In" isUnique="false">
+                  <elementDefinition Id="1ae01923-db8c-425a-a251-cf3aaa57e4a9" />
+                </parameter>
+              </operationHasOwnedParameters>
+            </ownedParameters>
+          </operation>
+        </ownedOperationsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="63c0cf4d-a581-450a-9976-7d019e1d4d57" name="ContractEnsuresExpression" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="599767cb-6233-4fab-898d-8f208d827116" />
+        <generalsInternal>
+          <generalization Id="22515f45-7b00-43cd-83a7-6c811e416c5f" isSubstitutable="false">
+            <classMoniker Id="51ab471e-f974-489c-b4ec-59a88e186a3b" LastKnownName="ContractAssertionExpressionBase" />
+            <elementDefinition Id="5c98128c-840d-4697-a426-e89d840821a4" />
+          </generalization>
+        </generalsInternal>
+        <ownedAttributesInternal>
+          <property Id="feb6a057-3edb-419b-9ba5-eea414188b0f" name="ResultType" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="f1239607-9215-4554-8248-ece4ce2dfbf6" />
+            <type_NamedElement>
+              <referencedTypeMoniker Id="b4c17c88-b136-40c2-be9d-b19585febb04" LastKnownName="IDeclaredType" />
+            </type_NamedElement>
+          </property>
+        </ownedAttributesInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <packageHasNamedElement>
+      <referencedType Id="b4c17c88-b136-40c2-be9d-b19585febb04" name="IDeclaredType" isAbstract="false" isLeaf="false" cachedFullName="IDeclaredType">
+        <elementDefinition Id="d19dbdd8-bb47-46d2-a603-064594ba21ad" />
+      </referencedType>
+    </packageHasNamedElement>
+  </packagedElements>
+  <package Id="b79721b4-9ff3-4f63-9de8-ee09c701dd80" name="ContractExtensionsModeling">
+    <elementDefinition Id="b22eae98-c849-4651-a4af-aee085fdd22b" />
+    <profileInstances>
+      <packageHasProfileInstances Id="63f26e02-da49-444d-be87-3d8fdde0d84f">
+        <profileInstance Id="7cdea26d-ad54-4554-90a0-9b5383307b68" name="StandardProfileL2">
+          <elementDefinition Id="e34d544e-0fea-4ed6-ac5e-1b74119ac791" />
+        </profileInstance>
+        <elementDefinition Id="0caec977-1f8c-4ba3-a7db-8cc9ad9cc73b" />
+      </packageHasProfileInstances>
+      <packageHasProfileInstances Id="9dd83685-cb24-4362-bfe4-d73b9b06b2b0">
+        <profileInstance Id="ffa0df93-5a11-49c5-9a75-d6088465f5c8" name="StandardProfileL3">
+          <elementDefinition Id="532ea607-fb19-44b8-8502-3351b05452be" />
+        </profileInstance>
+        <elementDefinition Id="29349502-908c-4fda-9054-c48619c59ed0" />
+      </packageHasProfileInstances>
+    </profileInstances>
+  </package>
+</logicalClassDesignerModel>

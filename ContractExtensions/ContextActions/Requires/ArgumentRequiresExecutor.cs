@@ -135,19 +135,22 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
                 .Reverse().ToList();
 
             // Creating lookup where key is argument name, and the value is statements.
-            var requiresStatements = 
+            var requiresStatements =
                 _functionDeclaration
-                    .GetRequires()
-                    .SelectMany(x => x.ArgumentNames.Select(a => new {Statement = x, ArgumentName = a}))
-                    .ToLookup(x => x.ArgumentName, x => x.Statement);
+                    .GetContractPreconditions().ToList();
+                    /*.SelectMany(x => x.ArgumentNames.Select(a => new {Statement = x, ArgumentName = a}))
+                    .ToLookup(x => x.ArgumentName, x => x.Statement)*/;
             
             // Looking for the last usage of the parameters in the requires statements
             foreach (var p in parameters)
             {
-                if (requiresStatements.Contains(p))
-                {
-                    return requiresStatements[p].Select(x => x.Statement).LastOrDefault();
-                }
+                var precondition = requiresStatements.LastOrDefault(r => r.ChecksForNull(p));
+                if (precondition != null)
+                    return precondition.Statement;
+                //if (requiresStatements.Contains(p))
+                //{
+                //    return requiresStatements[p].Select(x => x.Statement).LastOrDefault();
+                //}
             }
 
             return null;

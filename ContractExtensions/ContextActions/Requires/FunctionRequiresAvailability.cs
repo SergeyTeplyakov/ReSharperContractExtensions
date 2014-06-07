@@ -79,9 +79,8 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         private bool ArgumentIsAlreadyVerifiedByArgCheckOrRequires(
             ICSharpFunctionDeclaration functionDeclaration, string parameterName)
         {
-            var requiresStatements = functionDeclaration.GetRequires().ToList();
-
-            return requiresStatements.SelectMany(rs => rs.ArgumentNames).Any(rs => rs == parameterName);
+            return functionDeclaration.GetPreconditions()
+                .Any(p => p.ChecksForNull(parameterName));
         }
     }
 }

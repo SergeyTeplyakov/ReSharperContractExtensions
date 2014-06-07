@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReSharper.ContractExtension
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReSharper.ContractExtensions.Tests.R81", "ReSharper.ContractExtensions.Tests\ReSharper.ContractExtensions.Tests.R81.csproj", "{056D871D-0F3D-43C3-9EE3-FAD4B18BF3D9}"
 EndProject
+Project("{F088123C-0E9E-452A-89E6-6BA2F21D5CAC}") = "ContractExtensionsModeling", "ContractExtensionsModeling\ContractExtensionsModeling.modelproj", "{1FD4BE17-1953-4803-A4D3-D01C92F794DD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,10 @@ Global
 		{056D871D-0F3D-43C3-9EE3-FAD4B18BF3D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{056D871D-0F3D-43C3-9EE3-FAD4B18BF3D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{056D871D-0F3D-43C3-9EE3-FAD4B18BF3D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1FD4BE17-1953-4803-A4D3-D01C92F794DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1FD4BE17-1953-4803-A4D3-D01C92F794DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1FD4BE17-1953-4803-A4D3-D01C92F794DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1FD4BE17-1953-4803-A4D3-D01C92F794DD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

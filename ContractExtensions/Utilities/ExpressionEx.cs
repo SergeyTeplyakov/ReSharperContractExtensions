@@ -1,4 +1,6 @@
-﻿using System.Diagnostics.Contracts;
+﻿using System.Collections.Generic;
+using System.Diagnostics.Contracts;
+using System.Linq;
 using JetBrains.Annotations;
 using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
 using JetBrains.ReSharper.Psi;
@@ -64,6 +66,43 @@ namespace ReSharper.ContractExtensions.Utilities
                 .With(x => x.DeclaredElement)
                 .With(x => x as IClrDeclaredElement);
             return result;
+        }
+
+        public static IEnumerable<TExpression> ProcessRecursively<TExpression>(this IExpression expression)
+            where TExpression : IExpression
+        {
+            var processor = new Procesor<TExpression>();
+            expression.ProcessThisAndDescendants(processor);
+            return processor.ProcessedNodes.OfType<TExpression>();
+        }
+
+        private class Procesor<T> : IRecursiveElementProcessor where T : IExpression
+        {
+            public Procesor()
+            {
+                ProcessedNodes = new List<ITreeNode>();
+            }
+
+            public List<ITreeNode> ProcessedNodes { get; private set; }
+            public bool InteriorShouldBeProcessed(ITreeNode element)
+            {
+                if (element is T)
+                    return false;
+
+                return true;
+            }
+
+            public void ProcessBeforeInterior(ITreeNode element)
+            {
+                ProcessedNodes.Add(element);
+            }
+
+            public void ProcessAfterInterior(ITreeNode element)
+            {
+
+            }
+
+            public bool ProcessingIsFinished { get; private set; }
         }
     }
 

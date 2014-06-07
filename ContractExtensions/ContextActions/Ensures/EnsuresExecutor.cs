@@ -77,7 +77,8 @@ namespace ReSharper.ContractExtensions.ContextActions.Ensures
 
         private ICSharpStatement GetLastRequiresStatementIfAny(ICSharpFunctionDeclaration functionDeclaration)
         {
-            return functionDeclaration.GetRequires().Select(r => r.Statement).LastOrDefault();
+            return functionDeclaration.GetContractPreconditions()
+                .Select(r => r.Statement).LastOrDefault();
         }
 
         private void AddStatementAfter(ICSharpFunctionDeclaration functionDeclaration,

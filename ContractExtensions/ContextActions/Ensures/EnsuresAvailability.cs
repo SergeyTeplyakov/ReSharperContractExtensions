@@ -69,8 +69,8 @@ namespace ReSharper.ContractExtensions.ContextActions.Ensures
                 return false;
 
             var returnType = functionDeclaration.GetReturnType();
-            return functionDeclaration.GetEnsures()
-                .Any(e => e.ResultType.GetClrName().FullName == returnType.GetClrName().FullName);
+            return functionDeclaration.GetContractEnsures()
+                .Any(e => e.EnsuresType.GetClrName().FullName == returnType.GetClrName().FullName);
         }
     }
 }
