@@ -19,7 +19,7 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
 
         public override bool ChecksForNull(string name)
         {
-            return _assertExpression.PreconditionExpressions.Any(p => p.ChecksForNull(name));
+            return _assertExpression.PreconditionExpressions.Any(p => p.ChecksForNotNull(name));
         }
 
         [CanBeNull]

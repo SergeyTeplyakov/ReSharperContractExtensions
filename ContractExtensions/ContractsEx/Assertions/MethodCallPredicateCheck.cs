@@ -8,13 +8,23 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
 {
     internal sealed class MethodCallPredicateCheck : IPredicateCheck
     {
+        private bool _hasNot;
+
         public IClrTypeName CallSiteType { get; private set; }
         public string MethodName { get; private set; }
         public string ArgumentName { get; private set; }
 
+        public bool ChecksForNotNull(string name)
+        {
+            return _hasNot &&
+                (name == ArgumentName) &&
+                (CallSiteType.FullName == typeof(string).FullName &&
+                    (MethodName == "IsNullOrEmpty" || MethodName == "IsNullOrWhiteSpace"));
+        }
+
         public bool ChecksForNull(string name)
         {
-            return (name == ArgumentName) &&
+            return !_hasNot && (name == ArgumentName) &&
                 (CallSiteType.FullName == typeof(string).FullName &&
                     (MethodName == "IsNullOrEmpty" || MethodName == "IsNullOrWhiteSpace"));
         }
@@ -27,11 +37,6 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
             // Looking for constructs like !string.IsNullOrEmpty or !string.IsNullOrWhitespace
 
             // TODO: add test case: (!(!(string.IsNullOrEmpty)))
-
-            if (expression.UnaryOperatorType != UnaryOperatorType.EXCL)
-            {
-                return null;
-            }
 
             var invocationExpression = expression.Operand as IInvocationExpression;
             if (invocationExpression == null)
@@ -46,11 +51,14 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
             if (callSiteType == null || method == null || argument == null)
                 return null;
 
+            bool hasNot = expression.UnaryOperatorType == UnaryOperatorType.EXCL;
+
             return new MethodCallPredicateCheck
             {
                 CallSiteType = callSiteType,
                 MethodName = method,
-                ArgumentName = argument
+                ArgumentName = argument,
+                _hasNot = hasNot,
             };
         }
     }

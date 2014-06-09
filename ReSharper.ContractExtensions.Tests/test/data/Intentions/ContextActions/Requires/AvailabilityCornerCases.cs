@@ -18,4 +18,18 @@ abstract class A
     Contract.Requires(!string.IsNullOrWhiteSpace(s));
   }
 
+  public void DisabledOnAlreadyCheckByIfThrow(string s{off})
+  {
+    if (s == null)
+     throw new System.ArgumentNullException("s");
+  }
+
+  public void DisableOnAlreadyCheckByIfThrow2(string s{off})
+  {
+    if (s == null)
+    {
+      throw new ArgumentNullException("s", "some message");
+    }
+  }
+
 }

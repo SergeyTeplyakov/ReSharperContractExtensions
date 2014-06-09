@@ -17,10 +17,17 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
         public EqualityExpressionType EqualityType { get; private set; }
         public ICSharpLiteralExpression RightHandSide { get; private set; }
 
-        public bool ChecksForNull(string name)
+        public bool ChecksForNotNull(string name)
         {
             return ArgumentName == name && 
                    (EqualityType == EqualityExpressionType.NE && 
+                    RightHandSide.Literal.GetText() == "null");
+        }
+
+        public bool ChecksForNull(string name)
+        {
+            return ArgumentName == name &&
+                   (EqualityType == EqualityExpressionType.EQEQ &&
                     RightHandSide.Literal.GetText() == "null");
         }
 

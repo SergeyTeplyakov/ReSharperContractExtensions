@@ -8,6 +8,13 @@
         <classMoniker Id="e84d0886-94a8-4de2-a496-a6d14b5e0b0e" LastKnownName="CodeAssertion" />
       </annotatedElements>
     </comment>
+    <comment Id="f8108115-1ca2-4227-9731-78a3d5bef2d6">
+      <elementDefinition Id="d7758d28-6a77-4ab0-bf34-e76714105a74" />
+      <body>Precondition with Guard.NotNull or similar classes.</body>
+      <annotatedElements>
+        <classMoniker Id="187ba0b0-02b5-456b-b1a1-67c74aab10fe" LastKnownName="GuardBasedPreconditionAssertion" />
+      </annotatedElements>
+    </comment>
   </ownedCommentsInternal>
   <packagedElements>
     <logicalClassDesignerModelHasTypes>
@@ -366,6 +373,17 @@
         <elementDefinition Id="d19dbdd8-bb47-46d2-a603-064594ba21ad" />
       </referencedType>
     </packageHasNamedElement>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="187ba0b0-02b5-456b-b1a1-67c74aab10fe" name="GuardBasedPreconditionAssertion" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="6213481a-b995-4969-b007-ce8d40d6fc4d" />
+        <generalsInternal>
+          <generalization Id="0ecdb153-9fba-44bf-a512-a48ead67365b" isSubstitutable="false">
+            <classMoniker Id="7bfffa69-ea1e-4b4c-a83a-5a8e53146dde" LastKnownName="PreconditionAssertion" />
+            <elementDefinition Id="ddbe536c-efda-47ce-a70c-be6fb115f9b3" />
+          </generalization>
+        </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
   </packagedElements>
   <package Id="b79721b4-9ff3-4f63-9de8-ee09c701dd80" name="ContractExtensionsModeling">
     <elementDefinition Id="b22eae98-c849-4651-a4af-aee085fdd22b" />

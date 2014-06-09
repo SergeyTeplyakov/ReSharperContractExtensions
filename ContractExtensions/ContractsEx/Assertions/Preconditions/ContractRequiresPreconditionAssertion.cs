@@ -23,7 +23,7 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
 
         public override bool ChecksForNull(string name)
         {
-            return _contractAssertionExpression.PreconditionExpressions.Any(n => n.ChecksForNull(name));
+            return _contractAssertionExpression.PreconditionExpressions.Any(n => n.ChecksForNotNull(name));
         }
 
         public bool IsGeneric { get; private set; }

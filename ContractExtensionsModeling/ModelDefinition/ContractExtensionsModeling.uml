@@ -14,6 +14,16 @@
           LastKnownLocation="ContractExtensionsModeling.uml" />
       </annotatedElements>
     </comment>
+    <comment
+      Id="d7758d28-6a77-4ab0-bf34-e76714105a74">
+      <body>Precondition with Guard.NotNull or similar classes.</body>
+      <annotatedElements>
+        <classMoniker
+          Id="6213481a-b995-4969-b007-ce8d40d6fc4d"
+          LastKnownName="GuardBasedPreconditionAssertion"
+          LastKnownLocation="ContractExtensionsModeling.uml" />
+      </annotatedElements>
+    </comment>
   </ownedCommentsInternal>
   <profileInstances>
     <packageHasProfileInstances
@@ -698,6 +708,25 @@
       <undefinedType
         Id="d19dbdd8-bb47-46d2-a603-064594ba21ad"
         name="IDeclaredType" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="6213481a-b995-4969-b007-ce8d40d6fc4d"
+        name="GuardBasedPreconditionAssertion"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <generalsInternal>
+          <generalization
+            Id="ddbe536c-efda-47ce-a70c-be6fb115f9b3"
+            isSubstitutable="false">
+            <classMoniker
+              Id="e54bdc16-7d3a-455e-a701-39927a59228a"
+              LastKnownName="PreconditionAssertion"
+              LastKnownLocation="ContractExtensionsModeling.uml" />
+          </generalization>
+        </generalsInternal>
+      </class>
     </packageHasNamedElement>
   </packagedElements>
   <primitiveType

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.Contracts;
 using System.Linq;
@@ -19,7 +20,7 @@ namespace ReSharper.ContractExtensions.ContractsEx
         private readonly AssertionType _assertionType;
         private readonly string _message;
 
-        protected ContractAssertionExpressionBase(AssertionType assertionType, string message)
+        protected ContractAssertionExpressionBase(AssertionType assertionType, [NotNull] string message)
         {
             _assertionType = assertionType;
             _message = message;
