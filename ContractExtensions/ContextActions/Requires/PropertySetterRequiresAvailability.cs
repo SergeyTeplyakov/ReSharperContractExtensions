@@ -2,22 +2,23 @@
 using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
+using ReSharper.ContractExtensions.ContextActions.Infrastructure;
 using ReSharper.ContractExtensions.Utilities;
 
 namespace ReSharper.ContractExtensions.ContextActions.Requires
 {
-    internal sealed class PropertySetterRequiresAvailability
+    internal sealed class PropertySetterRequiresAvailability : ContextActionAvailabilityBase<PropertySetterRequiresAvailability>
     {
-        private readonly ICSharpContextActionDataProvider _provider;
         private readonly ICSharpFunctionDeclaration _currentFunction;
         private readonly IClrTypeName _propertyType;
 
-        public PropertySetterRequiresAvailability(ICSharpContextActionDataProvider provider)
-        {
-            Contract.Requires(provider != null);
-            _provider = provider;
+        public PropertySetterRequiresAvailability()
+        {}
 
-            IsAvailable = ComputeIsAvailable(out _currentFunction, out _propertyType);
+        public PropertySetterRequiresAvailability(ICSharpContextActionDataProvider provider)
+            : base(provider)
+        {
+            _isAvailable = ComputeIsAvailable(out _currentFunction, out _propertyType);
         }
 
         [ContractInvariantMethod]
@@ -28,7 +29,6 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             Contract.Invariant(!IsAvailable || PropertyType != null);
         }
 
-        public bool IsAvailable { get; private set; }
         public ICSharpFunctionDeclaration SelectedFunctionDeclaration { get { return _currentFunction; } }
         public IClrTypeName PropertyType { get { return _propertyType; } }
 

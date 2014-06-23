@@ -82,7 +82,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
 
         public override bool IsAvailable(IUserDataHolder cache)
         {
-            _availability = ComboMethodRequiresAvailability.Create(_provider);
+            _availability = ComboMethodRequiresAvailability.CheckIsAvailable(_provider);
             return _availability.IsAvailable;
         }
 

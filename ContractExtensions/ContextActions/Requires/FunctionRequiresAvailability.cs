@@ -2,6 +2,7 @@
 using System.Linq;
 using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
+using ReSharper.ContractExtensions.ContextActions.Infrastructure;
 using ReSharper.ContractExtensions.ContractsEx;
 using ReSharper.ContractExtensions.ContractUtils;
 
@@ -10,27 +11,27 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
     /// <summary>
     /// Checks that Contract.Requires should be available for specified function and parameter name.
     /// </summary>
-    internal sealed class FunctionRequiresAvailability
+    internal sealed class FunctionRequiresAvailability : ContextActionAvailabilityBase<FunctionRequiresAvailability>
     {
-        private readonly ICSharpContextActionDataProvider _provider;
-        
         /// <summary>
         /// Function, where the tool should insert precondition. Note that this could be different
         /// from the selected function (because selected function could be in the abstract class).
         /// </summary>
         private readonly ICSharpFunctionDeclaration _functionToInsertPrecondition;
 
+        public FunctionRequiresAvailability() { }
+
         public FunctionRequiresAvailability(ICSharpContextActionDataProvider provider, string parameterName, 
             ICSharpFunctionDeclaration selectedFunction = null)
+            : base(provider)
         {
             Contract.Requires(provider != null);
             Contract.Requires(parameterName != null);
 
-            _provider = provider;
             ParameterName = parameterName;
             
             _functionToInsertPrecondition = selectedFunction ?? GetSelectedFunctionDeclaration();
-            IsAvailable = IsRequiresAvailable(parameterName, ref _functionToInsertPrecondition);
+            _isAvailable = IsRequiresAvailable(parameterName, ref _functionToInsertPrecondition);
         }
 
         [ContractInvariantMethod]
@@ -41,7 +42,6 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             Contract.Invariant(!IsAvailable || ParameterName != null);
         }
 
-        public bool IsAvailable { get; private set; }
         public string ParameterName { get; private set; }
         public ICSharpFunctionDeclaration FunctionToInsertPrecondition { get { return _functionToInsertPrecondition; } }
 

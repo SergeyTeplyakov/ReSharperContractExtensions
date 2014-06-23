@@ -4,6 +4,7 @@ using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp;
 using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.ReSharper.Psi.Util;
+using ReSharper.ContractExtensions.ContextActions.Infrastructure;
 using ReSharper.ContractExtensions.Utilities;
 
 namespace ReSharper.ContractExtensions.ContextActions.Requires
@@ -17,23 +18,21 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
     /// the need of this check out of the main requires availability check.
     /// For example, this stuff is needed by <see cref="ComboRequiresAvailability"/> class as well.
     /// </remarks>
-    internal class ParameterRequiresAvailability
+    internal class ParameterRequiresAvailability : ContextActionAvailabilityBase<ParameterRequiresAvailability>
     {
         private readonly IParameterDeclaration _parameterDeclaration;
 
-        private ParameterRequiresAvailability()
-        {
-            IsAvailable = false;
-        }
+        public ParameterRequiresAvailability()
+        {}
 
         private ParameterRequiresAvailability(IParameterDeclaration parameterDeclaration)
         {
             Contract.Requires(parameterDeclaration != null);
 
             _parameterDeclaration = parameterDeclaration;
-            IsAvailable = ComputeIsAvailable();
+            _isAvailable = ComputeIsAvailable();
 
-            if (IsAvailable)
+            if (_isAvailable)
             {
                 ParameterName = _parameterDeclaration.DeclaredName;
 
@@ -56,12 +55,11 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
 
             selectedParameter = selectedParameter ?? provider.GetSelectedParameterDeclaration();
             if (selectedParameter == null)
-                return new ParameterRequiresAvailability {IsAvailable = false};
+                return Unavailable;
 
             return new ParameterRequiresAvailability(selectedParameter);
         }
 
-        public bool IsAvailable { get; private set; }
         public string ParameterName { get; private set; }
         public IClrTypeName ParameterType { get; private set; }
 

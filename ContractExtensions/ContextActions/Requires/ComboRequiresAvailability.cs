@@ -3,6 +3,7 @@ using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using ReSharper.ContractExtensions.ContextActions.ContractsFor;
+using ReSharper.ContractExtensions.ContextActions.Infrastructure;
 using ReSharper.ContractExtensions.Utilities;
 
 namespace ReSharper.ContractExtensions.ContextActions.Requires
@@ -15,21 +16,20 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
     /// Combo requires will try to add ContractClass attribute for the interface or abstract class and then
     /// will add Contract.Requires statement.
     /// </remarks>
-    internal sealed class ComboRequiresAvailability
+    internal sealed class ComboRequiresAvailability : ContextActionAvailabilityBase<ComboRequiresAvailability>
     {
-        private readonly ICSharpContextActionDataProvider _provider;
         private readonly string _parameterName;
         private readonly IClrTypeName _parameterType;
         private readonly ICSharpFunctionDeclaration _selectedAbstractMethod;
         private readonly AddContractAvailability _addContractAvailability;
 
-        private ComboRequiresAvailability()
+        public ComboRequiresAvailability()
         {}
 
-        public ComboRequiresAvailability(ICSharpContextActionDataProvider provider)
+        private ComboRequiresAvailability(ICSharpContextActionDataProvider provider)
+            : base(provider)
         {
             Contract.Requires(provider != null);
-            _provider = provider;
 
             _selectedAbstractMethod = GetSelectedFunctionDeclaration();
 
@@ -38,7 +38,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
                 && IsRequiresAvailableFor(out _parameterName, out _parameterType) 
                 && CanAddContractForSelectedMethod(_selectedAbstractMethod, out _addContractAvailability))
             {
-                IsAvailable = true;
+                _isAvailable = true;
             }
         }
 
@@ -51,13 +51,10 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             Contract.Invariant(!IsAvailable || _selectedAbstractMethod != null);
         }
 
-        public bool IsAvailable { get; private set; }
         public string ParameterName { get { return _parameterName; } }
         public IClrTypeName ParameterType { get { return _parameterType; } }
         public ICSharpFunctionDeclaration SelectedFunction { get { return _selectedAbstractMethod; } }
         public AddContractAvailability AddContractAvailability { get { return _addContractAvailability; } }
-
-        public static readonly ComboRequiresAvailability Unavailable = new ComboRequiresAvailability { IsAvailable = false };
 
         private bool IsAbstractClassOrInterface()
         {

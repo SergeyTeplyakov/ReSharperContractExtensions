@@ -21,11 +21,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         protected override void CheckAvailability()
         {
             _contractPreconditionAssertion = GetSelectedPreconditionAssertion();
-        }
-
-        public override bool IsAvailable
-        {
-            get { return _contractPreconditionAssertion != null; }
+            _isAvailable = _contractPreconditionAssertion != null;
         }
 
         public ContractPreconditionAssertion PreconditionAssertion

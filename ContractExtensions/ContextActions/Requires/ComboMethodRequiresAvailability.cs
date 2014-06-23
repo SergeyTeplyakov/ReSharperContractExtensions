@@ -8,6 +8,7 @@ using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Tree;
 using ReSharper.ContractExtensions.ContextActions.ContractsFor;
+using ReSharper.ContractExtensions.ContextActions.Infrastructure;
 using ReSharper.ContractExtensions.ContractUtils;
 using ReSharper.ContractExtensions.Utilities;
 
@@ -22,24 +23,23 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
     /// <summary>
     /// Checks that combo actions that add requires for all method argument should be available.
     /// </summary>
-    internal sealed class ComboMethodRequiresAvailability
+    internal sealed class ComboMethodRequiresAvailability : ContextActionAvailabilityBase<ComboMethodRequiresAvailability>
     {
-        private readonly ICSharpContextActionDataProvider _provider;
         private readonly ICSharpFunctionDeclaration _selectedFunctionDeclaration;
         private readonly AddContractAvailability _addContractAvailability;
         private readonly List<ArgumentDescription> _argumentNames;
 
-        private ComboMethodRequiresAvailability()
+        public ComboMethodRequiresAvailability()
         {}
 
         private ComboMethodRequiresAvailability(ICSharpContextActionDataProvider provider)
+            : base(provider)
         {
-            _provider = provider;
 
             if (IsAvailableFor(out _argumentNames, out _selectedFunctionDeclaration) &&
                 CanAddContractClassIfNecessary(_selectedFunctionDeclaration, out _addContractAvailability))
             {
-                IsAvailable = true;
+                _isAvailable = true;
             }
         }
 
@@ -53,6 +53,9 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
                 "If this action is available, we should have move than one available argument name!");
         }
 
+        protected override void CheckAvailability()
+        {}
+
         public static ComboMethodRequiresAvailability Create(ICSharpContextActionDataProvider provider)
         {
             Contract.Requires(provider != null);
@@ -61,11 +64,10 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             return new ComboMethodRequiresAvailability(provider);
         }
 
-        public static readonly ComboMethodRequiresAvailability Unavailable = new ComboMethodRequiresAvailability {IsAvailable = false};
         public ICSharpFunctionDeclaration SelectedFunctionDeclaration { get { return _selectedFunctionDeclaration; } }
+
         [CanBeNull]
         public AddContractAvailability AddContractAvailability { get { return _addContractAvailability; } }
-        public bool IsAvailable { get; private set; }
         public IList<ArgumentDescription> ArgumentNames { get { return _argumentNames; } }
 
         [System.Diagnostics.Contracts.Pure]

@@ -3,50 +3,45 @@ using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Tree;
+using ReSharper.ContractExtensions.ContextActions.Infrastructure;
 
 namespace ReSharper.ContractExtensions.ContextActions.Requires
 {
     /// <summary>
     /// Shows whether "Add Requires" action is available or not.
     /// </summary>
-    public sealed class ArgumentRequiresAvailability
+    public sealed class ArgumentRequiresAvailability : ContextActionAvailabilityBase<ArgumentRequiresAvailability>
     {
-        private readonly ICSharpContextActionDataProvider _provider;
         private readonly string _parameterName;
         private readonly IClrTypeName _parameterType;
         private readonly ICSharpFunctionDeclaration _functionToInsertPrecondition;
 
-        public readonly static ArgumentRequiresAvailability Unavailable = new ArgumentRequiresAvailability {IsAvailable = false};
-
-        private ArgumentRequiresAvailability()
+        public ArgumentRequiresAvailability()
         {}
 
         public ArgumentRequiresAvailability(ICSharpContextActionDataProvider provider)
+            : base(provider)
         {
             Contract.Requires(provider != null);
-
-            _provider = provider;
 
             if (MethodSupportsRequires(out _parameterName, out _parameterType, out _functionToInsertPrecondition)
                 || PropertySetterSupportRequires(out _parameterName, out _parameterType, out _functionToInsertPrecondition))
             {
-                IsAvailable = true;
+                _isAvailable = true;
             }
         }
 
         [ContractInvariantMethod]
         private void ObjectInvariant()
         {
-            Contract.Invariant(!IsAvailable || _provider != null);
-            Contract.Invariant(!IsAvailable || _parameterName != null);
-            Contract.Invariant(!IsAvailable || _functionToInsertPrecondition != null);
-            Contract.Invariant(!IsAvailable || _parameterType != null);
+            Contract.Invariant(!_isAvailable || _provider != null);
+            Contract.Invariant(!_isAvailable || _parameterName != null);
+            Contract.Invariant(!_isAvailable || _functionToInsertPrecondition != null);
+            Contract.Invariant(!_isAvailable || _parameterType != null);
         }
 
-        public static ArgumentRequiresAvailability Create(ICSharpContextActionDataProvider provider)
-        {
-            return new ArgumentRequiresAvailability(provider);
-        }
+        protected override void CheckAvailability()
+        {}
 
         private bool MethodSupportsRequires(out string parameterName, out IClrTypeName parameterType,
             out ICSharpFunctionDeclaration functionToInsertPrecondition)
@@ -113,7 +108,6 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             return false;
         }
 
-        public bool IsAvailable { get; private set; }
         public ICSharpFunctionDeclaration FunctionToInsertPrecondition { get { return _functionToInsertPrecondition; } }
         public string SelectedParameterName { get { return _parameterName; } }
         public IClrTypeName SelectedParameterType { get { return _parameterType; } }

@@ -7,8 +7,9 @@ namespace ReSharper.ContractExtensions.ContextActions.Infrastructure
     /// <summary>
     /// Non-generic base class that represent wether specific context action is available or not.
     /// </summary>
-    internal abstract class ContextActionAvailabilityBase
+    public abstract class ContextActionAvailabilityBase
     {
+        protected bool _isAvailable;
         protected readonly ICSharpContextActionDataProvider _provider;
 
         protected ContextActionAvailabilityBase(ICSharpContextActionDataProvider provider)
@@ -23,7 +24,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Infrastructure
                 "For available context action provider should exist.");
         }
 
-        public abstract bool IsAvailable { get; }
+        public bool IsAvailable { get { return _isAvailable; } }
 
 
         public ICSharpContextActionDataProvider Provider { get { return _provider; } }
@@ -34,7 +35,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Infrastructure
     /// </summary>
     /// <typeparam name="TConcreteAvailability"></typeparam>
     [ContractClass(typeof (ContextActionAvailabilityBaseContract<>))]
-    internal abstract class ContextActionAvailabilityBase<TConcreteAvailability> : ContextActionAvailabilityBase
+    public abstract class ContextActionAvailabilityBase<TConcreteAvailability> : ContextActionAvailabilityBase
         where TConcreteAvailability : ContextActionAvailabilityBase<TConcreteAvailability>, new()
     {
         protected ContextActionAvailabilityBase()
@@ -47,7 +48,8 @@ namespace ReSharper.ContractExtensions.ContextActions.Infrastructure
             Contract.Requires(provider != null);
         }
 
-        protected abstract void CheckAvailability();
+        protected virtual void CheckAvailability()
+        {}
 
         public static readonly TConcreteAvailability Unavailable = new TConcreteAvailability();
 
