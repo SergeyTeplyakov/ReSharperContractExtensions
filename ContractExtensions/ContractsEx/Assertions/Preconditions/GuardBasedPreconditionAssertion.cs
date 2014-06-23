@@ -11,8 +11,8 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
     /// </remarks>
     public sealed class GuardBasedPreconditionAssertion : ContractPreconditionAssertion
     {
-        public GuardBasedPreconditionAssertion(ICSharpStatement statement) 
-            : base(statement)
+        public GuardBasedPreconditionAssertion(ICSharpStatement statement, string message) 
+            : base(statement, message)
         {}
 
         public override bool ChecksForNull(string name)
@@ -21,9 +21,9 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
             throw new System.NotImplementedException();
         }
 
-        public override bool IsCodeContractBasedPrecondition
+        public override PreconditionType PreconditionType
         {
-            get { throw new System.NotImplementedException(); }
+            get { return PreconditionType.GuardClause; }
         }
     }
 }

@@ -1,0 +1,10 @@
+using System;
+using System.Diagnostics.Contracts;
+
+class A
+{
+  public void EnabledOnAbstractMethod(int n)
+  {
+    {caret}Contract.Requires<ArgumentOutOfRangeException>(n > 0 && n < 42, "n should be from 1 to 41!");
+  }
+}

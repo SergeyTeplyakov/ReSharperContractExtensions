@@ -16,7 +16,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
     internal sealed class ArgumentRequiresExecutor
     {
         private readonly string _parameterName;
-        private readonly IDeclaredType _propertyType;
+        private readonly IClrTypeName _propertyType;
 
         private readonly ICSharpContextActionDataProvider _provider;
         private readonly bool _shouldBeGeneric;
@@ -26,7 +26,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         private readonly ICSharpFunctionDeclaration _functionDeclaration;
 
         public ArgumentRequiresExecutor(ICSharpContextActionDataProvider provider, bool shouldBeGeneric, 
-            ICSharpFunctionDeclaration functionDeclaration, string parameterName, IDeclaredType propertyType)
+            ICSharpFunctionDeclaration functionDeclaration, string parameterName, IClrTypeName propertyType)
         {
             Contract.Requires(provider != null);
             Contract.Requires(functionDeclaration != null);
@@ -99,7 +99,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
 
         private string CreateCompareStatement()
         {
-            if (_propertyType.GetClrName().FullName == typeof (string).FullName
+            if (_propertyType.FullName == typeof (string).FullName
                 && ShouldCheckStringsForNullOrEmpty())
             {
 

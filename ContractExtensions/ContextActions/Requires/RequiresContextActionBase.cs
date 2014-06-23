@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
@@ -32,11 +33,28 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             Contract.Invariant(_provider != null);
         }
 
+        protected virtual IEnumerable<RequiresContextActionBase> GetContextActions()
+        {
+            if (IsGenericByDefault())
+            {
+                _requiresShouldBeGeneric = true;
+            }
+            yield return this;
+
+            if (IsTestShell)
+                yield break;
+
+            var secondAction = CreateContextAction();
+            secondAction._requiresShouldBeGeneric = !_requiresShouldBeGeneric;
+            secondAction.IsAvailable(new UserDataHolder());
+            yield return secondAction;
+        }
+
         protected abstract string GetTextBase();
 
         protected abstract RequiresContextActionBase CreateContextAction();
 
-        public override sealed string Text
+        public override string Text
         {
             get
             {
@@ -49,44 +67,129 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             }
         }
 
-        public override sealed IEnumerable<IntentionAction> CreateBulbItems()
+        protected virtual bool IsSingleItem()
         {
-            bool genericByDefault = IsGenericByDefault();
-            if (genericByDefault)
+            return false;
+        }
+
+        protected bool IsTestShell { get { return Shell.Instance.IsTestShell; } }
+
+        protected IList<IntentionAction> CreateBulbItemsBase()
+        {
+            return base.CreateBulbItems().ToList();
+        } 
+
+        public override IEnumerable<IntentionAction> CreateBulbItems()
+        {
+            if (IsSingleItem())
             {
-                _requiresShouldBeGeneric = true;
+                return base.CreateBulbItems();
             }
 
-            var actions = base.CreateBulbItems().ToList();
+            var contextActions = GetContextActions().ToList();
+            Contract.Assert(contextActions.Count > 0);
 
-            // Tests are not supports more than one menu item!
-            if (Shell.Instance.IsTestShell)
-            {
-                return actions;
-            }
-
-            // Now we should create anchor and add subelements
-            // based on configuration!
-            var secondAction = CreateContextAction();
-            secondAction._requiresShouldBeGeneric = !_requiresShouldBeGeneric;
-            secondAction.IsAvailable(new UserDataHolder());
-
-            // The anchor is different based on configuration settings
+            var actions = contextActions[0].CreateBulbItemsBase();
             var anchor = actions[0].Anchor;
 
             var subMenuAnchor = new ExecutableGroupAnchor(
                 anchor,
                 IntentionsAnchors.ContextActionsAnchorPosition);
 
-            return new List<IntentionAction>
-            {
-                new IntentionAction(this, Text, BulbThemedIcons.ContextAction.Id, subMenuAnchor),
-                new IntentionAction(secondAction, secondAction.Text,
-                    BulbThemedIcons.ContextAction.Id, subMenuAnchor)
-            };
+            return contextActions.Select(
+                n => new IntentionAction(n, n.Text, BulbThemedIcons.ContextAction.Id, subMenuAnchor));
+
+
+            //var contextActionsEnumerator = contextActions.GetEnumerator();
+            //bool movedNext = contextActionsEnumerator.MoveNext();
+            //Contract.Assert(movedNext, "ContextActionsEnumerator should have first element");
+
+            //// Tests are not supports more than one menu item!
+            //if (IsTestShell)
+            //{
+            //    return contextActionsEnumerator.Current.CreateBulbItemsBase();
+            //}
+
+            //var firstAction = contextActionsEnumerator.Current;
+            //movedNext = contextActionsEnumerator.MoveNext();
+            //Contract.Assert(movedNext, "ContextActionsEnumerator should have second element");
+            //var secondAction = contextActionsEnumerator.Current;
+
+            // Now we should create anchor and add subelements
+            // based on configuration!
+            //var actions = firstAction.CreateBulbItemsBase();
+
+            // The anchor is different based on configuration settings
+
+
+            //var subMenuAnchor = new ExecutableGroupAnchor(
+            //    anchor,
+            //    IntentionsAnchors.ContextActionsAnchorPosition);
+
+            //return new List<IntentionAction>
+            //{
+            //    new IntentionAction(this, Text, BulbThemedIcons.ContextAction.Id, subMenuAnchor),
+            //    new IntentionAction(secondAction, secondAction.Text,
+            //        BulbThemedIcons.ContextAction.Id, subMenuAnchor)
+            //};
+
+            //bool genericByDefault = IsGenericByDefault();
+            //if (genericByDefault)
+            //{
+            //    _requiresShouldBeGeneric = true;
+            //}
+
+            //var actions = base.CreateBulbItems().ToList();
+
+            //// Tests are not supports more than one menu item!
+            //if (IsTestShell)
+            //{
+            //    return actions;
+            //}
+
+            //// Now we should create anchor and add subelements
+            //// based on configuration!
+            //var secondAction = CreateContextAction();
+            //secondAction._requiresShouldBeGeneric = !_requiresShouldBeGeneric;
+            //secondAction.IsAvailable(new UserDataHolder());
+
+            //// The anchor is different based on configuration settings
+            //var anchor = actions[0].Anchor;
+
+            //var subMenuAnchor = new ExecutableGroupAnchor(
+            //    anchor,
+            //    IntentionsAnchors.ContextActionsAnchorPosition);
+
+            //return new List<IntentionAction>
+            //{
+            //    new IntentionAction(this, Text, BulbThemedIcons.ContextAction.Id, subMenuAnchor),
+            //    new IntentionAction(secondAction, secondAction.Text,
+            //        BulbThemedIcons.ContextAction.Id, subMenuAnchor)
+            //};
         }
 
-        private bool IsGenericByDefault()
+        protected IEnumerable<IntentionAction> CombineContextActions(params RequiresContextActionBase[] actions)
+        {
+            Contract.Requires(actions != null);
+            Contract.Requires(actions.Length > 0);
+
+            // Tests are not supports more than one menu item!
+            if (Shell.Instance.IsTestShell)
+            {
+                return new IntentionAction[] {actions[0].CreateAction()};
+            }
+
+
+            throw new NotImplementedException();
+        }
+
+        private IntentionAction CreateAction(IAnchor anchor = null)
+        {
+            return new IntentionAction(this, Text, BulbThemedIcons.ContextAction.Id, anchor);
+        }
+
+
+        protected bool IsGenericByDefault()
         {
             var settings = _provider.SourceFile.GetSettingsStore()
                 .GetKey<ContractExtensionsSettings>(SettingsOptimization.OptimizeDefault);

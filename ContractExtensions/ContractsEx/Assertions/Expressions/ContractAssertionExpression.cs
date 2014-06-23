@@ -20,7 +20,7 @@ namespace ReSharper.ContractExtensions.ContractsEx
         private readonly AssertionType _assertionType;
         private readonly string _message;
 
-        protected ContractAssertionExpressionBase(AssertionType assertionType, [NotNull] string message)
+        protected ContractAssertionExpressionBase(AssertionType assertionType, string message)
         {
             _assertionType = assertionType;
             _message = message;
@@ -81,6 +81,16 @@ namespace ReSharper.ContractExtensions.ContractsEx
         }
     }
 
+    internal sealed class ContractRequiresExpression : ContractAssertionExpression
+    {
+        internal ContractRequiresExpression(AssertionType assertionType, List<PredicateCheck> predicates, IExpression predicateExpression, string message) 
+            : base(assertionType, predicates, predicateExpression, message)
+        {}
+
+        [CanBeNull]
+        public IClrTypeName GenericArgumentType { get; internal set; }
+    }
+
     /// <summary>
     /// Represents one Assertion from Code Contract library, like Contract.Requires, Contract.Invariant etc.
     /// </summary>
@@ -93,14 +103,18 @@ namespace ReSharper.ContractExtensions.ContractsEx
     /// </remarks>
     internal class ContractAssertionExpression : ContractAssertionExpressionBase
     {
-        private readonly List<IPredicateCheck> _predicates;
+        private readonly List<PredicateCheck> _predicates;
+        private readonly IExpression _predicateExpression;
 
-        private ContractAssertionExpression(AssertionType assertionType, List<IPredicateCheck> predicates, string message)
+        protected ContractAssertionExpression(AssertionType assertionType, List<PredicateCheck> predicates, 
+            IExpression predicateExpression, string message)
             : base(assertionType, message)
         {
             Contract.Requires(predicates != null);
+            Contract.Requires(predicateExpression != null);
 
             _predicates = predicates;
+            _predicateExpression = predicateExpression;
         }
 
         [ContractInvariantMethod]
@@ -116,7 +130,7 @@ namespace ReSharper.ContractExtensions.ContractsEx
         {
             // TODO: potential enhancement: simplify condition first and convert !(result == null)
             Contract.Requires(invocationExpression != null);
-
+            
             AssertionType? assertionType = GetAssertionType(invocationExpression);
             if (assertionType == null)
                 return null;
@@ -131,92 +145,48 @@ namespace ReSharper.ContractExtensions.ContractsEx
             if (predicates.Count == 0)
                 return null;
 
-            return new ContractAssertionExpression(assertionType.Value, predicates, 
-            ExtractMessage(invocationExpression));
+            if (assertionType == AssertionType.Precondition)
+            {
+                var genericRequiresType = GetGenericRequiresType(invocationExpression);
+                return new ContractRequiresExpression(assertionType.Value, predicates, originalExpression,
+                    ExtractMessage(invocationExpression))
+                {
+                    GenericArgumentType = genericRequiresType,
+                };
+            }
+
+            return new ContractAssertionExpression(assertionType.Value, predicates, originalExpression, 
+                ExtractMessage(invocationExpression));
         }
 
-        public ReadOnlyCollection<IPredicateCheck> PreconditionExpressions
+        [System.Diagnostics.Contracts.Pure]
+        private static IClrTypeName GetGenericRequiresType(IInvocationExpression invocationExpression)
+        {
+            Contract.Requires(invocationExpression != null);
+            var type = invocationExpression.Reference
+                .With(x => x.Invocation)
+                .With(x => x.TypeArguments.FirstOrDefault());
+
+            return type.With(x => x as IDeclaredType)
+                .With(x => x.GetClrName());
+        }
+
+        public ReadOnlyCollection<PredicateCheck> PreconditionExpressions
         {
             get
             {
-                Contract.Ensures(Contract.Result<ReadOnlyCollection<IPredicateCheck>>() != null);
-                return new ReadOnlyCollection<IPredicateCheck>(_predicates);
+                Contract.Ensures(Contract.Result<ReadOnlyCollection<PredicateCheck>>() != null);
+                return new ReadOnlyCollection<PredicateCheck>(_predicates);
             }
         }
-    }
 
-    internal sealed class ContractEnsureExpression : ContractAssertionExpressionBase
-    {
-        public ContractEnsureExpression(IDeclaredType resultType, string message) 
-            : base(AssertionType.Postcondition, message)
+        public IExpression PredicateExpression
         {
-            Contract.Requires(resultType != null);
-
-            ResultType = resultType;
-        }
-
-        [ContractInvariantMethod]
-        private void ObjectInvariant()
-        {
-            Contract.Invariant(ResultType != null);
-        }
-
-        [CanBeNull]
-        public static ContractEnsureExpression FromInvocationExpression(IInvocationExpression invocationExpression)
-        {
-            Contract.Requires(invocationExpression != null);
-
-            AssertionType? assertionType = GetAssertionType(invocationExpression);
-            if (assertionType == null || assertionType != AssertionType.Postcondition)
-                return null;
-
-            Contract.Assert(invocationExpression.Arguments.Count != 0,
-                "Precondition expression should have at least one argument!");
-
-            IExpression originalExpression = invocationExpression.Arguments[0].Expression;
-
-            var expression = originalExpression as IEqualityExpression;
-            if (expression == null)
-                return null;
-
-            // looking for type from expression like: Contract.Result<Type>()
-            var ensureType = ExtractContractResultType(
-                expression.LeftOperand.With(x => x as IInvocationExpression));
-
-            var right = expression.RightOperand
-                .With(x => x as ICSharpLiteralExpression)
-                .With(x => x.Literal)
-                .Return(x => x.GetText());
-
-            if (ensureType == null || right == null || right != "null" &&
-                expression.EqualityType != EqualityExpressionType.NE)
+            get
             {
-                return null;
+                Contract.Ensures(Contract.Result<IExpression>() != null);
+                return _predicateExpression;
             }
-
-            return new ContractEnsureExpression(ensureType, ExtractMessage(invocationExpression));
-        }
-
-        public IDeclaredType ResultType { get; private set; }
-
-        [CanBeNull]
-        private static IDeclaredType ExtractContractResultType(IInvocationExpression contractResultExpression)
-        {
-            if (contractResultExpression == null)
-                return null;
-
-            var callSiteType = contractResultExpression.GetCallSiteType();
-            var method = contractResultExpression.GetCalledMethod();
-
-            if (callSiteType.With(x => x.FullName) != typeof(Contract).FullName ||
-                method != "Result")
-                return null;
-
-            return contractResultExpression
-                .With(x => x.InvokedExpression)
-                .With(x => x as IReferenceExpression)
-                .With(x => x.TypeArguments.FirstOrDefault())
-                .Return(x => x as IDeclaredType);
         }
     }
 }

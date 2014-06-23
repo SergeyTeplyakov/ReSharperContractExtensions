@@ -1,0 +1,10 @@
+using System;
+using System.Diagnostics.Contracts;
+
+class A
+{
+  public void EnabledOnAbstractMethod(string s)
+  {
+    {caret}Contract.Requires<ArgumentNullException>(s != null, "s should not be null");
+  }
+}

@@ -98,7 +98,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             }
         }
 
-        private ArgumentRequiresExecutor ArgumentCheckExecutor(string argumentName, IDeclaredType argumentType,
+        private ArgumentRequiresExecutor ArgumentCheckExecutor(string argumentName, IClrTypeName argumentType,
             ICSharpFunctionDeclaration functionWithContract)
         {
             return new ArgumentRequiresExecutor(_provider, _requiresShouldBeGeneric, functionWithContract, argumentName, argumentType);

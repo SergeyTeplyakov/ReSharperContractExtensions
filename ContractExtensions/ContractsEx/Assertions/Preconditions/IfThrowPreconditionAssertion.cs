@@ -14,20 +14,23 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
     /// </summary>
     public sealed class IfThrowPreconditionAssertion : ContractPreconditionAssertion
     {
-        private readonly IList<IPredicateCheck> _predicates;
+        private readonly IList<PredicateCheck> _predicates;
 
-        private IfThrowPreconditionAssertion(ICSharpStatement statement, 
-            IList<IPredicateCheck> predicates) 
-            : base(statement)
+        private IfThrowPreconditionAssertion(IIfStatement statement, 
+            IList<PredicateCheck> predicates, IClrTypeName exceptionType, string message) 
+            : base(statement, message)
         {
             Contract.Requires(predicates != null);
 
+            IfStatement = statement;
             _predicates = predicates;
+            ExceptionType = exceptionType;
         }
 
-        public override bool IsCodeContractBasedPrecondition
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
         {
-            get { return false; }
+            Contract.Invariant(ExceptionType != null);
         }
 
         public override bool ChecksForNull(string name)
@@ -35,35 +38,54 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
             return _predicates.Any(p => p.ChecksForNull(name));
         }
 
+        public override PreconditionType PreconditionType
+        {
+            get { return PreconditionType.IfThrowStatement; }
+        }
+
+        public IIfStatement IfStatement { get; private set; }
+        public IClrTypeName ExceptionType { get; private set; }
+
         [CanBeNull]
         new internal static IfThrowPreconditionAssertion TryCreate(ICSharpStatement statement)
         {
             Contract.Requires(statement != null);
 
             var ifStatement = statement as IIfStatement;
-            if (ifStatement == null)
+            if (ifStatement == null || ifStatement.Condition == null)
                 return null;
 
             var preconditionChecks = PredicateCheckFactory.Create(ifStatement.Condition).ToList();
 
             IThrowStatement throwStatement = ParseThrowStatement(ifStatement);
+            if (throwStatement == null)
+                return null;
 
             var arguments = throwStatement.GetArguments().ToList();
-
-            // TODO: is there any other exception types except ArgumentNullException?
+            var exceptionType = throwStatement.GetExceptionType();
+            
+            // We can deal with any exception derived from the ArgumentException
             if (preconditionChecks.Count == 0 ||
-                !throwStatement.Throws(typeof(ArgumentNullException)) ||
+                !IsDerivedOrEqualFor(exceptionType, typeof(ArgumentException)) ||
                 arguments.Count == 0)
             {
                 return null;
             }
 
-            return new IfThrowPreconditionAssertion(statement, preconditionChecks)
-            {
-                Message = arguments.Skip(1).FirstOrDefault(), // message is optional and should be second argument
-            };
+            string message = arguments.Skip(1).FirstOrDefault(); // message is optional and should be second argument
+
+            return new IfThrowPreconditionAssertion(ifStatement, preconditionChecks, exceptionType, message);
         }
-         
+
+        /// <summary>
+        /// Note, this implementation support only built-in CLR types!!1
+        /// </summary>
+        private static bool IsDerivedOrEqualFor(IClrTypeName exceptionType, Type type)
+        {
+            Type realExceptionType = Type.GetType(exceptionType.FullName);
+            return type.IsAssignableFrom(realExceptionType);
+        }
+
         private static IThrowStatement ParseThrowStatement(IIfStatement ifStatement)
         {
             if (ifStatement.Then is IThrowStatement)
@@ -78,9 +100,11 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
 
     static class ThrowStatementExtensions
     {
-        public static bool Throws(this IThrowStatement throwStatement, Type exceptionType)
+        [CanBeNull]
+        public static IClrTypeName GetExceptionType(this IThrowStatement throwStatement)
         {
-            var declaredElement = 
+            Contract.Requires(throwStatement != null);
+            var declaredElement =
                 throwStatement
                 .With(x => x.Exception)
                 .With(x => x as IObjectCreationExpression)
@@ -89,20 +113,37 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
                 .With(x => x.DeclaredElement)
                 .With(x => x as IClrDeclaredElement);
 
-            var clrName = 
+            var clrName =
                 declaredElement
                 .With(x => x.GetContainingType())
                 .Return(x => x.GetClrName());
 
             if (clrName != null)
             {
-                return clrName.FullName == exceptionType.FullName;
+                return clrName;
             }
+
+            if (declaredElement == null)
+                return null;
 
             // Unfortunately in the following code GetContainingType always returns null
             // although this approach works perfectly for determining CallSiteType!
+            
+            // This is terrible hack, but I don't know how to solve this!
+            // declaredElement.ToString() returns "Class:Fullname" so I'll remove first part!
+            return new ClrTypeName(declaredElement.ToString().Replace("Class:", ""));
+        }
 
-            return declaredElement.ToString().Contains(exceptionType.FullName);
+        public static bool Throws(this IThrowStatement throwStatement, Type exceptionType)
+        {
+            Contract.Requires(throwStatement != null);
+            Contract.Requires(exceptionType != null);
+
+            var clrExceptionType = throwStatement.GetExceptionType();
+            if (clrExceptionType == null)
+                return false;
+
+            return clrExceptionType.FullName == exceptionType.FullName;
         }
 
         public static IEnumerable<string> GetArguments(this IThrowStatement throwStatement)

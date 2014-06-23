@@ -1,0 +1,10 @@
+using System;
+using System.Diagnostics.Contracts;
+
+class A
+{
+  public void EnabledOnAbstractMethod(int n)
+  {
+    Contract.Requires{caret}<ArgumentException>(n > 0);
+  }
+}

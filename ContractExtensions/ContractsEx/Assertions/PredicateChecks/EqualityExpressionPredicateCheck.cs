@@ -11,28 +11,30 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
     /// <remarks>
     /// For example, s != null, str.Length == 42 etc
     /// </remarks>
-    internal sealed class ExpressionPredicateCheck : IPredicateCheck
+    internal sealed class EqualityExpressionPredicateCheck : PredicateCheck
     {
-        public string ArgumentName { get; private set; }
+        private EqualityExpressionPredicateCheck(string argumentName) 
+            : base(argumentName)
+        {
+        }
+
         public EqualityExpressionType EqualityType { get; private set; }
         public ICSharpLiteralExpression RightHandSide { get; private set; }
 
-        public bool ChecksForNotNull(string name)
+        public override bool ChecksForNotNull()
         {
-            return ArgumentName == name && 
-                   (EqualityType == EqualityExpressionType.NE && 
-                    RightHandSide.Literal.GetText() == "null");
+            return EqualityType == EqualityExpressionType.NE && 
+                   RightHandSide.Literal.GetText() == "null";
         }
 
-        public bool ChecksForNull(string name)
+        public override bool ChecksForNull()
         {
-            return ArgumentName == name &&
-                   (EqualityType == EqualityExpressionType.EQEQ &&
-                    RightHandSide.Literal.GetText() == "null");
+            return EqualityType == EqualityExpressionType.EQEQ &&
+                RightHandSide.Literal.GetText() == "null";
         }
 
         [CanBeNull]
-        public static ExpressionPredicateCheck TryCreate(IEqualityExpression expression)
+        public static EqualityExpressionPredicateCheck TryCreate(IEqualityExpression expression)
         {
             Contract.Requires(expression != null);
 
@@ -50,9 +52,8 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
 
             string predicateArgument = (qualifierReference ?? left).NameIdentifier.Name;
 
-            return new ExpressionPredicateCheck
+            return new EqualityExpressionPredicateCheck(predicateArgument)
             {
-                ArgumentName = predicateArgument,
                 EqualityType = expression.EqualityType,
                 RightHandSide = right,
             };

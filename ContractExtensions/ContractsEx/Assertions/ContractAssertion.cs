@@ -11,19 +11,20 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
     public abstract class ContractAssertion
     {
         protected ContractAssertion(AssertionType assertionType,
-            ICSharpStatement statement)
+            ICSharpStatement statement, string message)
         {
             Contract.Requires(statement != null);
 
             Statement = statement;
             AssertionType = assertionType;
+            Message = message;
         }
 
         public AssertionType AssertionType { get; private set; }
         public ICSharpStatement Statement { get; private set; }
 
         [CanBeNull]
-        public string Message { get; protected set; }
+        public string Message { get; private set; }
 
         /// <summary>
         /// Returns true if current Assertion checks for null something with specified <paramref name="name"/>.

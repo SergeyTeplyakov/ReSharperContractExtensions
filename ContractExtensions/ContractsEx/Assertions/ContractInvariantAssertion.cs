@@ -10,7 +10,7 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
         private readonly ContractAssertionExpression _assertExpression;
 
         private ContractInvariantAssertion(ICSharpStatement statement, ContractAssertionExpression assertExpression) 
-            : base(AssertionType.Invariant, statement)
+            : base(AssertionType.Invariant, statement, assertExpression.Message)
         {
             Contract.Requires(assertExpression != null);
 

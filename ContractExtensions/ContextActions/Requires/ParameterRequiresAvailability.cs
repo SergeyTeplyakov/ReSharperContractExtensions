@@ -1,6 +1,7 @@
 using System.Diagnostics.Contracts;
 using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
 using JetBrains.ReSharper.Psi;
+using JetBrains.ReSharper.Psi.CSharp;
 using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.ReSharper.Psi.Util;
 using ReSharper.ContractExtensions.Utilities;
@@ -35,7 +36,8 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             if (IsAvailable)
             {
                 ParameterName = _parameterDeclaration.DeclaredName;
-                ParameterType = _parameterDeclaration.Type as IDeclaredType;
+
+                ParameterType = _parameterDeclaration.Type.GetClrTypeName();
             }
         }
 
@@ -61,7 +63,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
 
         public bool IsAvailable { get; private set; }
         public string ParameterName { get; private set; }
-        public IDeclaredType ParameterType { get; private set; }
+        public IClrTypeName ParameterType { get; private set; }
 
         private bool ComputeIsAvailable()
         {

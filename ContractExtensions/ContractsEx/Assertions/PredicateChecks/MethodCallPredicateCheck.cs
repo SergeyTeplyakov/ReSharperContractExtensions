@@ -6,27 +6,34 @@ using ReSharper.ContractExtensions.Utilities;
 
 namespace ReSharper.ContractExtensions.ContractsEx.Assertions
 {
-    internal sealed class MethodCallPredicateCheck : IPredicateCheck
+    internal sealed class MethodCallPredicateCheck : PredicateCheck
     {
         private bool _hasNot;
 
+        private MethodCallPredicateCheck(string argumentName) : base(argumentName)
+        {
+        }
+
         public IClrTypeName CallSiteType { get; private set; }
         public string MethodName { get; private set; }
-        public string ArgumentName { get; private set; }
 
-        public bool ChecksForNotNull(string name)
+        public override bool ChecksForNotNull()
         {
             return _hasNot &&
-                (name == ArgumentName) &&
                 (CallSiteType.FullName == typeof(string).FullName &&
                     (MethodName == "IsNullOrEmpty" || MethodName == "IsNullOrWhiteSpace"));
         }
 
-        public bool ChecksForNull(string name)
+        public override bool ChecksForNull()
         {
-            return !_hasNot && (name == ArgumentName) &&
-                (CallSiteType.FullName == typeof(string).FullName &&
-                    (MethodName == "IsNullOrEmpty" || MethodName == "IsNullOrWhiteSpace"));
+            return CallSiteType.FullName == typeof (string).FullName &&
+                   (MethodName == "IsNullOrEmpty" || MethodName == "IsNullOrWhiteSpace");
+        }
+
+        [CanBeNull]
+        public static MethodCallPredicateCheck TryCreate(IInvocationExpression expression)
+        {
+            return TryCreateImpl(expression, false);
         }
 
         [CanBeNull]
@@ -42,6 +49,12 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
             if (invocationExpression == null)
                 return null;
 
+            return TryCreateImpl(invocationExpression, expression.UnaryOperatorType == UnaryOperatorType.EXCL);
+        }
+
+        private static MethodCallPredicateCheck TryCreateImpl(IInvocationExpression invocationExpression,
+            bool hasNot)
+        {
             var callSiteType = invocationExpression.GetCallSiteType();
             var method = invocationExpression.GetCalledMethod();
             var argument = invocationExpression.Arguments.FirstOrDefault()
@@ -51,13 +64,10 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
             if (callSiteType == null || method == null || argument == null)
                 return null;
 
-            bool hasNot = expression.UnaryOperatorType == UnaryOperatorType.EXCL;
-
-            return new MethodCallPredicateCheck
+            return new MethodCallPredicateCheck(argument)
             {
                 CallSiteType = callSiteType,
                 MethodName = method,
-                ArgumentName = argument,
                 _hasNot = hasNot,
             };
         }

@@ -1,22 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics.Contracts;
-using System.Linq;
-using JetBrains.Application;
 using JetBrains.Application.Progress;
-using JetBrains.Application.Settings;
 using JetBrains.ProjectModel;
-using JetBrains.ReSharper.Daemon.Src.Bulbs.Resources;
 using JetBrains.ReSharper.Feature.Services.Bulbs;
 using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
-using JetBrains.ReSharper.Intentions.Extensibility;
-using JetBrains.ReSharper.Intentions.Extensibility.Menu;
-using JetBrains.ReSharper.Psi;
-using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.TextControl;
-using JetBrains.UI.BulbMenu;
 using JetBrains.Util;
-using ReSharper.ContractExtensions.Settings;
 
 namespace ReSharper.ContractExtensions.ContextActions.Requires
 {

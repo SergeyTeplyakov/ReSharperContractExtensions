@@ -10,7 +10,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
     {
         private readonly ICSharpContextActionDataProvider _provider;
         private readonly ICSharpFunctionDeclaration _currentFunction;
-        private readonly IDeclaredType _propertyType;
+        private readonly IClrTypeName _propertyType;
 
         public PropertySetterRequiresAvailability(ICSharpContextActionDataProvider provider)
         {
@@ -30,10 +30,10 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
 
         public bool IsAvailable { get; private set; }
         public ICSharpFunctionDeclaration SelectedFunctionDeclaration { get { return _currentFunction; } }
-        public IDeclaredType PropertyType { get { return _propertyType; } }
+        public IClrTypeName PropertyType { get { return _propertyType; } }
 
         private bool ComputeIsAvailable(out ICSharpFunctionDeclaration currentFunction,
-            out IDeclaredType propertyType)
+            out IClrTypeName propertyType)
         {
             currentFunction = null;
             propertyType = null;
@@ -49,7 +49,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             if (currentFunction == null)
                 return false;
 
-            propertyType = propertyDeclaration.Type as IDeclaredType;
+            propertyType = propertyDeclaration.Type.GetClrTypeName();
 
             return propertyDeclaration.Type.IsReferenceOrNullableType();
         }

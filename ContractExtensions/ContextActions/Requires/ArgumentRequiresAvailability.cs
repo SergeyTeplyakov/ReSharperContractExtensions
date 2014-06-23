@@ -13,7 +13,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
     {
         private readonly ICSharpContextActionDataProvider _provider;
         private readonly string _parameterName;
-        private readonly IDeclaredType _parameterType;
+        private readonly IClrTypeName _parameterType;
         private readonly ICSharpFunctionDeclaration _functionToInsertPrecondition;
 
         public readonly static ArgumentRequiresAvailability Unavailable = new ArgumentRequiresAvailability {IsAvailable = false};
@@ -48,7 +48,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             return new ArgumentRequiresAvailability(provider);
         }
 
-        private bool MethodSupportsRequires(out string parameterName, out IDeclaredType parameterType,
+        private bool MethodSupportsRequires(out string parameterName, out IClrTypeName parameterType,
             out ICSharpFunctionDeclaration functionToInsertPrecondition)
         {
             functionToInsertPrecondition = null;
@@ -58,7 +58,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         }
 
         [Pure]
-        private bool ParameterSupportRequires(out string parameterName, out IDeclaredType parameterType)
+        private bool ParameterSupportRequires(out string parameterName, out IClrTypeName parameterType)
         {
             var parameterDeclaration = ParameterRequiresAvailability.Create(_provider);
             if (parameterDeclaration.IsAvailable)
@@ -87,7 +87,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             return false;
         }
 
-        private bool PropertySetterSupportRequires(out string parameterName, out IDeclaredType parameterType,
+        private bool PropertySetterSupportRequires(out string parameterName, out IClrTypeName parameterType,
             out ICSharpFunctionDeclaration functionToInsertPrecondition)
         {
             parameterName = null;
@@ -116,6 +116,6 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         public bool IsAvailable { get; private set; }
         public ICSharpFunctionDeclaration FunctionToInsertPrecondition { get { return _functionToInsertPrecondition; } }
         public string SelectedParameterName { get { return _parameterName; } }
-        public IDeclaredType SelectedParameterType { get { return _parameterType; } }
+        public IClrTypeName SelectedParameterType { get { return _parameterType; } }
     }
 }

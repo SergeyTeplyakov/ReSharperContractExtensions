@@ -16,7 +16,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
     internal struct ArgumentDescription
     {
         public string Name;
-        public IDeclaredType Type;
+        public IClrTypeName Type;
     }
 
     /// <summary>

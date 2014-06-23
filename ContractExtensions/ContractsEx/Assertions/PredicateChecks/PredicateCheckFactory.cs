@@ -9,18 +9,25 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
 {
     internal static class PredicateCheckFactory
     {
-        public static IEnumerable<IPredicateCheck> Create(IExpression expression)
+        public static IEnumerable<PredicateCheck> Create(IExpression expression)
         {
             Contract.Requires(expression != null);
-            Contract.Ensures(Contract.Result<IEnumerable<IPredicateCheck>>() != null);
-
+            Contract.Ensures(Contract.Result<IEnumerable<PredicateCheck>>() != null);
+            
             return expression.ProcessRecursively<IEqualityExpression>()
-                .Select(ExpressionPredicateCheck.TryCreate)
+                .Select(EqualityExpressionPredicateCheck.TryCreate)
                 .Where(e => e != null)
-                .Cast<IPredicateCheck>()
+                .Cast<PredicateCheck>()
                 .Concat(
                     expression.ProcessRecursively<IUnaryOperatorExpression>()
                         .Select(MethodCallPredicateCheck.TryCreate)
+                        .Where(e => e != null))
+                .Concat(
+                    expression.ProcessRecursively<IInvocationExpression>()
+                    .Select(MethodCallPredicateCheck.TryCreate)
+                        .Where(e => e != null))
+                .Concat(expression.ProcessRecursively<IBinaryExpression>()
+                    .Select(ExpressionPredicateCheck.TryCreate)
                         .Where(e => e != null));
         }
     }
