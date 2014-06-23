@@ -78,12 +78,6 @@ namespace ReSharper.ContractExtensions.ContextActions.Infrastructure
 
     [ContractClassFor(typeof(ContextActionAvailabilityBase<>))]
     abstract class ContextActionAvailabilityBaseContract<T> : ContextActionAvailabilityBase<T> where T : ContextActionAvailabilityBase<T>, new()
-    {
-        protected override void CheckAvailability()
-        {
-            Contract.Requires(_provider != null);
-            throw new NotImplementedException();
-        }
-    }
+    {}
 
 }

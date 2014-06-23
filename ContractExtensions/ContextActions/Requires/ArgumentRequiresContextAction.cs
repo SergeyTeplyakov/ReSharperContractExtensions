@@ -31,7 +31,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
 
         protected override Action<ITextControl> ExecutePsiTransaction(ISolution solution, IProgressIndicator progress)
         {
-            Contract.Assert(_argumentRequiresAvailability._isAvailable);
+            Contract.Assert(_argumentRequiresAvailability.IsAvailable);
 
             var executor = new ArgumentRequiresExecutor(_provider, _requiresShouldBeGeneric,
                 _argumentRequiresAvailability.FunctionToInsertPrecondition,
@@ -46,7 +46,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         public override bool IsAvailable(IUserDataHolder cache)
         {
             _argumentRequiresAvailability = ArgumentRequiresAvailability.CheckIsAvailable(_provider);
-            return _argumentRequiresAvailability._isAvailable;
+            return _argumentRequiresAvailability.IsAvailable;
         }
 
         protected override string GetTextBase()
