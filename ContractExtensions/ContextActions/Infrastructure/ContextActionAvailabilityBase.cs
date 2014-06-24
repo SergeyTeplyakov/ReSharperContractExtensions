@@ -68,7 +68,9 @@ namespace ReSharper.ContractExtensions.ContextActions.Infrastructure
             var ctor =
                 typeof (TConcreteAvailability).GetConstructor(new Type[] {typeof (ICSharpContextActionDataProvider)});
 
-            Contract.Assert(ctor != null, "Descendant should have a constructor that accepts ICSharpContextActionDataProvider");
+            Contract.Assert(ctor != null, 
+                string.Format("Descendant ({0}) should have a constructor that accepts ICSharpContextActionDataProvider",
+                    typeof(TConcreteAvailability)));
 
             var result = (TConcreteAvailability)ctor.Invoke(new object[] { provider});
             result.CheckAvailability();

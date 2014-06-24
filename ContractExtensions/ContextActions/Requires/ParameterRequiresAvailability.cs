@@ -25,7 +25,9 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         public ParameterRequiresAvailability()
         {}
 
-        private ParameterRequiresAvailability(IParameterDeclaration parameterDeclaration)
+        private ParameterRequiresAvailability(ICSharpContextActionDataProvider provider, 
+            IParameterDeclaration parameterDeclaration)
+            : base(provider)
         {
             Contract.Requires(parameterDeclaration != null);
 
@@ -57,7 +59,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             if (selectedParameter == null)
                 return Unavailable;
 
-            return new ParameterRequiresAvailability(selectedParameter);
+            return new ParameterRequiresAvailability(provider, selectedParameter);
         }
 
         public string ParameterName { get; private set; }

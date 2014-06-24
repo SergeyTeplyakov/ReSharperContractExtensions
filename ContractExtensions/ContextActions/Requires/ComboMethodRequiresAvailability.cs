@@ -32,7 +32,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         public ComboMethodRequiresAvailability()
         {}
 
-        private ComboMethodRequiresAvailability(ICSharpContextActionDataProvider provider)
+        public ComboMethodRequiresAvailability(ICSharpContextActionDataProvider provider)
             : base(provider)
         {
 

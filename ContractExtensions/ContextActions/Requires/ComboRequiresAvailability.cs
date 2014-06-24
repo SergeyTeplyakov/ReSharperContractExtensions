@@ -26,7 +26,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         public ComboRequiresAvailability()
         {}
 
-        private ComboRequiresAvailability(ICSharpContextActionDataProvider provider)
+        public ComboRequiresAvailability(ICSharpContextActionDataProvider provider)
             : base(provider)
         {
             Contract.Requires(provider != null);
