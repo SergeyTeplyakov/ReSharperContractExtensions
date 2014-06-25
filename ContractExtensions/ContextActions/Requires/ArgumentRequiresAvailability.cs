@@ -10,6 +10,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
     /// <summary>
     /// Shows whether "Add Requires" action is available or not.
     /// </summary>
+    // TODO: rename to null-check requiers availability
     public sealed class ArgumentRequiresAvailability : ContextActionAvailabilityBase<ArgumentRequiresAvailability>
     {
         private readonly string _parameterName;
@@ -49,7 +50,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             functionToInsertPrecondition = null;
 
             return ParameterSupportRequires(out parameterName, out parameterType) &&
-                   FunctionSupportRequiers(_parameterName, out functionToInsertPrecondition);
+                   FunctionSupportRequiers(parameterName, out functionToInsertPrecondition);
         }
 
         [Pure]

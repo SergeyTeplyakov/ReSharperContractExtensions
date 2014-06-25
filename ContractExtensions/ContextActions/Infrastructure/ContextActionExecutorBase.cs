@@ -1,8 +1,11 @@
 ﻿using System.Diagnostics.Contracts;
 using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
+using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
+using JetBrains.ReSharper.Psi.Impl.Types;
 using JetBrains.ReSharper.Psi.Tree;
+using JetBrains.Util.Lazy;
 
 namespace ReSharper.ContractExtensions.ContextActions.Infrastructure
 {
@@ -48,5 +51,37 @@ namespace ReSharper.ContractExtensions.ContextActions.Infrastructure
         }
 
         public abstract void ExecuteTransaction();
+
+        [Pure]
+        protected IDeclaredType CreateDeclaredType(IClrTypeName clrTypeName)
+        {
+            Contract.Requires(clrTypeName != null);
+            Contract.Ensures(Contract.Result<IDeclaredType>() != null);
+
+            return new DeclaredTypeFromCLRName(clrTypeName, _provider.PsiModule, _provider.SourceFile.ResolveContext);
+        }
+
+        [Pure]
+        protected IDeclaredType CreateDeclaredType(System.Type type)
+        {
+            Contract.Requires(type != null);
+            Contract.Ensures(Contract.Result<IDeclaredType>() != null);
+
+            return CreateDeclaredType(new ClrTypeName(type.FullName));
+        }
+
+        [Pure]
+        protected PredefinedType GetPredefinedType()
+        {
+            Contract.Ensures(Contract.Result<PredefinedType>() != null);
+            return _provider.PsiModule.GetPredefinedType(
+                _provider.SourceFile.ResolveContext);
+        }
+
+        public IDeclaredType ContractType
+        {
+            get { return CreateDeclaredType(typeof (Contract)); }
+        }
+
     }
 }

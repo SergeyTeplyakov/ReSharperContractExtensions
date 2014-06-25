@@ -6,16 +6,19 @@ using ReSharper.ContractExtensions.Utilities;
 
 namespace ReSharper.ContractExtensions.ContractsEx.Assertions
 {
-    internal sealed class MethodCallPredicateCheck : PredicateCheck
+    internal class MethodCallPredicateCheck : PredicateCheck
     {
-        private bool _hasNot;
+        protected bool _hasNot;
 
-        private MethodCallPredicateCheck(string argumentName) : base(argumentName)
+        protected MethodCallPredicateCheck(string argumentName, IClrTypeName callSiteType) 
+            : base(argumentName)
         {
+            Contract.Requires(callSiteType != null);
+            CallSiteType = callSiteType;
         }
 
         public IClrTypeName CallSiteType { get; private set; }
-        public string MethodName { get; private set; }
+        public string MethodName { get; protected set; }
 
         public override bool ChecksForNotNull()
         {
@@ -56,20 +59,28 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
             bool hasNot)
         {
             var callSiteType = invocationExpression.GetCallSiteType();
+            if (IsEnum(callSiteType))
+                return EnumValidationPredicateCheck.TryCreateEnumPredicateCheck(invocationExpression, hasNot);
+
             var method = invocationExpression.GetCalledMethod();
             var argument = invocationExpression.Arguments.FirstOrDefault()
+                .With(x => x)
                 .With(x => x.Value as IReferenceExpression)
                 .With(x => x.NameIdentifier.Name);
 
             if (callSiteType == null || method == null || argument == null)
                 return null;
 
-            return new MethodCallPredicateCheck(argument)
+            return new MethodCallPredicateCheck(argument, callSiteType)
             {
-                CallSiteType = callSiteType,
                 MethodName = method,
                 _hasNot = hasNot,
             };
+        }
+
+        protected static bool IsEnum(IClrTypeName name)
+        {
+            return name.With(x => x.FullName) == typeof (System.Enum).FullName;
         }
     }
 }

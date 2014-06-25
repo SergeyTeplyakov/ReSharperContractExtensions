@@ -204,7 +204,7 @@ namespace ReSharper.ContractExtensions.ContextActions.ContractsFor
             var holder = CSharpTypeAndNamespaceHolderDeclarationNavigator.GetByTypeDeclaration(
                 _addContractForAvailability.TypeDeclaration);
             Contract.Assert(holder != null);
-
+            
             var physicalContractClassDeclaration =
                 (IClassDeclaration) holder.AddTypeDeclarationAfter(contractClass,
                     _addContractForAvailability.TypeDeclaration);

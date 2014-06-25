@@ -11,6 +11,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
     /// <summary>
     /// Checks that Contract.Requires should be available for specified function and parameter name.
     /// </summary>
+    // TODO: name is really poor!!
     internal sealed class FunctionRequiresAvailability : ContextActionAvailabilityBase<FunctionRequiresAvailability>
     {
         /// <summary>

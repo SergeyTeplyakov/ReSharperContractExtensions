@@ -3,58 +3,41 @@ using System.Linq;
 using JetBrains.Application.Progress;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
+using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Tree;
+using ReSharper.ContractExtensions.ContextActions.Infrastructure;
 using ReSharper.ContractExtensions.ContractsEx;
 using ReSharper.ContractExtensions.ContractUtils;
 using ReSharper.ContractExtensions.Utilities;
 
 namespace ReSharper.ContractExtensions.ContextActions.Ensures
 {
-    internal sealed class EnsuresExecutor
+    internal sealed class EnsuresExecutor : ContextActionExecutorBase
     {
-        private readonly ICSharpContextActionDataProvider _provider;
         private readonly ICSharpFunctionDeclaration _selectedFunction;
 
-
         public EnsuresExecutor(ICSharpContextActionDataProvider provider, ICSharpFunctionDeclaration selectedFunction)
+            : base(provider)
         {
             Contract.Requires(provider != null);
             Contract.Requires(selectedFunction != null);
 
-            _provider = provider;
-
             _selectedFunction = selectedFunction;
         }
 
-        public void Execute(ISolution solution, IProgressIndicator progress)
+        public override void ExecuteTransaction()
         {
             var functionDeclaration = _selectedFunction;
 
             var contractFunction = functionDeclaration.GetContractFunction();
             Contract.Assert(contractFunction != null);
 
-            var factory = _provider.ElementFactory;
-
-            ICSharpFile currentFile = (ICSharpFile)functionDeclaration.GetContainingFile();
-            Contract.Assert(currentFile != null);
-
-            AddNamespaceUsing(factory, currentFile);
-            var ensureStatement = CreateContractEnsures(factory, contractFunction);
+            var ensureStatement = CreateContractEnsures(_factory, contractFunction);
 
             var requires = GetLastRequiresStatementIfAny(contractFunction);
             AddStatementAfter(contractFunction, ensureStatement, requires);
-        }
-
-        private static void AddNamespaceUsing(CSharpElementFactory factory, ICSharpFile currentFile)
-        {
-            // TODO: how to express this in postcondition? Add another helper method for this!!
-            var diagnostics = factory.CreateUsingDirective("using $0", typeof(Contract).Namespace);
-            if (!currentFile.Imports.ContainsUsing(diagnostics))
-            {
-                currentFile.AddImport(diagnostics);
-            }
         }
 
         private ICSharpStatement CreateContractEnsures(CSharpElementFactory factory, ICSharpFunctionDeclaration functionDeclaration)
@@ -62,17 +45,16 @@ namespace ReSharper.ContractExtensions.ContextActions.Ensures
             Contract.Requires(factory != null);
             Contract.Requires(functionDeclaration != null);
             Contract.Ensures(Contract.Result<ICSharpStatement>() != null);
+            
             // TODO: IsValid returns true even if resulting expression would not compiles!
             // To check this, please remove semicolon in the string below.
             // Maybe Resolve method would be good!
             // Contract.Ensures(Contract.Result<ICSharpStatement>().IsValid());
 
-            string statementLiteral = string.Format("{0}.Ensures(Contract.Result<{1}>() != null);",
-                typeof(Contract).Name,
-                functionDeclaration.DeclaredElement.ReturnType.GetPresentableName(CSharpLanguage.Instance));
-            var result = factory.CreateStatement(statementLiteral);
+            string format = "$0.Ensures(Contract.Result<$1>() != null);";
+            var returnType = (IDeclaredType)functionDeclaration.DeclaredElement.ReturnType;
 
-            return result;
+            return factory.CreateStatement(format, ContractType, returnType);
         }
 
         private ICSharpStatement GetLastRequiresStatementIfAny(ICSharpFunctionDeclaration functionDeclaration)

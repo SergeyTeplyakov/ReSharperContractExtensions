@@ -2,45 +2,35 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using JetBrains.Annotations;
-using JetBrains.Application.Progress;
-using JetBrains.ProjectModel;
 using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
 using JetBrains.ReSharper.Psi;
-using JetBrains.ReSharper.Psi.CSharp;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.Util;
+using ReSharper.ContractExtensions.ContextActions.Infrastructure;
 using ReSharper.ContractExtensions.ContractsEx;
 using ReSharper.ContractExtensions.ContractUtils;
-using ReSharper.ContractExtensions.Utilities;
 
 namespace ReSharper.ContractExtensions.ContextActions.Invariants
 {
-    internal sealed class InvariantActionExecutor
+    internal sealed class InvariantActionExecutor : ContextActionExecutorBase
     {
         private readonly InvariantAvailability _invariantAvailability;
-        private readonly ICSharpContextActionDataProvider _provider;
-        private readonly CSharpElementFactory _factory;
-        private readonly ICSharpFile _currentFile;
         private readonly IClassLikeDeclaration _classDeclaration;
 
         public InvariantActionExecutor(InvariantAvailability invariantAvailability,
             ICSharpContextActionDataProvider provider)
+            : base(provider)
         {
             Contract.Requires(invariantAvailability != null);
             Contract.Requires(invariantAvailability.IsAvailable);
-            Contract.Requires(provider != null);
 
             _invariantAvailability = invariantAvailability;
-            _provider = provider;
-
-            _factory = CSharpElementFactory.GetInstance(provider.PsiModule);
             // TODO: look at this class CSharpStatementNavigator
 
             _classDeclaration = provider.GetSelectedElement<IClassLikeDeclaration>(true, true);
             
             Contract.Assert(provider.SelectedElement != null);
-            _currentFile = (ICSharpFile)provider.SelectedElement.GetContainingFile();
         }
 
         [ContractInvariantMethod]
@@ -48,13 +38,10 @@ namespace ReSharper.ContractExtensions.ContextActions.Invariants
         {
             Contract.Invariant(_invariantAvailability != null);
             Contract.Invariant(_classDeclaration != null);
-            Contract.Invariant(_currentFile != null);
-            Contract.Invariant(_factory != null);
         }
 
-        public void ExecuteTransaction(ISolution solution, IProgressIndicator progress)
+        public override void ExecuteTransaction()
         {
-            AddNamespaceUsingIfNecessary();
             var invariantMethod = AddObjectInvariantMethodIfNecessary();
 
             var invariantStatement = CreateInvariantStatement();
@@ -114,10 +101,6 @@ namespace ReSharper.ContractExtensions.ContextActions.Invariants
                 {
                     return assertion.Statement;
                 }
-                //if (requiresStatements.Contains(p))
-                //{
-                //    return requiresStatements[p].Select(x => x.Statement).LastOrDefault();
-                //}
             }
 
             return null;
@@ -187,20 +170,10 @@ namespace ReSharper.ContractExtensions.ContextActions.Invariants
         {
             Contract.Ensures(Contract.Result<ICSharpStatement>() != null);
 
-            string stringStatement = string.Format("{0}.Invariant({1} != null);",
-                typeof(Contract).Name, _invariantAvailability.SelectedMemberName);
-            var statement = _factory.CreateStatement(stringStatement);
+            string format = "$0.Invariant($1 != null);";
 
-            return statement;
-        }
-
-        private void AddNamespaceUsingIfNecessary()
-        {
-            var diagnostics = _factory.CreateUsingDirective("using $0", typeof(Contract).Namespace);
-            if (!_currentFile.Imports.ContainsUsing(diagnostics))
-            {
-                _currentFile.AddImport(diagnostics);
-            }
+            return _factory.CreateStatement(format,
+                ContractType, _invariantAvailability.SelectedMemberName);
         }
     }
 }

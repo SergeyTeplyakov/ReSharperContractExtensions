@@ -38,7 +38,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Ensures
 
             var executor = new ComboEnsuresExecutor(_provider, _comboEnsuresAvailability.AddContractAvailability,
                 _comboEnsuresAvailability.SelectedFunction);
-            executor.Execute(solution, progress);
+            executor.ExecuteTransaction();
 
             return null;
         }

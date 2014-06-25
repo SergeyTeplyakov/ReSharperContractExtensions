@@ -1,18 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
-using System.Linq;
-using System.Security.Cryptography;
 using JetBrains.Annotations;
 using JetBrains.Application;
-using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
-using JetBrains.ReSharper.Intentions.CSharp.ContextActions;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp.Impl;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.CSharp.Util;
 using JetBrains.ReSharper.Psi.ExtensionsAPI.Tree;
-using JetBrains.ReSharper.Psi.Tree;
 using ReSharper.ContractExtensions.ContextActions.Infrastructure;
 using ReSharper.ContractExtensions.ContractsEx.Assertions;
 using ReSharper.ContractExtensions.Utilities;
@@ -105,14 +100,11 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
 
             string predicateCheck = negatedExpression.GetText();
 
-            AddUsingForTheNamespaceIfNecessary(typeof(Contract).Namespace);
-
             ICSharpStatement newStatement = null;
             if (isGeneric)
             {
                 newStatement = CreateGenericContractRequires(ifThrowAssertion.ExceptionType, predicateCheck,
                     ifThrowAssertion.Message);
-                AddUsingForTheNamespaceIfNecessary(ifThrowAssertion.ExceptionType.NamespaceNames.First());
             }
             else
             {
@@ -140,11 +132,9 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         {
             string optionalMessage = message != null ? string.Format(", {0}", message) : null;
 
-            var stringStatement = string.Format("{0}.Requires<{1}>({2}{3});",
-                    typeof(Contract).Name, exceptionType.ShortName, predicateExpression,
-                    optionalMessage);
+            var format = string.Format("$0.Requires<$1>({0}{1});", predicateExpression, optionalMessage);
 
-            return _factory.CreateStatement(stringStatement);
+            return _factory.CreateStatement(format, ContractType, CreateDeclaredType(exceptionType));
         }
 
         [System.Diagnostics.Contracts.Pure]
@@ -152,10 +142,10 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         {
             string optionalMessage = message != null ? string.Format(", {0}", message) : null;
 
-            var stringStatement = string.Format("{0}.Requires({1}{2});",
-                    typeof(Contract).Name, predicateExpression, optionalMessage);
+            var stringStatement = string.Format("$0.Requires({0}{1});",
+                    predicateExpression, optionalMessage);
 
-            return _factory.CreateStatement(stringStatement);
+            return _factory.CreateStatement(stringStatement, ContractType);
         }
 
         private void FromRequiresToGenericRequires(ContractPreconditionAssertion assertion)
@@ -168,7 +158,6 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             string predicate = requiresAssertion.ContractAssertionExpression.PredicateExpression.GetText();
             var newStatement = CreateGenericContractRequires(exceptionType, predicate, requiresAssertion.Message);
 
-            AddUsingForTheNamespaceIfNecessary(exceptionType.NamespaceNames.First());
             ReplaceStatements(requiresAssertion.Statement, newStatement);
         }
 

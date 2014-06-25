@@ -90,6 +90,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         private void AddRequiresTo(ICSharpFunctionDeclaration contractFunction)
         {
             var executors = _availability.ArgumentNames
+                .Reverse() // This fix an issue that ArgumentCheckExecutor can't find newly created Contract.Requires and adds new Contract.Requires in the opposite order!
                 .Select(pn => ArgumentCheckExecutor(pn.Name, pn.Type, contractFunction));
 
             foreach (var executor in executors)

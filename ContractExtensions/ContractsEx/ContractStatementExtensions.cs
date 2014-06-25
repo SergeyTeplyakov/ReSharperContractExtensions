@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using JetBrains.Annotations;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using ReSharper.ContractExtensions.ContractsEx.Assertions;
 using ReSharper.ContractExtensions.ContractUtils;
@@ -33,6 +34,33 @@ namespace ReSharper.ContractExtensions.ContractsEx
             Contract.Assert(functionDeclaration.Body != null);
             return functionDeclaration.Body.Statements
                 .Select(ContractPreconditionAssertion.TryCreate).Where(p => p != null);
+        }
+
+        [System.Diagnostics.Contracts.Pure, CanBeNull]
+        public static ContractPreconditionAssertion GetLastPreconditionFor(this ICSharpFunctionDeclaration functionDeclaration, 
+            string parameterName)
+        {
+            var parameters = functionDeclaration.DeclaredElement.Parameters
+                .Select(p => p.ShortName).TakeWhile(paramName => paramName != parameterName)
+                .Reverse().ToList();
+
+            // Creating lookup where key is argument name, and the value is statements.
+            var requiresStatements =
+                functionDeclaration
+                    .GetContractPreconditions().ToList();
+            /*.SelectMany(x => x.ArgumentNames.Select(a => new {Statement = x, ArgumentName = a}))
+            .ToLookup(x => x.ArgumentName, x => x.Statement)*/
+            ;
+
+            // Looking for the last usage of the parameters in the requires statements
+            foreach (var p in parameters)
+            {
+                var precondition = requiresStatements.LastOrDefault(r => r.ChecksForNull(p));
+                if (precondition != null)
+                    return precondition;
+            }
+
+            return null;
         }
 
         public static IEnumerable<ContractEnsuresAssertion> GetContractEnsures(

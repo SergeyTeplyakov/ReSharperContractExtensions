@@ -1,3 +1,25 @@
 1. Caret
 
 Could be found at _provider.GetCaretOffset
+
+2. Check for null-ness (CheckVariableNullAction) can change for Assert is not null!
+private bool CanBeNull(ILocalVariableDeclaration localVariableDeclaration)
+        {
+            ICSharpControlFlowGraf controlFlowGraf = base.Provider.GetControlFlowGraf();
+            ICSharpControlFlowAnalysisResult result = base.Provider.InspectControlFlowGraf();
+            if (result == null)
+            {
+                return false;
+            }
+            ILocalVariable declaredElement = localVariableDeclaration.DeclaredElement;
+            IControlFlowElement position = Enumerable.FirstOrDefault<IControlFlowElement>(controlFlowGraf.AllElements, (Func<IControlFlowElement, bool>) (e => (e.SourceElement == localVariableDeclaration)));
+            if (position == null)
+            {
+                return false;
+            }
+            if (result.GetVariableStateAt(position, declaredElement) == CSharpControlFlowNullReferenceState.NOT_NULL)
+            {
+                return false;
+            }
+            return true;
+        }

@@ -38,7 +38,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Invariants
             Contract.Assert(_invariantContract.IsAvailable);
 
             var executor = new InvariantActionExecutor(_invariantContract, _provider);
-            executor.ExecuteTransaction(solution, progress);
+            executor.ExecuteTransaction();
 
             return null;
         }

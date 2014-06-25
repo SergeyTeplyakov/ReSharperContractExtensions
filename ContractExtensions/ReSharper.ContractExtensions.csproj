@@ -90,13 +90,15 @@
     <Compile Include="ContextActions\Ensures\EnsuresAvailability.cs" />
     <Compile Include="ContextActions\Ensures\EnsuresExecutor.cs" />
     <Compile Include="ContextActions\Ensures\ReturnTypeEnsuresAvailability.cs" />
+    <Compile Include="ContextActions\EnumChecks\EnumCheckRequiresAvailability.cs" />
+    <Compile Include="ContextActions\EnumChecks\EnumCheckRequiresContextAction.cs" />
+    <Compile Include="ContextActions\EnumChecks\EnumCheckRequiresExecutor.cs" />
     <Compile Include="ContextActions\Infrastructure\ContextActionExecutorBase.cs" />
     <Compile Include="ContextActions\Invariants\FieldOrPropertyDeclaration.cs" />
     <Compile Include="ContextActions\Invariants\InvariantActionExecutor.cs" />
     <Compile Include="ContextActions\Invariants\InvariantAvailability.cs" />
     <Compile Include="ContextActions\Invariants\InvariantContextAction.cs" />
     <Compile Include="ContextActions\Ensures\EnsuresContextAction.cs" />
-    <Compile Include="ContextActions\Requires\ComboMethodRequiresExecutor.cs" />
     <Compile Include="ContextActions\Requires\ComboRequiresAvailability.cs" />
     <Compile Include="ContextActions\Requires\ComboRequiresContextAction.cs" />
     <Compile Include="ContextActions\Infrastructure\ContextActionAvailabilityBase.cs" />
@@ -115,6 +117,7 @@
     <Compile Include="ContractsEx\Assertions\Preconditions\ContractRequiresPreconditionAssertion.cs" />
     <Compile Include="ContractsEx\Assertions\ContractInvariantAssertion.cs" />
     <Compile Include="ContractsEx\Assertions\ContractEnsuresAssertion.cs" />
+    <Compile Include="ContractsEx\Assertions\PredicateChecks\EnumValidationPredicateCheck.cs" />
     <Compile Include="ContractsEx\Assertions\PredicateChecks\EqualityExpressionPredicateCheck.cs" />
     <Compile Include="ContractsEx\Assertions\Preconditions\GuardBasedPreconditionAssertion.cs" />
     <Compile Include="ContractsEx\Assertions\Preconditions\IfThrowPreconditionAssertion.cs" />
