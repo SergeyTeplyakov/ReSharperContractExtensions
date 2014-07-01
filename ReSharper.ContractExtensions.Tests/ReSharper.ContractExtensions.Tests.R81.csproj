@@ -14,13 +14,13 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
-    <BaseIntermediateOutputPath>obj\R82\</BaseIntermediateOutputPath>
+    <BaseIntermediateOutputPath>obj\R81\</BaseIntermediateOutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>binR81\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -29,7 +29,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>binR81\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -50,6 +50,10 @@
     <Compile Include="src\ContractFor\AddContractForContextActionExecuteTest.cs" />
     <Compile Include="src\Ensures\ComboEnsuresContextActionAvailabilityTest.cs" />
     <Compile Include="src\Ensures\ComboEnsuresContextActionExecuteTest.cs" />
+    <Compile Include="src\EnumChecks\EnumCheckEnsuresContextActionAvailabilityTest.cs" />
+    <Compile Include="src\EnumChecks\EnumCheckRequiresContextActionAvailabilityTest.cs" />
+    <Compile Include="src\EnumChecks\EnumCheckEnsuresContextActionExecutionTest.cs" />
+    <Compile Include="src\EnumChecks\EnumCheckRequiresContextActionExecutionTest.cs" />
     <Compile Include="src\Invariants\InvariantActionAvailabilityTest.cs" />
     <Compile Include="src\Invariants\InvariantContextActionExecuteTest.cs" />
     <Compile Include="src\Logic\RequresStatementTest.cs" />
@@ -84,7 +88,7 @@
     <None Include="test\data\Intentions\ContextActions\Requires\ExecutionWithExistingUsing.cs.gold" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.R82.config">
+    <None Include="packages.R81.config">
       <SubType>Designer</SubType>
     </None>
     <None Include="test\data\Intentions\ContextActions\Ensures\Execution.cs.gold" />
@@ -96,9 +100,9 @@
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ContractExtensions\ReSharper.ContractExtensions.csproj">
-      <Project>{015f0c46-eb80-40fa-a508-cad66b02b7e6}</Project>
-      <Name>ReSharper.ContractExtensions</Name>
+    <ProjectReference Include="..\ContractExtensions\ReSharper.ContractExtensions.R81.csproj">
+      <Project>{b0a3dcd3-5b44-4e3b-9208-42c9ad545d35}</Project>
+      <Name>ReSharper.ContractExtensions.R81</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

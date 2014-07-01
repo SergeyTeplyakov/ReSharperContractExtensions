@@ -14,13 +14,13 @@
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
     <CodeContractsAssemblyMode>0</CodeContractsAssemblyMode>
-    <BaseIntermediateOutputPath>obj\R82\</BaseIntermediateOutputPath>
+    <BaseIntermediateOutputPath>obj\R81\</BaseIntermediateOutputPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>binR82\Debug\</OutputPath>
+    <OutputPath>binR81\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -62,7 +62,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>binR82\Release\</OutputPath>
+    <OutputPath>binR81\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -90,13 +90,17 @@
     <Compile Include="ContextActions\Ensures\EnsuresAvailability.cs" />
     <Compile Include="ContextActions\Ensures\EnsuresExecutor.cs" />
     <Compile Include="ContextActions\Ensures\ReturnTypeEnsuresAvailability.cs" />
+    <Compile Include="ContextActions\EnumChecks\EnumCheckEnsuresContextAction.cs" />
+    <Compile Include="ContextActions\EnumChecks\EnumCheckRequiresAvailability.cs" />
+    <Compile Include="ContextActions\EnumChecks\EnumCheckRequiresContextAction.cs" />
+    <Compile Include="ContextActions\EnumChecks\EnumCheckRequiresExecutor.cs" />
     <Compile Include="ContextActions\Infrastructure\ContextActionExecutorBase.cs" />
+    <Compile Include="ContextActions\Infrastructure\ContractsContextActionBase.cs" />
     <Compile Include="ContextActions\Invariants\FieldOrPropertyDeclaration.cs" />
     <Compile Include="ContextActions\Invariants\InvariantActionExecutor.cs" />
     <Compile Include="ContextActions\Invariants\InvariantAvailability.cs" />
     <Compile Include="ContextActions\Invariants\InvariantContextAction.cs" />
     <Compile Include="ContextActions\Ensures\EnsuresContextAction.cs" />
-    <Compile Include="ContextActions\Requires\ComboMethodRequiresExecutor.cs" />
     <Compile Include="ContextActions\Requires\ComboRequiresAvailability.cs" />
     <Compile Include="ContextActions\Requires\ComboRequiresContextAction.cs" />
     <Compile Include="ContextActions\Infrastructure\ContextActionAvailabilityBase.cs" />
@@ -111,14 +115,19 @@
     <Compile Include="ContextActions\Requires\RequiresContextActionBase.cs" />
     <Compile Include="ContractsEx\Assertions\AssertionType.cs" />
     <Compile Include="ContractsEx\Assertions\ContractAssertion.cs" />
+    <Compile Include="ContractsEx\Assertions\Expressions\ContractAssertionExpressionBase.cs" />
     <Compile Include="ContractsEx\Assertions\Expressions\ContractEnsureExpression.cs" />
+    <Compile Include="ContractsEx\Assertions\Expressions\ContractRequiresExpression.cs" />
+    <Compile Include="ContractsEx\Assertions\Expressions\IfThrowPreconditionExpression.cs" />
     <Compile Include="ContractsEx\Assertions\Preconditions\ContractRequiresPreconditionAssertion.cs" />
     <Compile Include="ContractsEx\Assertions\ContractInvariantAssertion.cs" />
     <Compile Include="ContractsEx\Assertions\ContractEnsuresAssertion.cs" />
+    <Compile Include="ContractsEx\Assertions\PredicateChecks\EnumValidationPredicateCheck.cs" />
     <Compile Include="ContractsEx\Assertions\PredicateChecks\EqualityExpressionPredicateCheck.cs" />
     <Compile Include="ContractsEx\Assertions\Preconditions\GuardBasedPreconditionAssertion.cs" />
     <Compile Include="ContractsEx\Assertions\Preconditions\IfThrowPreconditionAssertion.cs" />
     <Compile Include="ContractsEx\Assertions\PredicateChecks\ExpressionPredicateCheck.cs" />
+    <Compile Include="ContractsEx\Assertions\PredicateChecks\PredicateArgument.cs" />
     <Compile Include="ContractsEx\Assertions\PredicateChecks\PredicateCheck.cs" />
     <Compile Include="ContractsEx\Assertions\PredicateChecks\MethodCallPredicateCheck.cs" />
     <Compile Include="ContractsEx\Assertions\Preconditions\ContractPreconditionAssertion.cs" />
@@ -140,7 +149,6 @@
     <Compile Include="Utilities\ClassLikeDeclarationExtensions.cs" />
     <Compile Include="Utilities\CSharpContextActionDataProviderExtensions.cs" />
     <Compile Include="Utilities\ExpressionEx.cs" />
-    <Compile Include="Utilities\Extensions.cs" />
     <Compile Include="Utilities\MethodDeclarationEx.cs" />
     <Compile Include="Utilities\Monadic.cs" />
     <Compile Include="Utilities\StringExtensions.cs" />
@@ -149,7 +157,7 @@
     <Compile Include="Utilities\TypeExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <None Include="packages.R81.config" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Configuration\" />

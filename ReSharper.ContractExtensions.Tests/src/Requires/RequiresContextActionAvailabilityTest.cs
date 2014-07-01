@@ -14,6 +14,7 @@ namespace ReSharper.ContractExtensions.Tests.Preconditions
         }
 
         [TestCase("Availability")]
+        [TestCase("AvailabilityDebug")]
         public void TestSimpleAvailability(string testSrc)
         {
             DoOneTest(testSrc);
