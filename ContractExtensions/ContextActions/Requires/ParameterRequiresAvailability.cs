@@ -101,9 +101,8 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
 
             // TODO: not sure that GetDefaultValue could return null!
             return _parameterDeclaration.DeclaredElement.IsOptional
-                   && (defaultValue == null
-                       || defaultValue.ConstantValue == null
-                       || defaultValue.ConstantValue.Value == null);
+                   && (defaultValue.With(x => x.ConstantValue).With(x => x.Value) == null ||
+                       defaultValue.With(x => x.ConstantValue).With(x => x.Type) == null);
         }
 
         [Pure]
