@@ -2,8 +2,11 @@
 using JetBrains.Annotations;
 using JetBrains.Application.Settings;
 using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
+using JetBrains.ReSharper.Intentions.Util;
 using JetBrains.ReSharper.Psi;
+using JetBrains.ReSharper.Psi.CSharp;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
+using JetBrains.ReSharper.Psi.CSharp.Util;
 using ReSharper.ContractExtensions.ContextActions.Infrastructure;
 using ReSharper.ContractExtensions.ContractsEx;
 using ReSharper.ContractExtensions.Settings;
@@ -42,17 +45,17 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             Contract.Invariant(_functionDeclaration != null);
         }
 
-        public override void ExecuteTransaction()
+        protected override void DoExecuteTransaction()
         {
             var statement = CreateContractRequires();
             var addAfter = GetPreviousRequires();
 
             // Tried to fix an issue that I can't find a precondition for the newly created Contract.Requires
             // Controlflow talked about physical trees, but in this case didn't help!!
-            //var declaration = (ICSharpFunctionDeclaration)CSharpFunctionDeclarationNavigator.GetByBody(_functionDeclaration.Body);
-            //declaration.Body.AddStatementAfter(statement, addAfter);
 
             _functionDeclaration.Body.AddStatementAfter(statement, addAfter);
+            // Following line will break a lot of tests (because will add internal class for generatec classes etc)
+            // ContextActionUtils.FormatWithDefaultProfile(_currentFile);
         }
 
         [System.Diagnostics.Contracts.Pure]
@@ -61,7 +64,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             Contract.Ensures(Contract.Result<ICSharpStatement>() != null);
 
             var compareExpression = CreateCompareExpression();
-            IDeclaredType contract = CreateDeclaredType(typeof(Contract));
+            ITypeElement contract = CreateDeclaredType(typeof(Contract));
 
             if (_shouldBeGeneric)
             {

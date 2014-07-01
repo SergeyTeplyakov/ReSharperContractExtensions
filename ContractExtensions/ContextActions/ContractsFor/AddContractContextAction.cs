@@ -7,13 +7,13 @@ using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
 using JetBrains.ReSharper.Intentions.Extensibility;
 using JetBrains.TextControl;
 using JetBrains.Util;
+using ReSharper.ContractExtensions.ContextActions.Infrastructure;
 
 namespace ReSharper.ContractExtensions.ContextActions.ContractsFor
 {
     [ContextAction(Name = Name, Group = "Contracts", Description = Description, Priority = 100)]
-    public sealed class AddContractContextAction : ContextActionBase
+    public sealed class AddContractContextAction : ContractsContextActionBase
     {
-        private readonly ICSharpContextActionDataProvider _provider;
         private const string MenuTextFormat = "Add or Update Contract Class for '{0}'";
         private const string Name = "Add Contract Class";
         private const string Description = "Add Contract Class for selected interface or abstract class.";
@@ -21,18 +21,13 @@ namespace ReSharper.ContractExtensions.ContextActions.ContractsFor
         private AddContractAvailability _addContractForAvailability = AddContractAvailability.Unavailable;
 
         public AddContractContextAction(ICSharpContextActionDataProvider provider)
-        {
-            Contract.Requires(provider != null);
+            : base(provider)
+        {}
 
-            _provider = provider;
-        }
-
-        protected override Action<ITextControl> ExecutePsiTransaction(ISolution solution, IProgressIndicator progress)
+        protected override void ExecuteTransaction()
         {
             var executor = new AddContractExecutor(_provider, _addContractForAvailability);
             executor.Execute();
-
-            return null;
         }
 
         public override string Text
@@ -44,7 +39,7 @@ namespace ReSharper.ContractExtensions.ContextActions.ContractsFor
             }
         }
 
-        public override bool IsAvailable(IUserDataHolder cache)
+        protected override bool DoIsAvailable()
         {
             _addContractForAvailability = AddContractAvailability.IsAvailableForSelectedType(_provider);
             return _addContractForAvailability.IsAvailable;

@@ -50,7 +50,9 @@
     <Compile Include="src\ContractFor\AddContractForContextActionExecuteTest.cs" />
     <Compile Include="src\Ensures\ComboEnsuresContextActionAvailabilityTest.cs" />
     <Compile Include="src\Ensures\ComboEnsuresContextActionExecuteTest.cs" />
+    <Compile Include="src\EnumChecks\EnumCheckEnsuresContextActionAvailabilityTest.cs" />
     <Compile Include="src\EnumChecks\EnumCheckRequiresContextActionAvailabilityTest.cs" />
+    <Compile Include="src\EnumChecks\EnumCheckEnsuresContextActionExecutionTest.cs" />
     <Compile Include="src\EnumChecks\EnumCheckRequiresContextActionExecutionTest.cs" />
     <Compile Include="src\Invariants\InvariantActionAvailabilityTest.cs" />
     <Compile Include="src\Invariants\InvariantContextActionExecuteTest.cs" />

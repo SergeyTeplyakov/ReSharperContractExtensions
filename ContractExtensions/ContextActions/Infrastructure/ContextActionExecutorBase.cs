@@ -50,22 +50,29 @@ namespace ReSharper.ContractExtensions.ContextActions.Infrastructure
             Contract.Invariant(_currentFile != null);
         }
 
-        public abstract void ExecuteTransaction();
+        public void ExecuteTransaction()
+        {
+            DoExecuteTransaction();
+            _provider.PsiServices.Caches.Update();
+        }
+
+        protected abstract void DoExecuteTransaction();
 
         [Pure]
-        protected IDeclaredType CreateDeclaredType(IClrTypeName clrTypeName)
+        protected ITypeElement CreateDeclaredType(IClrTypeName clrTypeName)
         {
             Contract.Requires(clrTypeName != null);
-            Contract.Ensures(Contract.Result<IDeclaredType>() != null);
+            Contract.Ensures(Contract.Result<ITypeElement>() != null);
 
-            return new DeclaredTypeFromCLRName(clrTypeName, _provider.PsiModule, _provider.SourceFile.ResolveContext);
+            return new DeclaredTypeFromCLRName(clrTypeName, _provider.PsiModule, _provider.SourceFile.ResolveContext)
+                .GetTypeElement();
         }
 
         [Pure]
-        protected IDeclaredType CreateDeclaredType(System.Type type)
+        protected ITypeElement CreateDeclaredType(System.Type type)
         {
             Contract.Requires(type != null);
-            Contract.Ensures(Contract.Result<IDeclaredType>() != null);
+            Contract.Ensures(Contract.Result<ITypeElement>() != null);
 
             return CreateDeclaredType(new ClrTypeName(type.FullName));
         }
@@ -78,9 +85,13 @@ namespace ReSharper.ContractExtensions.ContextActions.Infrastructure
                 _provider.SourceFile.ResolveContext);
         }
 
-        public IDeclaredType ContractType
+        public ITypeElement ContractType
         {
-            get { return CreateDeclaredType(typeof (Contract)); }
+            get
+            {
+                Contract.Ensures(Contract.Result<ITypeElement>() != null);
+                return CreateDeclaredType(typeof (Contract));
+            }
         }
 
     }

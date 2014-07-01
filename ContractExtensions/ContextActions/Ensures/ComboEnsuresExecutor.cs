@@ -28,13 +28,13 @@ namespace ReSharper.ContractExtensions.ContextActions.Ensures
             _selectedFunctionDeclaration = selectedFunctionDeclaration;
         }
 
-        public override void ExecuteTransaction()
+        protected override void DoExecuteTransaction()
         {
             var addContractExecutor = new AddContractExecutor(_provider, _addContractAvailability, 
                 _selectedFunctionDeclaration);
             addContractExecutor.Execute();
 
-            var addEnsuresExecutor = new EnsuresExecutor(_provider, _selectedFunctionDeclaration);
+            var addEnsuresExecutor = EnsuresExecutor.CreateNotNullEnsuresExecutor(_provider, _selectedFunctionDeclaration);
             addEnsuresExecutor.ExecuteTransaction();
         }
     }

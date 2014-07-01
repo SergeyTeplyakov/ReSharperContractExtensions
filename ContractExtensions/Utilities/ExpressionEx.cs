@@ -5,9 +5,7 @@ using JetBrains.Annotations;
 using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
-using JetBrains.ReSharper.Psi.Resolve;
 using JetBrains.ReSharper.Psi.Tree;
-using JetBrains.Util.Special;
 
 namespace ReSharper.ContractExtensions.Utilities
 {
@@ -105,6 +103,4 @@ namespace ReSharper.ContractExtensions.Utilities
             public bool ProcessingIsFinished { get; private set; }
         }
     }
-
-    
 }

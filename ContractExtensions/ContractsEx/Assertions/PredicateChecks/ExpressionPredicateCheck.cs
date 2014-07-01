@@ -15,8 +15,8 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
     {
         private readonly IBinaryExpression _binaryExpression;
 
-        public ExpressionPredicateCheck(string argumentName, IBinaryExpression binaryExpression)
-            : base(argumentName)
+        public ExpressionPredicateCheck(PredicateArgument argument, IBinaryExpression binaryExpression)
+            : base(argument)
         {
             Contract.Requires(binaryExpression != null);
             _binaryExpression = binaryExpression;
@@ -42,7 +42,10 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
         {
             Contract.Requires(expression != null);
 
-            return new ExpressionPredicateCheck("fake", expression);
+            return new ExpressionPredicateCheck(new FakeArgument(), expression);
         }
+
+        private class FakeArgument : PredicateArgument
+        {}
     }
 }

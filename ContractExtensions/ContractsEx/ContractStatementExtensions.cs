@@ -47,7 +47,9 @@ namespace ReSharper.ContractExtensions.ContractsEx
             // Creating lookup where key is argument name, and the value is statements.
             var requiresStatements =
                 functionDeclaration
-                    .GetContractPreconditions().ToList();
+                    .GetContractPreconditions()
+                    .OfType<ContractRequiresPreconditionAssertion>()
+                    .ToList();
             /*.SelectMany(x => x.ArgumentNames.Select(a => new {Statement = x, ArgumentName = a}))
             .ToLookup(x => x.ArgumentName, x => x.Statement)*/
             ;
@@ -55,7 +57,11 @@ namespace ReSharper.ContractExtensions.ContractsEx
             // Looking for the last usage of the parameters in the requires statements
             foreach (var p in parameters)
             {
-                var precondition = requiresStatements.LastOrDefault(r => r.ChecksForNull(p));
+                // TODO: it seems terrible!!! and ugly!
+                var precondition = requiresStatements
+                    .LastOrDefault(r => r.AssertsArgumentIsNotNull(pa => 
+                        pa.CompareReferenceArgument(ra => ra.BaseArgumentName == p)));
+
                 if (precondition != null)
                     return precondition;
             }

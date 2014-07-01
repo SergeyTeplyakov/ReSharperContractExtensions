@@ -1,0 +1,19 @@
+using System;
+using System.Diagnostics.Contracts;
+
+namespace CustomNamespace 
+{
+  enum Foo
+  {
+    Value1,
+  }
+
+  abstract class A
+  {
+    Foo{caret} EnableOnCustomEnum()
+    {
+      Contract.Ensures(Enum.IsDefined(typeof (Foo), Contract.Result<Foo>()));
+      throw new System.NotImplementedException();
+    }
+  }
+}

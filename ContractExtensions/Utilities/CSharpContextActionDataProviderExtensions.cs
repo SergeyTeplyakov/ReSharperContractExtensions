@@ -9,7 +9,8 @@ namespace ReSharper.ContractExtensions.Utilities
     public static class CSharpContextActionDataProviderExtensions
     {
         [Pure]
-        public static IParameterDeclaration GetSelectedParameterDeclaration(this ICSharpContextActionDataProvider provider)
+        public static IParameterDeclaration GetSelectedParameterDeclaration(
+            this ICSharpContextActionDataProvider provider)
         {
             Contract.Requires(provider != null);
 
@@ -44,6 +45,11 @@ namespace ReSharper.ContractExtensions.Utilities
                 .Contains(selectedDeclaration);
 
             return isArgument ? selectedDeclaration : null;
+        }
+
+        public static bool IsValidForContractContextActions(this ICSharpContextActionDataProvider provider)
+        {
+            return provider != null && provider.SelectedElement != null;
         }
     }
 }

@@ -4,6 +4,8 @@ using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Tree;
+using JetBrains.ReSharper.Psi.Util;
+using ReSharper.ContractExtensions.ContractUtils;
 using ReSharper.ContractExtensions.Utilities;
 
 namespace ReSharper.ContractExtensions.ContextActions.Ensures
@@ -12,7 +14,8 @@ namespace ReSharper.ContractExtensions.ContextActions.Ensures
     /// Computes whether adding Contract.Ensures should be available based
     /// on the return type of the select method or property.
     /// </summary>
-    internal sealed class ReturnTypeEnsuresAvailability
+    [ContractClass(typeof (ReturnTypeEnsuresAvailabilityContract))]
+    internal abstract class ReturnTypeEnsuresAvailability
     {
         private readonly ICSharpContextActionDataProvider _provider;
         private readonly ICSharpFunctionDeclaration _currentFunction;
@@ -35,6 +38,8 @@ namespace ReSharper.ContractExtensions.ContextActions.Ensures
         public bool IsAvailable { get; private set; }
         public ICSharpFunctionDeclaration SelectedFunctionDeclaration { get { return _currentFunction; } }
 
+        protected abstract bool ReturnTypeCompatibleForEnsure(ICSharpFunctionDeclaration methodDeclaration);
+
         private bool ComputeIsAvailable(out ICSharpFunctionDeclaration currentFunction)
         {
             currentFunction = null;
@@ -43,15 +48,16 @@ namespace ReSharper.ContractExtensions.ContextActions.Ensures
                 return false;
 
             var methodDeclaration = GetFunctionDeclaration();
+
             currentFunction = methodDeclaration;
 
-            if (methodDeclaration == null || methodDeclaration.DeclaredElement == null)
+            if (!methodDeclaration.IsValidForContracts())
                 return false;
 
             if (ResultIsVoid(methodDeclaration))
                 return false;
 
-            if (!methodDeclaration.GetReturnType().IsReferenceOrNullableType())
+            if (!ReturnTypeCompatibleForEnsure(methodDeclaration))
                 return false;
 
             return true;
@@ -113,9 +119,49 @@ namespace ReSharper.ContractExtensions.ContextActions.Ensures
             throw new InvalidOperationException();
         }
 
-        [Pure] private bool ResultIsVoid(IFunctionDeclaration functionDeclaration)
+        [Pure]
+        private bool ResultIsVoid(ICSharpFunctionDeclaration functionDeclaration)
         {
             return functionDeclaration.GetReturnType().IsVoid();
+        }
+    }
+
+    [ContractClassFor(typeof (ReturnTypeEnsuresAvailability))]
+    abstract class ReturnTypeEnsuresAvailabilityContract : ReturnTypeEnsuresAvailability
+    {
+        protected ReturnTypeEnsuresAvailabilityContract(ICSharpContextActionDataProvider provider) 
+            : base(provider)
+        {}
+
+        protected override bool ReturnTypeCompatibleForEnsure(ICSharpFunctionDeclaration methodDeclaration)
+        {
+            Contract.Requires(methodDeclaration != null);
+            throw new NotImplementedException();
+        }
+    }
+
+    internal sealed class NullCheckReturnTypeEnsuresAvailability : ReturnTypeEnsuresAvailability
+    {
+        public NullCheckReturnTypeEnsuresAvailability(ICSharpContextActionDataProvider provider) 
+            : base(provider)
+        {}
+
+        protected override bool ReturnTypeCompatibleForEnsure(ICSharpFunctionDeclaration methodDeclaration)
+        {
+            return methodDeclaration.GetReturnType().IsReferenceOrNullableType();
+        }
+    }
+
+    internal sealed class EnumCheckReturnTypeEnsuresAvailability : ReturnTypeEnsuresAvailability
+    {
+        public EnumCheckReturnTypeEnsuresAvailability(ICSharpContextActionDataProvider provider) : base(provider)
+        {}
+
+        protected override bool ReturnTypeCompatibleForEnsure(ICSharpFunctionDeclaration methodDeclaration)
+        {
+            var returnType = methodDeclaration.GetReturnType();
+            return returnType.IsEnumType() || 
+                (returnType.IsNullable() && returnType.GetNullableUnderlyingType().IsEnumType());
         }
     }
 }

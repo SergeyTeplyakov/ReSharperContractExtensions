@@ -116,7 +116,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Invariants
             if (invariantMethod == null)
                 return false;
 
-            return invariantMethod.GetInvariantAssertions().Any(a => a.ChecksForNull(selectedName));
+            return invariantMethod.GetInvariantAssertions().Any(a => a.AssertsArgumentIsNotNull(selectedName));
         }
 
         public bool IsAvailable { get; private set; }

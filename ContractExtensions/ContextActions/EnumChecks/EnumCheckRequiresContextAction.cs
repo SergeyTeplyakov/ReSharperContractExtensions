@@ -21,15 +21,13 @@ namespace ReSharper.ContractExtensions.ContextActions.EnumChecks
         public EnumCheckRequiresContextAction(ICSharpContextActionDataProvider provider) : base(provider)
         {}
 
-        protected override Action<ITextControl> ExecutePsiTransaction(ISolution solution, IProgressIndicator progress)
+        protected override void ExecuteTransaction()
         {
             var executor = new EnumCheckRequiresExecutor(_availability, false);
             executor.ExecuteTransaction();
-
-            return null;
         }
 
-        public override bool IsAvailable(IUserDataHolder cache)
+        protected override bool DoIsAvailable()
         {
             _availability = EnumCheckRequiresAvailability.CheckIsAvailable(_provider);
             return _availability.IsAvailable;

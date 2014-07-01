@@ -6,8 +6,8 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
 {
     public abstract class ContractPreconditionAssertion : ContractAssertion
     {
-        protected ContractPreconditionAssertion(ICSharpStatement statement, string message)
-            : base(AssertionType.Precondition, statement, message)
+        protected ContractPreconditionAssertion(ICSharpStatement statement, ContractAssertionExpressionBase expression)
+            : base(AssertionType.Precondition, statement, expression)
         { }
 
         /// <summary>

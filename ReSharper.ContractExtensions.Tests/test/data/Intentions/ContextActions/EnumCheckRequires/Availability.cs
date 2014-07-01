@@ -11,10 +11,19 @@ abstract class A
   void EnableOnCustomEnum(Foo foo{on})
   {}
 
+  void EnableOnNullableCustomEnum(Foo? foo{on})
+  {}
+
+
   void EnableOnDotNetEnum(System.Reflection.BindingFlags flags{on})
   {}
 
   void DisabledBecauseAlreadyChecked(System.Reflection.BindingFlags flags{off})
+  {
+    Contract.Requires(Enum.IsDefined(typeof(System.Reflection.BindingFlags), flags));
+  }
+
+  void DisabledBecauseAlreadyCheckedForNullable(System.Reflection.BindingFlags? flags{off})
   {
     Contract.Requires(Enum.IsDefined(typeof(System.Reflection.BindingFlags), flags));
   }

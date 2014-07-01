@@ -29,7 +29,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             Contract.Invariant(_argumentRequiresAvailability != null);
         }
 
-        protected override Action<ITextControl> ExecutePsiTransaction(ISolution solution, IProgressIndicator progress)
+        protected override void ExecuteTransaction()
         {
             Contract.Assert(_argumentRequiresAvailability.IsAvailable);
 
@@ -39,11 +39,9 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
                 _argumentRequiresAvailability.SelectedParameterType);
 
             executor.ExecuteTransaction();
-
-            return null;
         }
 
-        public override bool IsAvailable(IUserDataHolder cache)
+        protected override bool DoIsAvailable()
         {
             _argumentRequiresAvailability = ArgumentRequiresAvailability.CheckIsAvailable(_provider);
             return _argumentRequiresAvailability.IsAvailable;

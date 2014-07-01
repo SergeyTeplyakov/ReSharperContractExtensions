@@ -7,40 +7,35 @@ using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
 using JetBrains.ReSharper.Intentions.Extensibility;
 using JetBrains.TextControl;
 using JetBrains.Util;
+using ReSharper.ContractExtensions.ContextActions.Infrastructure;
 
 namespace ReSharper.ContractExtensions.ContextActions.Invariants
 {
     [ContextAction(Name = Name, Group = "Contracts", Description = Description, Priority = 90)]
-    public class InvariantContextAction : ContextActionBase
+    public class InvariantContextAction : ContractsContextActionBase
     {
         private const string MenuFormat = "Invariant '{0}' is not null";
         private const string Name = "Add Contract.Invariant";
         private const string Description = "Add Contract.Invariant on the selected field or property.";
-        private readonly ICSharpContextActionDataProvider _provider;
 
         private InvariantAvailability _invariantContract = InvariantAvailability.InvariantUnavailable;
 
         public InvariantContextAction(ICSharpContextActionDataProvider provider)
-        {
-            Contract.Requires(provider != null);
-            _provider = provider;
-        }
+            : base(provider)
+        {}
 
         [ContractInvariantMethod]
         private void ObjectInvariant()
         {
-            Contract.Invariant(_provider != null);
             Contract.Invariant(_invariantContract != null);
         }
 
-        protected override Action<ITextControl> ExecutePsiTransaction(ISolution solution, IProgressIndicator progress)
+        protected override void ExecuteTransaction()
         {
             Contract.Assert(_invariantContract.IsAvailable);
 
             var executor = new InvariantActionExecutor(_invariantContract, _provider);
             executor.ExecuteTransaction();
-
-            return null;
         }
 
         public override string Text
@@ -48,7 +43,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Invariants
             get { return string.Format(MenuFormat, _invariantContract.SelectedMemberName); }
         }
 
-        public override bool IsAvailable(IUserDataHolder cache)
+        protected override bool DoIsAvailable()
         {
             _invariantContract = InvariantAvailability.Create(_provider);
             return _invariantContract.IsAvailable;

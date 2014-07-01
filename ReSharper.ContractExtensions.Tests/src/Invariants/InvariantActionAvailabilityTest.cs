@@ -14,6 +14,7 @@ namespace ReSharper.ContractExtensions.Tests.Invariants
         }
 
         [TestCase("Availability")]
+        [TestCase("AvailabilityDebug")]
         public void TestSimpleAvailability(string testSrc)
         {
             DoOneTest(testSrc);

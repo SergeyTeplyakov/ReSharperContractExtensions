@@ -1,0 +1,9 @@
+using System.Diagnostics.Contracts;
+
+class A
+{
+  void Foo(object @namespace{caret})
+  {
+    Contract.Requires(@namespace != null);
+  }
+}

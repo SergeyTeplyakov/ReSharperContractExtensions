@@ -57,7 +57,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             return Format;
         }
 
-        protected override Action<ITextControl> ExecutePsiTransaction(ISolution solution, IProgressIndicator progress)
+        protected override void ExecuteTransaction()
         {
             Contract.Assert(_availability.IsAvailable);
 
@@ -71,8 +71,6 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             }
 
             AddRequiresTo(contractFunction);
-
-            return null;
         }
 
         protected override RequiresContextActionBase CreateContextAction()
@@ -80,12 +78,11 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             return new ComboMethodRequiresContextAction(_provider);
         }
 
-        public override bool IsAvailable(IUserDataHolder cache)
+        protected override bool DoIsAvailable()
         {
             _availability = ComboMethodRequiresAvailability.CheckIsAvailable(_provider);
             return _availability.IsAvailable;
         }
-
 
         private void AddRequiresTo(ICSharpFunctionDeclaration contractFunction)
         {

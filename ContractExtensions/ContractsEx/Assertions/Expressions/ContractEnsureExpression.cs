@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using JetBrains.Annotations;
@@ -5,18 +6,25 @@ using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Tree;
 using ReSharper.ContractExtensions.ContractsEx.Assertions;
-using ReSharper.ContractExtensions.Utilities;
 
 namespace ReSharper.ContractExtensions.ContractsEx
 {
     internal sealed class ContractEnsureExpression : ContractAssertionExpressionBase
     {
-        public ContractEnsureExpression(IDeclaredType resultType, string message) 
-            : base(AssertionType.Postcondition, message)
-        {
-            Contract.Requires(resultType != null);
+        private readonly List<PredicateCheck> _predicates;
 
-            ResultType = resultType;
+        public ContractEnsureExpression(List<PredicateCheck> predicates, string message) 
+            : base(AssertionType.Postcondition, predicates, message)
+        {
+            Contract.Requires(predicates != null);
+            Contract.Requires(predicates.Count != 0);
+            _predicates = predicates;
+
+            ResultType = 
+                _predicates.Select(p => p.Argument)
+                .OfType<ContractResultPredicateArgument>()
+                .First()
+                .ResultTypeName;
         }
 
         [ContractInvariantMethod]
@@ -38,49 +46,53 @@ namespace ReSharper.ContractExtensions.ContractsEx
                 "Precondition expression should have at least one argument!");
 
             IExpression originalExpression = invocationExpression.Arguments[0].Expression;
+            var predicates = PredicateCheckFactory.Create(originalExpression).ToList();
 
-            var expression = originalExpression as IEqualityExpression;
-            if (expression == null)
+            if (predicates.Count == 0)
                 return null;
 
-            // looking for type from expression like: Contract.Result<Type>()
-            var ensureType = ExtractContractResultType(
-                expression.LeftOperand.With(x => x as IInvocationExpression));
+            //var expression = originalExpression as IEqualityExpression;
+            //if (expression == null)
+            //    return null;
 
-            var right = expression.RightOperand
-                .With(x => x as ICSharpLiteralExpression)
-                .With(x => x.Literal)
-                .Return(x => x.GetText());
+            //// looking for type from expression like: Contract.Result<Type>()
+            //var ensureType = ExtractContractResultType(
+            //    expression.LeftOperand.With(x => x as IInvocationExpression));
 
-            if (ensureType == null || right == null || right != "null" &&
-                expression.EqualityType != EqualityExpressionType.NE)
-            {
-                return null;
-            }
+            //var right = expression.RightOperand
+            //    .With(x => x as ICSharpLiteralExpression)
+            //    .With(x => x.Literal)
+            //    .Return(x => x.GetText());
 
-            return new ContractEnsureExpression(ensureType, ExtractMessage(invocationExpression));
+            //if (ensureType == null || right == null || right != "null" &&
+            //    expression.EqualityType != EqualityExpressionType.NE)
+            //{
+            //    return null;
+            //}
+
+            return new ContractEnsureExpression(predicates, ExtractMessage(invocationExpression));
         }
 
-        public IDeclaredType ResultType { get; private set; }
+        public IClrTypeName ResultType { get; private set; }
 
-        [CanBeNull]
-        private static IDeclaredType ExtractContractResultType(IInvocationExpression contractResultExpression)
-        {
-            if (contractResultExpression == null)
-                return null;
+        //[CanBeNull]
+        //private static IDeclaredType ExtractContractResultType(IInvocationExpression contractResultExpression)
+        //{
+        //    if (contractResultExpression == null)
+        //        return null;
 
-            var callSiteType = contractResultExpression.GetCallSiteType();
-            var method = contractResultExpression.GetCalledMethod();
+        //    var callSiteType = contractResultExpression.GetCallSiteType();
+        //    var method = contractResultExpression.GetCalledMethod();
 
-            if (callSiteType.With(x => x.FullName) != typeof(Contract).FullName ||
-                method != "Result")
-                return null;
+        //    if (callSiteType.With(x => x.FullName) != typeof(Contract).FullName ||
+        //        method != "Result")
+        //        return null;
 
-            return contractResultExpression
-                .With(x => x.InvokedExpression)
-                .With(x => x as IReferenceExpression)
-                .With(x => x.TypeArguments.FirstOrDefault())
-                .Return(x => x as IDeclaredType);
-        }
+        //    return contractResultExpression
+        //        .With(x => x.InvokedExpression)
+        //        .With(x => x as IReferenceExpression)
+        //        .With(x => x.TypeArguments.FirstOrDefault())
+        //        .Return(x => x as IDeclaredType);
+        //}
     }
 }

@@ -22,7 +22,7 @@ class A
   private void ObjectInvariant()
   {
     Contract.Invariant(_disabledOnStringIfAlreadyChecked != null);
-    Contract.Invariant(DisabledIfAlreadyChecked != null);
+    Contract.Invariant(false || DisabledIfAlreadyChecked != null);
   }
 
   public string EnabledOnReferenceProperty{on} {get; private set;}

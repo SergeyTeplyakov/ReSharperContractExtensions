@@ -152,10 +152,9 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             Contract.Invariant(_availability != null);
         }
 
-        protected override Action<ITextControl> ExecutePsiTransaction(ISolution solution, IProgressIndicator progress)
+        protected override sealed void ExecuteTransaction()
         {
             Execute();
-            return null;
         }
 
         internal virtual void Execute()
@@ -173,7 +172,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             return availability.IsAvailable;
         }
 
-        public override bool IsAvailable(IUserDataHolder cache)
+        protected override bool DoIsAvailable()
         {
             _availability = PreconditionConverterAvailability.CheckIsAvailable(_provider);
             return IsAvailable(_availability);

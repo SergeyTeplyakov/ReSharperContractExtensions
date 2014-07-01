@@ -23,7 +23,7 @@ namespace ReSharper.ContractExtensions.ContextActions.EnumChecks
             _functionDeclaration = _availability.FunctionToInsertPrecondition;
         }
 
-        public override void ExecuteTransaction()
+        protected override void DoExecuteTransaction()
         {
             var statement = CreateRequiresStatement(_useGenericVersion);
             var previousRequires = GetPreviousRequires();
@@ -36,9 +36,10 @@ namespace ReSharper.ContractExtensions.ContextActions.EnumChecks
         {
             Contract.Ensures(Contract.Result<ICSharpStatement>() != null);
 
-            IDeclaredType contractType = CreateDeclaredType(typeof(Contract));
-            IDeclaredType systemEnumType = CreateDeclaredType(typeof(System.Enum));
-            IDeclaredType customEnumType = CreateDeclaredType(_availability.ParameterType);
+            ITypeElement contractType = CreateDeclaredType(typeof(Contract));
+            ITypeElement systemEnumType = CreateDeclaredType(typeof(System.Enum));
+
+            ITypeElement customEnumType = CreateDeclaredType(_availability.ParameterUnderlyingType);
 
             ICSharpStatement statement = null;
             if (isGeneric)
@@ -58,6 +59,7 @@ namespace ReSharper.ContractExtensions.ContextActions.EnumChecks
 
             return statement;
         }
+
 
         [System.Diagnostics.Contracts.Pure, CanBeNull]
         ICSharpStatement GetPreviousRequires()

@@ -11,13 +11,12 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
     /// </remarks>
     public sealed class GuardBasedPreconditionAssertion : ContractPreconditionAssertion
     {
-        public GuardBasedPreconditionAssertion(ICSharpStatement statement, string message) 
-            : base(statement, message)
+        public GuardBasedPreconditionAssertion(ICSharpStatement statement, ContractAssertionExpression expression)
+            : base(statement, expression)
         {}
 
-        public override bool ChecksForNull(string name)
+        public override bool AssertsArgumentIsNotNull(string name)
         {
-            
             throw new System.NotImplementedException();
         }
 

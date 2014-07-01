@@ -1,0 +1,12 @@
+using System;
+using System.Diagnostics.Contracts;
+using System.Reflection;
+
+abstract class A
+{
+  BindingFlags{caret} EnableOnDotNetEnum()
+  {
+    Contract.Ensures(Enum.IsDefined(typeof (BindingFlags), Contract.Result<BindingFlags>()));
+    throw new System.NotImplementedException();
+  }
+}

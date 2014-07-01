@@ -1,28 +1,34 @@
-﻿using System.Diagnostics.Contracts;
+﻿using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
+using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
-using JetBrains.ReSharper.Psi.Impl.reflection2.elements.Compiled;
+using JetBrains.ReSharper.Psi.Util;
 using ReSharper.ContractExtensions.ContractsEx;
+using ReSharper.ContractExtensions.ContractsEx.Assertions;
 using ReSharper.ContractExtensions.ContractUtils;
 using ReSharper.ContractExtensions.Utilities;
 
 namespace ReSharper.ContractExtensions.ContextActions.Ensures
 {
-    internal sealed class EnsuresAvailability
+    internal class EnsuresAvailability
     {
         private readonly ICSharpContextActionDataProvider _provider;
+        private readonly ReturnTypeEnsuresAvailability _returnTypeEnsuresAvailability;
         private readonly ICSharpFunctionDeclaration _selectedFunction;
 
         private EnsuresAvailability()
         {}
 
-        public EnsuresAvailability(ICSharpContextActionDataProvider provider)
+        protected EnsuresAvailability(ICSharpContextActionDataProvider provider, 
+            ReturnTypeEnsuresAvailability returnTypeEnsuresAvailability)
         {
             Contract.Requires(provider != null);
+            Contract.Requires(returnTypeEnsuresAvailability != null);
 
             _provider = provider;
-
+            _returnTypeEnsuresAvailability = returnTypeEnsuresAvailability;
             IsAvailable = ComputeIsAvailable(out _selectedFunction);
         }
 
@@ -37,6 +43,19 @@ namespace ReSharper.ContractExtensions.ContextActions.Ensures
         public ICSharpFunctionDeclaration SelectedFunction { get { return _selectedFunction; } }
 
         public static readonly EnsuresAvailability Unavailable = new EnsuresAvailability {IsAvailable = false};
+
+        public static EnsuresAvailability IsAvailableForNullableResult(ICSharpContextActionDataProvider provider)
+        {
+            Contract.Requires(provider != null);
+            return new EnsuresAvailability(provider, new NullCheckReturnTypeEnsuresAvailability(provider));
+        }
+
+        public static EnsuresAvailability IsAvailableForEnumResult(ICSharpContextActionDataProvider provider)
+        {
+            Contract.Requires(provider != null);
+
+            return new EnumResultEnsuresAvailability(provider, new EnumCheckReturnTypeEnsuresAvailability(provider));
+        }
 
         private bool ComputeIsAvailable(out ICSharpFunctionDeclaration currentFunction)
         {
@@ -57,20 +76,55 @@ namespace ReSharper.ContractExtensions.ContextActions.Ensures
 
         private bool EnsuresAvailableForSelectedReturnType(out ICSharpFunctionDeclaration selectedFunction)
         {
-            var availability = new ReturnTypeEnsuresAvailability(_provider);
-            selectedFunction = availability.SelectedFunctionDeclaration;
-            return availability.IsAvailable;
+            selectedFunction = _returnTypeEnsuresAvailability.SelectedFunctionDeclaration;
+            return _returnTypeEnsuresAvailability.IsAvailable;
         }
 
         private bool ResultIsAlreadyCheckedByContractEnsures(ICSharpFunctionDeclaration functionDeclaration)
         {
             Contract.Requires(functionDeclaration != null);
+
             if (functionDeclaration.Body == null)
                 return false;
 
             var returnType = functionDeclaration.GetReturnType();
-            return functionDeclaration.GetContractEnsures()
-                .Any(e => e.EnsuresType.GetClrName().FullName == returnType.GetClrName().FullName);
+
+            if (returnType == null)
+                return false;
+
+            return ResultIsAlreadyCheckedByContractEnsures(
+                functionDeclaration.GetContractEnsures(), returnType);
+        }
+
+        protected virtual bool ResultIsAlreadyCheckedByContractEnsures(
+            IEnumerable<ContractEnsuresAssertion> ensureAssertions, IDeclaredType methodReturnType)
+        {
+            Contract.Requires(ensureAssertions != null);
+            Contract.Requires(methodReturnType != null);
+
+            return ensureAssertions
+                .Any(e => e.AssertsArgumentIsNotNull(
+                    pa => pa.With(x => x as ContractResultPredicateArgument)
+                        .With(x => x.ResultTypeName.FullName) == methodReturnType.GetClrName().FullName));
+        }
+    }
+
+    // TODO: names and design are bad!! revise them later!
+    internal sealed class EnumResultEnsuresAvailability : EnsuresAvailability
+    {
+        internal EnumResultEnsuresAvailability(ICSharpContextActionDataProvider provider, ReturnTypeEnsuresAvailability returnTypeEnsuresAvailability) 
+            : base(provider, returnTypeEnsuresAvailability)
+        {}
+
+        protected override bool ResultIsAlreadyCheckedByContractEnsures(IEnumerable<ContractEnsuresAssertion> ensureAssertions, IDeclaredType methodReturnType)
+        {
+            // Ensures for enums should be available for System.Enum and for System.Enum?
+            // thats why we should extract underlying type out of the nullable type.
+            var returnType = methodReturnType.IsNullable() ? methodReturnType.GetNullableUnderlyingType() : methodReturnType;
+            return ensureAssertions
+                .Any(e => e.AssertsArgumentIsNotNull(
+                    pa => pa.With(x => x as ContractResultPredicateArgument)
+                        .With(x => x.ResultTypeName.FullName) == returnType.GetClrTypeName().FullName));
         }
     }
 }

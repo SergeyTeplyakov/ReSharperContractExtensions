@@ -1,10 +1,32 @@
 using System.Diagnostics.Contracts;
 using System;
 
+class Person
+{
+  public string Name {get; set;}
+}
+
 abstract class A
 {
+  public void EnabledIfOnlyPropertyChecked(Person person{on})
+  {
+    Contract.Requires(person.Name != null);
+  }
+
+  public void EnabledIfOnlyPropertyCheckedByMethodCall(Person person{on})
+  {
+    Contract.Requires(!string.IsNullOrEmpty(person.Name));
+  }
+
+  public void EnabledIfOnlyPropertyCheckedByIfThrow(Person person{on})
+  {
+    if (person.Name == null)
+      throw new ArgumentNullException("person");
+  }
+
   public void EnabledOnParamsArguments(params object[] arguments{on})
   {}
+
   public void DisabledBecauseAlreadyCheckedInFirstComplex(string s1, string s2{off}) 
   {
     Contract.Requires((s1 != null || s1.Length == 0) && s2 != null);
@@ -33,5 +55,4 @@ abstract class A
       throw new ArgumentNullException("s", "some message");
     }
   }
-
 }

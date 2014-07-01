@@ -10,8 +10,8 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
     {
         protected bool _hasNot;
 
-        protected MethodCallPredicateCheck(string argumentName, IClrTypeName callSiteType) 
-            : base(argumentName)
+        protected MethodCallPredicateCheck(PredicateArgument argument, IClrTypeName callSiteType) 
+            : base(argument)
         {
             Contract.Requires(callSiteType != null);
             CallSiteType = callSiteType;
@@ -59,14 +59,17 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
             bool hasNot)
         {
             var callSiteType = invocationExpression.GetCallSiteType();
+
             if (IsEnum(callSiteType))
                 return EnumValidationPredicateCheck.TryCreateEnumPredicateCheck(invocationExpression, hasNot);
 
             var method = invocationExpression.GetCalledMethod();
-            var argument = invocationExpression.Arguments.FirstOrDefault()
-                .With(x => x)
-                .With(x => x.Value as IReferenceExpression)
-                .With(x => x.NameIdentifier.Name);
+
+            var argument = ExtractArgument(invocationExpression.Arguments.FirstOrDefault().With(x => x.Value));
+            //var argument = invocationExpression.Arguments.FirstOrDefault()
+            //    .With(x => x)
+            //    .With(x => x.Value as IReferenceExpression)
+            //    .With(x => x.NameIdentifier.Name);
 
             if (callSiteType == null || method == null || argument == null)
                 return null;

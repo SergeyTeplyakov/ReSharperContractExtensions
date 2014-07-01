@@ -18,7 +18,7 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
             Contract.Requires(!assertion.IsGeneric);
             Contract.Ensures(Contract.Result<IClrTypeName>() != null);
 
-            if (assertion.ContractAssertionExpression.PreconditionExpressions.Any(n => n.ChecksForNotNull()))
+            if (assertion.ContractAssertionExpression.Predicates.Any(n => n.ChecksForNotNull()))
             {
                 return new ClrTypeName(typeof(ArgumentNullException).FullName);
             }
@@ -33,7 +33,7 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
 
         private ContractRequiresPreconditionAssertion(ICSharpStatement statement, 
             ContractAssertionExpression contractAssertionExpression)
-            : base(statement, contractAssertionExpression.Message)
+            : base(statement, contractAssertionExpression)
         {
             Contract.Requires(contractAssertionExpression != null);
             _contractAssertionExpression = contractAssertionExpression;
@@ -42,11 +42,6 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
         public override PreconditionType PreconditionType
         {
             get { return IsGeneric ? PreconditionType.GenericContractRequires : PreconditionType.ContractRequires; }
-        }
-
-        public override bool ChecksForNull(string name)
-        {
-            return _contractAssertionExpression.PreconditionExpressions.Any(n => n.ChecksForNotNull(name));
         }
 
         internal ContractAssertionExpression ContractAssertionExpression

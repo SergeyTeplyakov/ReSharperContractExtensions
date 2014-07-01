@@ -40,7 +40,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Invariants
             Contract.Invariant(_classDeclaration != null);
         }
 
-        public override void ExecuteTransaction()
+        protected override void DoExecuteTransaction()
         {
             var invariantMethod = AddObjectInvariantMethodIfNecessary();
 
@@ -96,7 +96,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Invariants
             // Looking for the last usage of the parameters in the requires statements
             foreach (var p in previousInvariants)
             {
-                var assertion = assertions.LastOrDefault(a => a.ChecksForNull(p));
+                var assertion = assertions.LastOrDefault(a => a.AssertsArgumentIsNotNull(p));
                 if (assertion != null)
                 {
                     return assertion.Statement;

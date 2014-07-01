@@ -50,7 +50,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Ensures
 
         private bool IsEnsuresAvailableFor(out ICSharpFunctionDeclaration selectedFunctionDeclaration)
         {
-            var returnTypeEnsuresAvailability = new ReturnTypeEnsuresAvailability(_provider);
+            var returnTypeEnsuresAvailability = new NullCheckReturnTypeEnsuresAvailability(_provider);
             selectedFunctionDeclaration = returnTypeEnsuresAvailability.SelectedFunctionDeclaration;
             return returnTypeEnsuresAvailability.IsAvailable;
         }

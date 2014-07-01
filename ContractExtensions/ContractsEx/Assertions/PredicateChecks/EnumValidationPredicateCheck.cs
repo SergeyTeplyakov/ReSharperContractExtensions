@@ -8,8 +8,8 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
 {
     internal sealed class EnumValidationPredicateCheck : MethodCallPredicateCheck
     {
-        private EnumValidationPredicateCheck(string argumentName, IClrTypeName callSiteType) 
-            : base(argumentName, callSiteType)
+        private EnumValidationPredicateCheck(PredicateArgument argument, IClrTypeName callSiteType) 
+            : base(argument, callSiteType)
         {
             Contract.Assert(IsEnum(callSiteType));
         }
@@ -52,13 +52,18 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
                     .With(x => x.GetClrTypeName());
 
             // Second argument is a enum value itself
-            var enumValueName =
-                arguments[1].Value
-                    .With(x => x as IReferenceExpression)
-                    .With(x => x.NameIdentifier)
-                    .With(x => x.Name);
+            var argument = ExtractArgument(arguments[1].Value);
 
-            return new EnumValidationPredicateCheck(enumValueName, callSiteType)
+            if (argument == null)
+                return null;
+
+            //var enumValueName =
+            //    arguments[1].Value
+            //        .With(x => x as IReferenceExpression)
+            //        .With(x => x.NameIdentifier)
+            //        .With(x => x.Name);
+
+            return new EnumValidationPredicateCheck(argument, callSiteType)
             {
                 CheckedEnumTypeName = enumType,
                 MethodName = method,

@@ -8,24 +8,22 @@ using JetBrains.ReSharper.Intentions.Extensibility;
 using JetBrains.TextControl;
 using JetBrains.Util;
 using ReSharper.ContractExtensions.ContextActions.Ensures;
+using ReSharper.ContractExtensions.ContextActions.Infrastructure;
 
 namespace ReSharper.ContractExtensions.ContextActions
 {
     [ContextAction(Name = Name, Group = "Contracts", Description = Description, Priority = 90)]
-    public class EnsuresContextAction : ContextActionBase
+    public class EnsuresContextAction : ContractsContextActionBase
     {
         private const string MenuText = "Ensures result is not null";
         private const string Name = "Add Contract.Ensures";
         private const string Description = "Add Contract.Ensures on the potentially nullable return value.";
 
-        private readonly ICSharpContextActionDataProvider _provider;
-
         private EnsuresAvailability _ensuresAvailability = EnsuresAvailability.Unavailable;
 
         public EnsuresContextAction(ICSharpContextActionDataProvider provider)
-        {
-            _provider = provider;
-        }
+            : base(provider)
+        {}
 
         [ContractInvariantMethod]
         private void ObjectInvariant()
@@ -33,14 +31,12 @@ namespace ReSharper.ContractExtensions.ContextActions
             Contract.Invariant(_ensuresAvailability != null);
         }
 
-        protected override Action<ITextControl> ExecutePsiTransaction(ISolution solution, IProgressIndicator progress)
+        protected override void ExecuteTransaction()
         {
             Contract.Assert(_ensuresAvailability.IsAvailable);
 
-            var executor = new EnsuresExecutor(_provider, _ensuresAvailability.SelectedFunction);
+            var executor = EnsuresExecutor.CreateNotNullEnsuresExecutor(_provider, _ensuresAvailability.SelectedFunction);
             executor.ExecuteTransaction();
-
-            return null;
         }
 
         public override string Text
@@ -48,10 +44,9 @@ namespace ReSharper.ContractExtensions.ContextActions
             get { return MenuText; }
         }
 
-        [Pure]
-        public override bool IsAvailable(IUserDataHolder cache)
+        protected override bool DoIsAvailable()
         {
-            _ensuresAvailability = new EnsuresAvailability(_provider);
+            _ensuresAvailability = EnsuresAvailability.IsAvailableForNullableResult(_provider);
             return _ensuresAvailability.IsAvailable;
         }
     }

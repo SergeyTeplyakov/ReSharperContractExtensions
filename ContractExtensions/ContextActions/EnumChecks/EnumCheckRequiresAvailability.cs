@@ -42,6 +42,16 @@ namespace ReSharper.ContractExtensions.ContextActions.EnumChecks
             }
         }
 
+        public IClrTypeName ParameterUnderlyingType
+        {
+            get
+            {
+                Contract.Ensures(!IsAvailable || Contract.Result<IClrTypeName>() != null);
+                var type = _selectedParameterDeclaration.Type;
+                return (type.IsNullable() ? type.GetNullableUnderlyingType() : type).GetClrTypeName();
+            }
+        }
+
         public IClrTypeName ParameterType
         {
             get
@@ -70,7 +80,7 @@ namespace ReSharper.ContractExtensions.ContextActions.EnumChecks
             if (parameterDeclaration == null)
                 return false;
 
-            if (!IsEnum(parameterDeclaration))
+            if (!IsEnum(parameterDeclaration) && !IsNullableEnum(parameterDeclaration))
                 return false;
 
             if (!ContractFunctionIsWellDefinedAndDidntContainPrecondition(parameterDeclaration.DeclaredName, out functionToInsertPrecondition))
@@ -94,6 +104,16 @@ namespace ReSharper.ContractExtensions.ContextActions.EnumChecks
             functionToInsertPrecondition = null;
             return false;
         }
+
+        private bool IsNullableEnum(IParameterDeclaration parameterDeclaration)
+        {
+            Contract.Requires(parameterDeclaration != null);
+            Contract.Assert(parameterDeclaration.Type != null);
+
+            return parameterDeclaration.Type.IsNullable() &&
+                   parameterDeclaration.Type.GetNullableUnderlyingType().IsEnumType();
+        }
+
 
         private bool IsEnum(IParameterDeclaration parameterDeclaration)
         {

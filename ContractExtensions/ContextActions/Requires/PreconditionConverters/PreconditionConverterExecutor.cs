@@ -10,7 +10,6 @@ using JetBrains.ReSharper.Psi.CSharp.Util;
 using JetBrains.ReSharper.Psi.ExtensionsAPI.Tree;
 using ReSharper.ContractExtensions.ContextActions.Infrastructure;
 using ReSharper.ContractExtensions.ContractsEx.Assertions;
-using ReSharper.ContractExtensions.Utilities;
 
 namespace ReSharper.ContractExtensions.ContextActions.Requires
 {
@@ -50,7 +49,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             InitializeConverters();
         }
 
-        public override void ExecuteTransaction()
+        protected override void DoExecuteTransaction()
         {
             var converter = GetConverter(_availability.SourcePreconditionType, _destinationPreconditionType);
             Contract.Assert(converter != null, 
@@ -185,17 +184,6 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
 
             if (usages.Count == 0)
                 UsingUtil.RemoveImport(realUsing);
-        }
-
-        private void AddUsingForTheNamespaceIfNecessary(string nameSpace)
-        {
-            var usingDirective = _factory.CreateUsingDirective("using $0",
-                nameSpace);
-
-            if (!_currentFile.Imports.ContainsUsing(usingDirective))
-            {
-                UsingUtil.AddImportAfter(_currentFile, usingDirective);
-            }
         }
     }
 }

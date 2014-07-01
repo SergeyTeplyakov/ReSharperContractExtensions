@@ -9,16 +9,16 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
         private readonly ContractEnsureExpression _contractEnsure;
 
         private ContractEnsuresAssertion(ICSharpStatement statement, ContractEnsureExpression contractEnsure) 
-            : base(AssertionType.Precondition, statement, contractEnsure.Message)
+            : base(AssertionType.Precondition, statement, contractEnsure)
         {
             Contract.Requires(contractEnsure != null);
 
             _contractEnsure = contractEnsure;
         }
 
-        public IDeclaredType EnsuresType { get { return _contractEnsure.ResultType; } }
+        public IClrTypeName EnsuresType { get { return _contractEnsure.ResultType; } }
 
-        public override bool ChecksForNull(string name)
+        public override bool AssertsArgumentIsNotNull(string name)
         {
             return true;
         }

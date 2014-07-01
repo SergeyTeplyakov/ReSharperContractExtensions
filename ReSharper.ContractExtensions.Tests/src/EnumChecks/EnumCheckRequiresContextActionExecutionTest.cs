@@ -15,6 +15,7 @@ namespace ReSharper.ContractExtensions.Tests.Preconditions
         }
 
         [TestCase("ExecutionForCustomEnum")]
+        [TestCase("ExecutionForNullableCustomEnum")]
         [TestCase("ExecutionForDotNetEnum")]
         public void TestSimpleExecution(string testSrc)
         {

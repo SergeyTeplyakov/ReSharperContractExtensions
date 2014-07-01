@@ -5,6 +5,7 @@ using JetBrains.ReSharper.Psi.CSharp.Tree;
 using ReSharper.ContractExtensions.ContextActions.Infrastructure;
 using ReSharper.ContractExtensions.ContractsEx;
 using ReSharper.ContractExtensions.ContractUtils;
+using ReSharper.ContractExtensions.Utilities;
 
 namespace ReSharper.ContractExtensions.ContextActions.Requires
 {
@@ -51,7 +52,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         {
             var functionToInsertPrecondition = functionDeclaration.GetContractFunction();
 
-            if (!IsFunctionWellDefined(functionToInsertPrecondition))
+            if (!functionToInsertPrecondition.IsValidForContracts())
                 return false;
 
             if (ArgumentIsAlreadyVerifiedByArgCheckOrRequires(functionToInsertPrecondition, parameterName))
@@ -69,19 +70,11 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         }
 
         [Pure]
-        private bool IsFunctionWellDefined(ICSharpFunctionDeclaration functionDeclaration)
-        {
-            return functionDeclaration != null
-                   && functionDeclaration.Body != null
-                   && functionDeclaration.DeclaredElement != null;
-        }
-
-        [Pure]
         private bool ArgumentIsAlreadyVerifiedByArgCheckOrRequires(
             ICSharpFunctionDeclaration functionDeclaration, string parameterName)
         {
             return functionDeclaration.GetPreconditions()
-                .Any(p => p.ChecksForNull(parameterName));
+                .Any(p => p.AssertsArgumentIsNotNull(parameterName));
         }
     }
 }

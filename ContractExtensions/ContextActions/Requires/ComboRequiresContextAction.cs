@@ -1,20 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics.Contracts;
-using System.Linq;
 using JetBrains.Annotations;
-using JetBrains.Application;
 using JetBrains.Application.Progress;
 using JetBrains.ProjectModel;
-using JetBrains.ReSharper.Daemon.Src.Bulbs.Resources;
 using JetBrains.ReSharper.Feature.Services.Bulbs;
 using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
-using JetBrains.ReSharper.Intentions.Extensibility;
-using JetBrains.ReSharper.Intentions.Extensibility.Menu;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
-using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.TextControl;
-using JetBrains.UI.BulbMenu;
 using JetBrains.Util;
 using ReSharper.ContractExtensions.ContextActions.ContractsFor;
 using ReSharper.ContractExtensions.ContractUtils;
@@ -33,12 +25,9 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
 
         public ComboRequiresContextAction(ICSharpContextActionDataProvider provider)
             : base(provider)
-        {
-            Contract.Requires(provider != null);
-            _provider = provider;
-        }
+        {}
 
-        protected override Action<ITextControl> ExecutePsiTransaction(ISolution solution, IProgressIndicator progress)
+        protected override void ExecuteTransaction()
         {
             Contract.Assert(_availability.IsAvailable);
 
@@ -52,8 +41,6 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             }
 
             AddRequiresTo(contractFunction);
-
-            return null;
         }
 
         [CanBeNull, System.Diagnostics.Contracts.Pure]
@@ -72,7 +59,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             return new ComboRequiresContextAction(_provider);
         }
 
-        public override bool IsAvailable(IUserDataHolder cache)
+        protected override bool DoIsAvailable()
         {
             _availability = ComboRequiresAvailability.CheckIsAvailable(_provider);
             return _availability.IsAvailable;

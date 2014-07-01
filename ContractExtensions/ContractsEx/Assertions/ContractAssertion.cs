@@ -1,4 +1,6 @@
-﻿using System.Diagnostics.Contracts;
+﻿using System;
+using System.Diagnostics.Contracts;
+using System.Linq;
 using JetBrains.Annotations;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using ReSharper.ContractExtensions.ContractsEx.Impl;
@@ -10,14 +12,19 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
     /// </summary>
     public abstract class ContractAssertion
     {
+        protected readonly ContractAssertionExpressionBase _assertionExpression;
+
         protected ContractAssertion(AssertionType assertionType,
-            ICSharpStatement statement, string message)
+            ICSharpStatement statement, ContractAssertionExpressionBase assertionExpression)
         {
             Contract.Requires(statement != null);
+            Contract.Requires(assertionExpression != null);
+
+            _assertionExpression = assertionExpression;
 
             Statement = statement;
             AssertionType = assertionType;
-            Message = message;
+            Message = assertionExpression.Message;
         }
 
         public AssertionType AssertionType { get; private set; }
@@ -29,7 +36,36 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
         /// <summary>
         /// Returns true if current Assertion checks for null something with specified <paramref name="name"/>.
         /// </summary>
-        public abstract bool ChecksForNull(string name);
+        public virtual bool AssertsArgumentIsNotNull(string name)
+        {
+            Contract.Requires(!string.IsNullOrEmpty(name));
+
+            return _assertionExpression.Predicates.Any(p => p.ChecksForNotNull(name));
+        }
+
+        public virtual bool AssertsArgumentIsNull(string name)
+        {
+            Contract.Requires(!string.IsNullOrEmpty(name));
+
+            return _assertionExpression.Predicates.Any(p => p.ChecksForNull(name));
+        }
+
+        /// <summary>
+        /// Checks whether assertion is a null check based on the specified <paramref name="comparer"/>.
+        /// </summary>
+        /// <remarks>
+        /// <see cref="PredicateCheck"/> contains <see cref="PredicateArgument"/> as an argument that could have more
+        /// complex behavior that simple string-to-string comparison.
+        /// For instance, in some cases we should now whether assertion checks for specified argument directly
+        /// (like Contract.Requires(person != null);), or it checks some property of the argument 
+        /// (like Contract.Requires(person.Name != null);). In some cases we need first check, but in some other
+        /// cases we need a second check.
+        /// </remarks>
+        public virtual bool AssertsArgumentIsNotNull(Func<PredicateArgument, bool> comparer)
+        {
+            Contract.Requires(comparer != null);
+            return _assertionExpression.CheckArgumentIsNotNull(comparer);
+        }
 
         public override string ToString()
         {

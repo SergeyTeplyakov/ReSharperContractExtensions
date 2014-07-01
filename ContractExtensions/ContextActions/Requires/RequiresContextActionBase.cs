@@ -11,27 +11,19 @@ using JetBrains.ReSharper.Intentions.Extensibility.Menu;
 using JetBrains.ReSharper.Psi;
 using JetBrains.UI.BulbMenu;
 using JetBrains.Util;
+using ReSharper.ContractExtensions.ContextActions.Infrastructure;
 using ReSharper.ContractExtensions.Settings;
 
 namespace ReSharper.ContractExtensions.ContextActions.Requires
 {
     [ContractClass(typeof (RequiresContextActionBaseContract))]
-    public abstract class RequiresContextActionBase : ContextActionBase
+    public abstract class RequiresContextActionBase : ContractsContextActionBase
     {
         protected bool _requiresShouldBeGeneric;
-        protected ICSharpContextActionDataProvider _provider;
 
         protected RequiresContextActionBase(ICSharpContextActionDataProvider provider)
-        {
-            Contract.Requires(provider != null);
-            _provider = provider;
-        }
-
-        [ContractInvariantMethod]
-        private void ObjectInvariant()
-        {
-            Contract.Invariant(_provider != null);
-        }
+            : base(provider)
+        {}
 
         protected virtual IEnumerable<RequiresContextActionBase> GetContextActions()
         {
@@ -98,74 +90,6 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
 
             return contextActions.Select(
                 n => new IntentionAction(n, n.Text, BulbThemedIcons.ContextAction.Id, subMenuAnchor));
-
-
-            //var contextActionsEnumerator = contextActions.GetEnumerator();
-            //bool movedNext = contextActionsEnumerator.MoveNext();
-            //Contract.Assert(movedNext, "ContextActionsEnumerator should have first element");
-
-            //// Tests are not supports more than one menu item!
-            //if (IsTestShell)
-            //{
-            //    return contextActionsEnumerator.Current.CreateBulbItemsBase();
-            //}
-
-            //var firstAction = contextActionsEnumerator.Current;
-            //movedNext = contextActionsEnumerator.MoveNext();
-            //Contract.Assert(movedNext, "ContextActionsEnumerator should have second element");
-            //var secondAction = contextActionsEnumerator.Current;
-
-            // Now we should create anchor and add subelements
-            // based on configuration!
-            //var actions = firstAction.CreateBulbItemsBase();
-
-            // The anchor is different based on configuration settings
-
-
-            //var subMenuAnchor = new ExecutableGroupAnchor(
-            //    anchor,
-            //    IntentionsAnchors.ContextActionsAnchorPosition);
-
-            //return new List<IntentionAction>
-            //{
-            //    new IntentionAction(this, Text, BulbThemedIcons.ContextAction.Id, subMenuAnchor),
-            //    new IntentionAction(secondAction, secondAction.Text,
-            //        BulbThemedIcons.ContextAction.Id, subMenuAnchor)
-            //};
-
-            //bool genericByDefault = IsGenericByDefault();
-            //if (genericByDefault)
-            //{
-            //    _requiresShouldBeGeneric = true;
-            //}
-
-            //var actions = base.CreateBulbItems().ToList();
-
-            //// Tests are not supports more than one menu item!
-            //if (IsTestShell)
-            //{
-            //    return actions;
-            //}
-
-            //// Now we should create anchor and add subelements
-            //// based on configuration!
-            //var secondAction = CreateContextAction();
-            //secondAction._requiresShouldBeGeneric = !_requiresShouldBeGeneric;
-            //secondAction.IsAvailable(new UserDataHolder());
-
-            //// The anchor is different based on configuration settings
-            //var anchor = actions[0].Anchor;
-
-            //var subMenuAnchor = new ExecutableGroupAnchor(
-            //    anchor,
-            //    IntentionsAnchors.ContextActionsAnchorPosition);
-
-            //return new List<IntentionAction>
-            //{
-            //    new IntentionAction(this, Text, BulbThemedIcons.ContextAction.Id, subMenuAnchor),
-            //    new IntentionAction(secondAction, secondAction.Text,
-            //        BulbThemedIcons.ContextAction.Id, subMenuAnchor)
-            //};
         }
 
         protected IEnumerable<IntentionAction> CombineContextActions(params RequiresContextActionBase[] actions)
