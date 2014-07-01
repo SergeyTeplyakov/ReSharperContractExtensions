@@ -11,25 +11,6 @@ This plugin is available for download in [ReSharper extensions gallery](https://
 
 ### Basic use cases
 
-#### Convert null-check preconditions from if-throw to Contract.Requires
-![](https://github.com/SergeyTeplyakov/ReSharperContractExtensions/raw/master/Content/075%20-%20ConvertPreconditionANE.gif)
-
-#### Convert range check from if-throw to Contract.Requires
-![](https://github.com/SergeyTeplyakov/ReSharperContractExtensions/raw/master/Content/075%20-%20ConvertPreconditionWithAOR.gif)
-
-#### Add precondition check for enum argument
-![](https://github.com/SergeyTeplyakov/ReSharperContractExtensions/raw/master/Content/075%20-%20EnumRequires.gif)
-
-#### Add postcondition check for enum argument
-![](https://github.com/SergeyTeplyakov/ReSharperContractExtensions/raw/master/Content/075%20-%20EnsureEnums.gif)
-
-#### Add preconditions for all arguments (new in v.0.7)
-![](https://github.com/SergeyTeplyakov/ReSharperContractExtensions/raw/master/Content/07_MethodCombo.gif)
-
-#### Check string arguments with string.IsNullOrEmpty (new in v.0.7)
-(Note, this feature should be turned on at plug-in settings page, available at R# Options)
-![](https://github.com/SergeyTeplyakov/ReSharperContractExtensions/raw/master/Content/08_StringCheck.gif)
-
 #### Add preconditions
 
 ![](https://raw.githubusercontent.com/SergeyTeplyakov/ReSharperContractExtensions/master/Content/Requires_avi.gif)
@@ -50,13 +31,33 @@ This plugin is available for download in [ReSharper extensions gallery](https://
 
 ![](https://github.com/SergeyTeplyakov/ReSharperContractExtensions/raw/master/Content/AbstractClassCombo_avi.gif)
 
+#### Convert null-check preconditions from if-throw to Contract.Requires (new in v.0.7.5)
+![](https://github.com/SergeyTeplyakov/ReSharperContractExtensions/raw/master/Content/075%20-%20ConvertPreconditionANE.gif)
+
+#### Convert range check from if-throw to Contract.Requires (new in v.0.7.5)
+![](https://github.com/SergeyTeplyakov/ReSharperContractExtensions/raw/master/Content/075%20-%20ConvertPreconditionWithAOR.gif)
+
+#### Add precondition check for enum argument (new in v.0.7.5)
+![](https://github.com/SergeyTeplyakov/ReSharperContractExtensions/raw/master/Content/075%20-%20EnumRequires.gif)
+
+#### Add postcondition check for enum argument (new in v.0.7.5)
+![](https://github.com/SergeyTeplyakov/ReSharperContractExtensions/raw/master/Content/075%20-%20EnsureEnums.gif)
+
+#### Add preconditions for all arguments (new in v.0.7)
+![](https://github.com/SergeyTeplyakov/ReSharperContractExtensions/raw/master/Content/07_MethodCombo.gif)
+
+#### Check string arguments with string.IsNullOrEmpty (new in v.0.7)
+(Note, this feature should be turned on at plug-in settings page, available at R# Options)
+![](https://github.com/SergeyTeplyakov/ReSharperContractExtensions/raw/master/Content/08_StringCheck.gif)
+
+
 
 ### What next for you?
 Download sources and play with them or
-Download this plug-in via R# Gallery - https://resharper-plugins.jetbrains.com/packages/ReSharper.ContractExtensions/0.5.0
+Download this plug-in via R# Gallery - https://resharper-plugins.jetbrains.com/packages/ReSharper.ContractExtensions/0.7.51
 
 ### What next for me?
-0. Add support for R# 8.0 and 8.1
+0. Add support for R# 8.0 and 8.1 (Done)
 
 1. Add quick fixes and code analysis rules that will show some common errors in the IDE directly, instead of waiting for compilation time.
 
