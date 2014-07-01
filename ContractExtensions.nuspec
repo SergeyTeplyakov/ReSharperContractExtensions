@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>ReSharper.ContractExtensions</id>
-    <version>0.7.0</version>
+    <version>0.7.5</version>
     <!-- update plugin ver in AssemblyInfo.cs plz -->
     <title>Code Contract editing extensions</title>
     <authors>Sergey Teplyakov</authors>
@@ -14,6 +14,14 @@
       Simplifies adding preconditions, postconditions and object invariant during day-to-day activities.
     </description>
     <releaseNotes>
+New features (v.7.5)
+- Added combo action that convert if-throw precondition check to Contract.Requires (both - gneric and non-generic versions);
+- Added combo action that convert between generic and non-generic Contract.Requires
+
+Requires: Requires for enum (https://github.com/SergeyTeplyakov/ReSharperContractExtensions/issues/1)
+- Added combo action that adds precondition check for enums and nullable enums with Contract.Requires(Enum.IsDefined(typeof(SomeEnumType), someEnumValue));
+- Added combo action that adds postcondition check that enum and nullable enum result is defined by Enum.IsDefiined method.
+
 New features (v.7.0)
 - Added combo actions that will add Contract.Requires for all method arguments
 - Added Plug-in Settings (available at R# Options page):
