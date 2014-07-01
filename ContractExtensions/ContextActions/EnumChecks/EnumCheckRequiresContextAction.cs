@@ -23,7 +23,7 @@ namespace ReSharper.ContractExtensions.ContextActions.EnumChecks
 
         protected override void ExecuteTransaction()
         {
-            var executor = new EnumCheckRequiresExecutor(_availability, false);
+            var executor = new EnumCheckRequiresExecutor(_availability, _requiresShouldBeGeneric);
             executor.ExecuteTransaction();
         }
 
