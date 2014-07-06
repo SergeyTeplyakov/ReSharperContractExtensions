@@ -23,14 +23,13 @@ namespace ReSharper.ContractExtensions.Tests.ProblemAnalyzers.PreconditionAnalyz
 
         [Test]
         [TestCase("NoWarning.cs")]
+        [TestCase("NoWarningForPartiallyDefinedDefault.cs")]
         [TestCase("WarnForCanBeNullParam.cs")]
         [TestCase("WarnForNullableDefault.cs")]
         [TestCase("WarnForNullableDefaultWithMethodCall.cs")]
         public void Test(string testName)
         {
             DoTestSolution(testName);
-            //DoOneTest(testName);
-            //DoTestFiles(testName);
         }
 
     }

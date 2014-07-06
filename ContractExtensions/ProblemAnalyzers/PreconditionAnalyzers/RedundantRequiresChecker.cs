@@ -101,7 +101,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
 
         public string ToolTip
         {
-            get { return ToolTipWarning; }
+            get { return string.Format("{0} '{1}'", ToolTipWarning, ArgumentName); }
         }
 
         public string ErrorStripeToolTip { get { return ToolTip; } }

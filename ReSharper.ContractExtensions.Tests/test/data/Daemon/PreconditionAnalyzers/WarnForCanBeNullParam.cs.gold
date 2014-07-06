@@ -8,4 +8,4 @@ class A
   }
 }
 ---------------------------------------------------------
-(0): ReSharper Warning: Suspicios requires for nullable argument
+(0): ReSharper Warning: Suspicios requires for nullable argument 's'

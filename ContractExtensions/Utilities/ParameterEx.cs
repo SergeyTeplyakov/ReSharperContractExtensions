@@ -16,8 +16,7 @@ namespace ReSharper.ContractExtensions.Utilities
 
             // TODO: not sure that GetDefaultValue could return null!
             return parameter.IsOptional
-                   && (defaultValue.With(x => x.ConstantValue).With(x => x.Value) == null ||
-                       defaultValue.With(x => x.ConstantValue).With(x => x.Type) == null);
+                   && (defaultValue.With(x => x.ConstantValue).With(x => x.Value) == null);
         }
 
         public static bool IsDefaultedToNull(this IParameterDeclaration parameterDeclaration)
@@ -30,8 +29,7 @@ namespace ReSharper.ContractExtensions.Utilities
 
             // TODO: not sure that GetDefaultValue could return null!
             return parameterDeclaration.DeclaredElement.IsOptional
-                   && (defaultValue.With(x => x.ConstantValue).With(x => x.Value) == null ||
-                       defaultValue.With(x => x.ConstantValue).With(x => x.Type) == null);
+                   && (defaultValue.With(x => x.ConstantValue).With(x => x.Value) == null);
         }
 
         public static bool HasClrAttribute(this IParameterDeclaration parameterDeclaration, System.Type attributeType)
