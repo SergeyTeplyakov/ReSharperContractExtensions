@@ -1,4 +1,4 @@
-using System.Diagnostics.Contracts2;
+using System.Diagnostics.Contracts;
 using System;
 
 abstract class A

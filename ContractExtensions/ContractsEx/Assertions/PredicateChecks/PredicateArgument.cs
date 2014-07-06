@@ -17,11 +17,13 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
     /// </summary>
     public sealed class ReferenceArgument : PredicateArgument
     {
+        private readonly IReferenceExpression _referenceExpression;
         private readonly string _argumentName;
         private readonly string _baseArgumentName;
 
         public ReferenceArgument(IReferenceExpression referenceExpression)
         {
+            _referenceExpression = referenceExpression;
             Contract.Requires(referenceExpression != null);
             Contract.Requires(referenceExpression.NameIdentifier != null);
 
@@ -48,6 +50,11 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
         public string BaseArgumentName
         {
             get { return _baseArgumentName; }
+        }
+
+        public IReferenceExpression ReferenceExpression
+        {
+            get { return _referenceExpression; }
         }
     }
 

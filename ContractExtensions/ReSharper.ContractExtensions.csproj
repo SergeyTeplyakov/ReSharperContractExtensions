@@ -141,6 +141,8 @@
     <Compile Include="ContextActions\Requires\ArgumentRequiresContextAction.cs" />
     <Compile Include="ContextActions\Requires\ArgumentRequiresExecutor.cs" />
     <Compile Include="ContractUtils\ContractExtensions.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\RedundantRequiresChecker.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\RedundantRequiresQuickFix.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings\ContractExtensionsOptionsPage.xaml.cs" />
     <Compile Include="Settings\ContractExtensionsOptionsViewModel.cs" />
@@ -151,6 +153,7 @@
     <Compile Include="Utilities\ExpressionEx.cs" />
     <Compile Include="Utilities\MethodDeclarationEx.cs" />
     <Compile Include="Utilities\Monadic.cs" />
+    <Compile Include="Utilities\ParameterEx.cs" />
     <Compile Include="Utilities\StringExtensions.cs" />
     <Compile Include="Utilities\TreeNodeExtensions.cs" />
     <Compile Include="Utilities\JetTypeEx.cs" />
@@ -159,9 +162,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Configuration\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Page Include="Settings\ContractExtensionsOptionsPage.xaml">
       <Generator>MSBuild:Compile</Generator>

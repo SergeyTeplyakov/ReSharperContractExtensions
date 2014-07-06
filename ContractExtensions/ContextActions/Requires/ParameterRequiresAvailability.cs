@@ -97,12 +97,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         [Pure]
         private bool IsParameterDefaultedToNull()
         {
-            var defaultValue = _parameterDeclaration.DeclaredElement.GetDefaultValue();
-
-            // TODO: not sure that GetDefaultValue could return null!
-            return _parameterDeclaration.DeclaredElement.IsOptional
-                   && (defaultValue.With(x => x.ConstantValue).With(x => x.Value) == null ||
-                       defaultValue.With(x => x.ConstantValue).With(x => x.Type) == null);
+            return _parameterDeclaration.IsDefaultedToNull();
         }
 
         [Pure]

@@ -1,0 +1,13 @@
+using System.Diagnostics.Contracts;
+
+class A
+{
+  public void Foo(string s = null)
+  {
+    |Contract.Requires(s != null)|(0);
+  }
+}
+------------------------------------------------
+0: Suspicios requires for nullable argument
+QUICKFIXES:
+Remove redundant precondition for argument 's'

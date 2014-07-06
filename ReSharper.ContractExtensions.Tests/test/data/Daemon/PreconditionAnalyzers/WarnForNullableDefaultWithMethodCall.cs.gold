@@ -1,0 +1,11 @@
+using System.Diagnostics.Contracts;
+
+class A
+{
+  public void Foo(string s = null)
+  {
+    |Contract.Requires(!string.IsNullOrEmpty(s))|(0);
+  }
+}
+---------------------------------------------------------
+(0): ReSharper Warning: Suspicios requires for nullable argument

@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace ReSharper.ContractExtensions.Utilities
 {
-    internal static class TypeExtensions
+    public static class TypeExtensions
     {
         [Pure]
         public static bool IsAttribute(this System.Type type)
