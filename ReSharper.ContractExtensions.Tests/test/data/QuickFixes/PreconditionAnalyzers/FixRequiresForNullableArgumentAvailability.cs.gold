@@ -8,6 +8,6 @@ class A
   }
 }
 ------------------------------------------------
-0: Suspicios requires for nullable argument
+0: Suspicios requires for nullable argument 's'
 QUICKFIXES:
 Remove redundant precondition for argument 's'

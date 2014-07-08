@@ -38,9 +38,9 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
             string argumentName;
             if (IsAvailable(element, out argumentName))
             { 
-            consumer.AddHighlighting(
-                new RedundantRequiresCheckerHighlighting(element.GetContainingStatement(), argumentName), 
-                element.GetDocumentRange(), element.GetContainingFile());
+                consumer.AddHighlighting(
+                    new RedundantRequiresCheckerHighlighting(element.GetContainingStatement(), argumentName), 
+                    element.GetDocumentRange(), element.GetContainingFile());
             }
         }
 

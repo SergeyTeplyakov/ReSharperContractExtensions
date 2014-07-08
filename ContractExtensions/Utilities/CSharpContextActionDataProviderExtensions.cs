@@ -8,6 +8,13 @@ namespace ReSharper.ContractExtensions.Utilities
 {
     public static class CSharpContextActionDataProviderExtensions
     {
+        public static bool IsSelected<T>(this ICSharpContextActionDataProvider provider) where T : class, ITreeNode
+        {
+            Contract.Requires(provider != null);
+
+            return provider.GetSelectedElement<T>(true, true) != null;
+        }
+
         [Pure]
         public static IParameterDeclaration GetSelectedParameterDeclaration(
             this ICSharpContextActionDataProvider provider)

@@ -42,10 +42,7 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
         {
             Contract.Requires(expression != null);
 
-            return new ExpressionPredicateCheck(new FakeArgument(), expression);
+            return new ExpressionPredicateCheck(new EmptyPredicateArgument(), expression);
         }
-
-        private class FakeArgument : PredicateArgument
-        {}
     }
 }

@@ -61,6 +61,8 @@
     <Compile Include="src\Ensures\EnsuresContextActionExecuteTest.cs" />
     <Compile Include="src\ProblemAnalyzers\CSharpHighlightingTestBase.cs" />
     <Compile Include="src\ProblemAnalyzers\PreconditionAnalyzers\FixRedundantRequiresTests.cs" />
+    <Compile Include="src\ProblemAnalyzers\PreconditionAnalyzers\InconsistentVisilibilityChecker\AccessVisibilityCheckerTests.cs" />
+    <Compile Include="src\ProblemAnalyzers\PreconditionAnalyzers\InconsistentVisilibilityChecker\RequiresInconsistentVisibilityCheckerTests.cs" />
     <Compile Include="src\ProblemAnalyzers\PreconditionAnalyzers\RedundantRequiresCheckerTests.cs" />
     <Compile Include="src\ProblemAnalyzers\PreconditionAnalyzers\RedundantRequiresQuickFixAvailabilityTests.cs" />
     <Compile Include="src\ProblemAnalyzers\QuickFixAvailabilityTestBase.cs" />

@@ -11,12 +11,6 @@ namespace ReSharper.ContractExtensions.Utilities
 {
     public static class ExpressionEx
     {
-        public static bool IsSelected<T>(this ICSharpContextActionDataProvider provider) where T : class, ITreeNode
-        {
-            Contract.Requires(provider != null);
-
-            return provider.GetSelectedElement<T>(true, true) != null;
-        }
 
         [CanBeNull]
         public static IClrTypeName GetCallSiteType(this IInvocationExpression invocationExpression)

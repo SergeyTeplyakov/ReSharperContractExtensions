@@ -12,6 +12,9 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
     public abstract class PredicateArgument 
     {}
 
+    public sealed class EmptyPredicateArgument : PredicateArgument
+    { }
+
     /// <summary>
     /// Represents "reference" argument that contains a name for the argument/field/property.
     /// </summary>

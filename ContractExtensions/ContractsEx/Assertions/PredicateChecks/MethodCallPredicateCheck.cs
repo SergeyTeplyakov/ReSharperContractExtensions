@@ -66,12 +66,10 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
             var method = invocationExpression.GetCalledMethod();
 
             var argument = ExtractArgument(invocationExpression.Arguments.FirstOrDefault().With(x => x.Value));
-            //var argument = invocationExpression.Arguments.FirstOrDefault()
-            //    .With(x => x)
-            //    .With(x => x.Value as IReferenceExpression)
-            //    .With(x => x.NameIdentifier.Name);
 
-            if (callSiteType == null || method == null || argument == null)
+            argument = argument ?? new EmptyPredicateArgument();
+
+            if (callSiteType == null || method == null)
                 return null;
 
             return new MethodCallPredicateCheck(argument, callSiteType)
