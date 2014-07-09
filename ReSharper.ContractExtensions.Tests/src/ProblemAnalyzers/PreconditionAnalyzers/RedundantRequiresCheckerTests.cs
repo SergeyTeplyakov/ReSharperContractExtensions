@@ -1,7 +1,4 @@
-﻿using JetBrains.Application.Settings;
-using JetBrains.ReSharper.Daemon;
-using JetBrains.ReSharper.Daemon.CSharp;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers;
 
 namespace ReSharper.ContractExtensions.Tests.ProblemAnalyzers.PreconditionAnalyzers

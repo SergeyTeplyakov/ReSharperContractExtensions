@@ -10,25 +10,32 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
 {
     internal static class PredicateCheckFactory
     {
-        private static readonly Dictionary<Type, Func<IExpression, IEnumerable<PredicateCheck>>> _factories = 
-            new Dictionary<Type, Func<IExpression, IEnumerable<PredicateCheck>>>();
+        private static readonly Func<IExpression, IEnumerable<PredicateCheck>> _equalityExpressionFactory;
+        private static readonly Func<IExpression, IEnumerable<PredicateCheck>> _unaryOperatorExpressionFactory;
+        private static readonly Func<IExpression, IEnumerable<PredicateCheck>> _invocationExpressionFactory;
+        private static readonly Func<IExpression, IEnumerable<PredicateCheck>> _csharpExpressionFactory;
 
         static PredicateCheckFactory()
         {
-            _factories[typeof(IEqualityExpression)] = 
+            _equalityExpressionFactory = 
                 ex => ex.ProcessRecursively<IEqualityExpression>()
                         .Select(EqualityExpressionPredicateCheck.TryCreate)
                         .Where(n => n != null);
 
-            _factories[typeof(IUnaryOperatorExpression)] = 
+            _unaryOperatorExpressionFactory =
                 ex => ex.ProcessRecursively<IUnaryOperatorExpression>()
                         .Select(MethodCallPredicateCheck.TryCreate)
                         .Where(n => n != null);
 
-            _factories[typeof(IInvocationExpression)] = 
+            _invocationExpressionFactory = 
                 ex => ex.ProcessRecursively<IInvocationExpression>()
                         .Select(MethodCallPredicateCheck.TryCreate)
                         .Where(n => n != null);
+
+            _csharpExpressionFactory =
+                ex => ex.ProcessRecursively<ICSharpExpression>()
+                    .Select(ExpressionPredicateCheck.TryCreate)
+                    .Where(n => n != null);
         }
 
         public static IEnumerable<PredicateCheck> Create(IExpression expression)
@@ -40,28 +47,21 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
             return factory(expression);
         }
 
-
-        private static Func<IExpression, IEnumerable<PredicateCheck>> CSharpExpressionPredicateCheck
-        {
-            get
-            {
-                return ex => ex.ProcessRecursively<ICSharpExpression>()
-                    .Select(ExpressionPredicateCheck.TryCreate)
-                    .Where(n => n != null);
-            }
-        }
-
         private static Func<IExpression, IEnumerable<PredicateCheck>> GetFactoryMethodFor(IExpression expression)
         {
             Contract.Requires(expression != null);
             Contract.Ensures(Contract.Result<Func<IExpression, IEnumerable<PredicateCheck>>>() != null);
 
+            if (expression is IEqualityExpression)
+                return _equalityExpressionFactory;
 
-            Func<IExpression, IEnumerable<PredicateCheck>> result;
-            if (_factories.TryGetValue(expression.GetType(), out result))
-                return result;
+            if (expression is IUnaryOperatorExpression)
+                return _unaryOperatorExpressionFactory;
 
-            return CSharpExpressionPredicateCheck;
+            if (expression is IInvocationExpression)
+                return _invocationExpressionFactory;
+
+            return _csharpExpressionFactory;
         }
     }
 }

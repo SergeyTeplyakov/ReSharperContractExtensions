@@ -55,8 +55,9 @@ namespace ReSharper.ContractExtensions.Utilities
             // So, I've added a workaround and trying to compare with "PresentableName" which is "CanBeNull" in this case.
             return parameter
                 .GetAttributeInstances(false)
-                .Any(a => a.GetClrName().With(x => x.FullName) == attributeType.FullName || 
-                     attributeType.Name.Contains(a.GetAttributeType().GetPresentableName(CSharpLanguage.Instance)));
+                .Any(a => a.GetClrName().With(x => x.FullName) == attributeType.FullName
+                            || attributeType.Name.Contains(a.GetAttributeType().GetPresentableName(CSharpLanguage.Instance)));
         }
     }
 }
+
