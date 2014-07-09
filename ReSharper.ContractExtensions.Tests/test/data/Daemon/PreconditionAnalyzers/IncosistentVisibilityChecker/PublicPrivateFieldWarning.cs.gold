@@ -9,4 +9,4 @@ class A
   }
 }
 ---------------------------------------------------------
-(0): ReSharper Underlined Error Highlighting: Member 'Foo' has less visibility than the encolsing method '_isValid'
+(0): ReSharper Underlined Error Highlighting: Member 'Foo' has less visibility than the enclosing field '_isValid'

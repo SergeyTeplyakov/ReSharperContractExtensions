@@ -20,10 +20,11 @@ namespace ReSharper.ContractExtensions.Tests.ProblemAnalyzers.PreconditionAnalyz
             DoTestSolution(testName);
         }
 
-        [TestCase("PublicPrivatePropertyWarning.cs")]
-
         [TestCase("NoWarning.cs")]
-        
+
+        [TestCase("PublicPrivatePropertyWarning.cs")]
+        [TestCase("PublicPrivateFieldWarning.cs")]
+
         [TestCase("PublicProtectedWarning.cs")]
         [TestCase("PublicInternalWarning.cs")]
         [TestCase("PublicPrivateWarning.cs")]

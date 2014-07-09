@@ -101,11 +101,10 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
         [Pure]
         private IEnumerable<MemberWithAccess> ProcessExpression(IExpression expression)
         {
-            foreach (var invocations in expression.ProcessRecursively<IInvocationExpression>())
+            foreach (var reference in expression.ProcessRecursively<IReferenceExpression>())
             {
                 var memberWithAccess =
-                    invocations.InvokedExpression
-                    .With(x => x as IReferenceExpression)
+                    reference
                     .With(x => x.Reference)
                     .With(x => x.Resolve())
                     .With(x => x.DeclaredElement)
@@ -167,7 +166,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
 
         public const string ServerityId = "RequiresInconsistentVisibilityHighlighting";
         // Sample: Member 'ConsoleApplication6.Demo.Analyzers.Demo.Check' has less visibility than the enclosing method 'ConsoleApplication6.Demo.Analyzers.Demo.Foo(System.String)'.
-        const string ToolTipWarningFormat = "Member '{0}' has less visibility than the encolsing {1} '{2}'";
+        const string ToolTipWarningFormat = "Member '{0}' has less visibility than the enclosing {1} '{2}'";
 
         public bool IsValid()
         {

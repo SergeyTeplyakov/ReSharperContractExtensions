@@ -13,18 +13,18 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
     /// </remarks>
     internal sealed class ExpressionPredicateCheck : PredicateCheck
     {
-        private readonly IBinaryExpression _binaryExpression;
+        private readonly ICSharpExpression _expression;
 
-        public ExpressionPredicateCheck(PredicateArgument argument, IBinaryExpression binaryExpression)
+        public ExpressionPredicateCheck(PredicateArgument argument, ICSharpExpression expression)
             : base(argument)
         {
-            Contract.Requires(binaryExpression != null);
-            _binaryExpression = binaryExpression;
+            Contract.Requires(expression != null);
+            _expression = expression;
         }
 
-        public IBinaryExpression BinaryExpression
+        public ICSharpExpression Expression
         {
-            get { return _binaryExpression; }
+            get { return _expression; }
         }
 
         public override bool ChecksForNotNull()
@@ -38,7 +38,7 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
         }
 
         [CanBeNull]
-        public static ExpressionPredicateCheck TryCreate(IBinaryExpression expression)
+        public static ExpressionPredicateCheck TryCreate(ICSharpExpression expression)
         {
             Contract.Requires(expression != null);
 
