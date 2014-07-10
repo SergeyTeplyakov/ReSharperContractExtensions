@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using JetBrains.Application;
+using JetBrains.Annotations;
 using JetBrains.ReSharper.Daemon;
 using JetBrains.ReSharper.Daemon.Stages;
 using JetBrains.ReSharper.Daemon.Stages.Dispatcher;
@@ -24,11 +24,26 @@ using ReSharper.ContractExtensions.Utilities;
 
 namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
 {
-    internal class MemberWithAccess
+    internal enum MemberType
     {
-        public MemberWithAccess(string memberName, string memberType, AccessRights accessRights)
+        Method,
+        Property,
+        Field,
+        Member
+    }
+
+
+    internal sealed class MemberWithAccess
+    {
+        private readonly IDeclaredElement _declaredElement;
+
+        private MemberWithAccess(IDeclaredElement declaredElement, MemberType memberType, AccessRights accessRights)
         {
-            MemberName = memberName;
+            Contract.Requires(declaredElement != null);
+
+            _declaredElement = declaredElement;
+
+            MemberName = declaredElement.ShortName;
             MemberType = memberType;
             AccessRights = accessRights;
         }
@@ -37,12 +52,65 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
         private void ObjectInvariant()
         {
             Contract.Invariant(MemberName != null);
-            Contract.Invariant(MemberType != null);
+            Contract.Invariant(MemberTypeName != null);
         }
 
+        [CanBeNull]
+        public static MemberWithAccess FromDeclaredElement(IDeclaredElement declaredElement)
+        {
+            Contract.Requires(declaredElement != null);
+
+            var accessRightsOwner = declaredElement as IAccessRightsOwner;
+            if (accessRightsOwner == null)
+                return null;
+
+            return new MemberWithAccess(declaredElement, GetMemberType(declaredElement), 
+                accessRightsOwner.GetAccessRights());
+        }
+
+
         public string MemberName { get; private set; }
-        public string MemberType { get; private set; }
+
+        public MemberType MemberType { get; private set; }
+
+        public string MemberTypeName
+        {
+            get
+            {
+                switch (MemberType)
+                {
+                    case MemberType.Method:
+                        return "method";
+                    case MemberType.Property:
+                        return "property";
+                    case MemberType.Field:
+                        return "field";
+                    default:
+                        return "member";
+                }
+            }
+        }
+
         public AccessRights AccessRights { get; private set; }
+
+        public IDeclaredElement DeclaredElement
+        {
+            get { return _declaredElement; }
+        }
+
+        private static MemberType GetMemberType(IDeclaredElement element)
+        {
+            Contract.Requires(element != null);
+
+            if (element is IProperty)
+                return MemberType.Property;
+            if (element is IMethod)
+                return MemberType.Method;
+            if (element is IField)
+                return MemberType.Field;
+
+            return MemberType.Member;
+        }
     }
 
 
@@ -71,6 +139,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
             }
         }
 
+        [System.Diagnostics.Contracts.Pure]
         private bool IsAvailable(IInvocationExpression expression, out MemberWithAccess preconditionContainer, 
             out MemberWithAccess enclosingMember)
         {
@@ -84,33 +153,35 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
             var preconditionHolder =
                 expression.GetContainingStatement()
                     .With(x => x.GetContainingTypeMemberDeclaration())
-                    .With(x => new MemberWithAccess(x.DeclaredName, "foo", x.GetAccessRights()));
+                    .With(x => x.DeclaredElement)
+                    .With(MemberWithAccess.FromDeclaredElement);
 
             preconditionContainer = preconditionHolder;
             if (preconditionContainer == null)
                 return false;
 
-            enclosingMember = ProcessExpression(contractAssertion.PredicateExpression)
+            // Looking for a "enclosing" members that are less visible then a contract holder.
+            // The only exception is a field with ContractPublicPropertyName attribute.
+            enclosingMember = 
+                ProcessExpression(contractAssertion.PredicateExpression)
                 .FirstOrDefault(member => 
-                !AccessVisibilityChecker.MemberWith(member.AccessRights)
-                    .IsAccessibleFrom(preconditionHolder.AccessRights));
+                !EnclosingFieldMarkedWithContractPublicPropertyName(member) && 
+                !AccessVisibilityChecker.MemberWith(member.AccessRights).IsAccessibleFrom(preconditionHolder.AccessRights));
 
             return enclosingMember != null;
         }
 
-        [Pure]
+        [System.Diagnostics.Contracts.Pure]
         private IEnumerable<MemberWithAccess> ProcessExpression(IExpression expression)
         {
             foreach (var reference in expression.ProcessRecursively<IReferenceExpression>())
             {
                 var memberWithAccess =
                     reference
-                    .With(x => x.Reference)
-                    .With(x => x.Resolve())
-                    .With(x => x.DeclaredElement)
-                    .With(x => x as IAccessRightsOwner)
-                    .With(x => new MemberWithAccess(
-                        ((IDeclaredElement)x).ShortName, GetMemberType((IDeclaredElement)x), x.GetAccessRights()));
+                        .With(x => x.Reference)
+                        .With(x => x.Resolve())
+                        .With(x => x.DeclaredElement)
+                        .With(MemberWithAccess.FromDeclaredElement);
 
                 if (memberWithAccess != null)
                     yield return memberWithAccess;
@@ -118,18 +189,16 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
             }
         }
 
-        public static string GetMemberType(IDeclaredElement element)
+        [System.Diagnostics.Contracts.Pure]
+        private bool EnclosingFieldMarkedWithContractPublicPropertyName(MemberWithAccess member)
         {
-            if (element is IProperty)
-                return "property";
-            if (element is IMethod)
-                return "method";
-            if (element is IField)
-                return "field";
+            if (member.MemberType != MemberType.Field)
+                return false;
 
-            return "contractHolder";
+            var field = (IField)member.DeclaredElement;
+            return field.HasAttributeInstance(
+                new ClrTypeName(typeof (ContractPublicPropertyNameAttribute).FullName), false);
         }
-         
     }
 
     internal static class FuncEx
@@ -173,10 +242,13 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
             return true;
         }
 
+        internal MemberWithAccess PreconditionContainer { get { return _preconditionContainer; } }
+        internal MemberWithAccess EnclosingMember { get { return _enclosingMember; } }
+
         public string ToolTip
         {
             get { return string.Format(ToolTipWarningFormat, _preconditionContainer.MemberName, 
-                _enclosingMember.MemberType, _enclosingMember.MemberName); }
+                _enclosingMember.MemberTypeName, _enclosingMember.MemberName); }
         }
 
         public string ErrorStripeToolTip { get { return ToolTip; } }
@@ -211,7 +283,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
 
         private static readonly Dictionary<AccessRights, Func<AccessRights, bool>> _accessRightsCompatibility = FillRules();
 
-        [Pure]
+        [System.Diagnostics.Contracts.Pure]
         private static Dictionary<AccessRights, Func<AccessRights, bool>> FillRules()
         {
             var accessRights = new Dictionary<AccessRights, Func<AccessRights, bool>>();

@@ -61,32 +61,35 @@ namespace ReSharper.ContractExtensions.Utilities
         }
 
         public static IEnumerable<TExpression> ProcessRecursively<TExpression>(this IExpression expression)
-            where TExpression : IExpression
+            where TExpression : class, IExpression
+            
         {
             var processor = new Procesor<TExpression>();
             expression.ProcessThisAndDescendants(processor);
-            return processor.ProcessedNodes.OfType<TExpression>();
+            return processor.ProcessedNodes;
         }
 
-        private class Procesor<T> : IRecursiveElementProcessor where T : IExpression
+        private class Procesor<T> : IRecursiveElementProcessor where T : class, IExpression
         {
             public Procesor()
             {
-                ProcessedNodes = new List<ITreeNode>();
+                ProcessedNodes = new List<T>();
             }
 
-            public List<ITreeNode> ProcessedNodes { get; private set; }
+            public List<T> ProcessedNodes { get; private set; }
             public bool InteriorShouldBeProcessed(ITreeNode element)
             {
-                if (element is T)
-                    return false;
+                //if (element is T)
+                //    return false;
 
                 return true;
             }
 
             public void ProcessBeforeInterior(ITreeNode element)
             {
-                ProcessedNodes.Add(element);
+                var t = element as T;
+                if (t != null)
+                    ProcessedNodes.Add(t);
             }
 
             public void ProcessAfterInterior(ITreeNode element)

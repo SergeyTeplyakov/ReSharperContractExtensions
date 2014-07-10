@@ -1,0 +1,19 @@
+using System.Diagnostics.Contracts;
+
+class A
+{
+  protected void Foo()
+  {
+    |Contract.Requires(B.IsValid)|(0);
+  }
+
+  class B
+  {
+    internal static bool IsValid {get; private set;}
+  }
+}
+
+
+------------------------------------------------
+0: Member 'Foo' has less visibility than the enclosing property 'IsValid'
+NO QUICKFIXES

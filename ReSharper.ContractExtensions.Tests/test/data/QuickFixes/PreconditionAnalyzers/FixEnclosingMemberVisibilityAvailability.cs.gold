@@ -1,0 +1,14 @@
+using System.Diagnostics.Contracts;
+
+class A
+{
+  protected void Foo()
+  {
+    |Contract.Requires(IsValid)|(0);
+  }
+  private bool IsValid {get; private set;}
+}
+------------------------------------------------
+0: Member 'Foo' has less visibility than the enclosing property 'IsValid'
+QUICKFIXES:
+Change visibility of the enclosing property 'IsValid' to 'protected'

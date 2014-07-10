@@ -51,8 +51,8 @@ namespace ReSharper.ContractExtensions.ContractsEx
 
             var predicates = PredicateCheckFactory.Create(originalExpression).ToList();
 
-            if (predicates.Count == 0)
-                return null;
+            //if (predicates.Count == 0)
+            //    return null;
 
             if (assertionType == AssertionType.Precondition)
             {

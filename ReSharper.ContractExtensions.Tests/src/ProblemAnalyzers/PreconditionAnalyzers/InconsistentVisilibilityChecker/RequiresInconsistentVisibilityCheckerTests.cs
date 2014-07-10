@@ -21,6 +21,7 @@ namespace ReSharper.ContractExtensions.Tests.ProblemAnalyzers.PreconditionAnalyz
         }
 
         [TestCase("NoWarning.cs")]
+        [TestCase("NoWarningWithContractPublicPropertyName.cs")]
 
         [TestCase("PublicPrivatePropertyWarning.cs")]
         [TestCase("PublicPrivateFieldWarning.cs")]

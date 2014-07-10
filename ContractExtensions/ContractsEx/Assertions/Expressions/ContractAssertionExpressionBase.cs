@@ -25,7 +25,6 @@ namespace ReSharper.ContractExtensions.ContractsEx
         {
             Contract.Requires(Enum.IsDefined(typeof (AssertionType), assertionType));
             Contract.Requires(predicates != null);
-            Contract.Requires(predicates.Count != 0);
 
             _assertionType = assertionType;
             _predicates = predicates;
@@ -36,7 +35,6 @@ namespace ReSharper.ContractExtensions.ContractsEx
         private void ObjectInvariant()
         {
             Contract.Invariant(Predicates != null);
-            Contract.Invariant(Predicates.Count != 0);
         }
 
         public AssertionType AssertionType

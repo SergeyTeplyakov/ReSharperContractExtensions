@@ -11,6 +11,7 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
     /// <remarks>
     /// For example, n > 0 && n &lt; 42 etc
     /// </remarks>
+    // TODO: don't think that we need this!!
     internal sealed class ExpressionPredicateCheck : PredicateCheck
     {
         private readonly ICSharpExpression _expression;
@@ -41,7 +42,6 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
         public static ExpressionPredicateCheck TryCreate(ICSharpExpression expression)
         {
             Contract.Requires(expression != null);
-
             return new ExpressionPredicateCheck(new EmptyPredicateArgument(), expression);
         }
     }

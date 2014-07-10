@@ -82,9 +82,6 @@ namespace ReSharper.ContractExtensions.ContextActions.Invariants
 
             // Creating lookup where key is argument name, and the value is statements.
             var assertions = _classDeclaration.GetInvariantAssertions().ToList();
-                //_classDeclaration.GetInvariants()
-                    //.SelectMany(x => x.ArgumentNames.Select(a => new { Statement = x, ArgumentName = a }))
-                    //.ToLookup(x => x.ArgumentName, x => x.Statement);
 
             // We should consider only members, declared previously to current member
             var previousInvariants =

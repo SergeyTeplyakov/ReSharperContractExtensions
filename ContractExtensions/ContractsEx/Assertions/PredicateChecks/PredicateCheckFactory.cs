@@ -8,34 +8,44 @@ using ReSharper.ContractExtensions.Utilities;
 
 namespace ReSharper.ContractExtensions.ContractsEx.Assertions
 {
+    
+
     internal static class PredicateCheckFactory
     {
-        private static readonly Func<IExpression, IEnumerable<PredicateCheck>> _equalityExpressionFactory;
-        private static readonly Func<IExpression, IEnumerable<PredicateCheck>> _unaryOperatorExpressionFactory;
-        private static readonly Func<IExpression, IEnumerable<PredicateCheck>> _invocationExpressionFactory;
-        private static readonly Func<IExpression, IEnumerable<PredicateCheck>> _csharpExpressionFactory;
-
-        static PredicateCheckFactory()
+        // TODO: is it possible to generialize this?
+        private class ExpressionMatcher
         {
-            _equalityExpressionFactory = 
-                ex => ex.ProcessRecursively<IEqualityExpression>()
-                        .Select(EqualityExpressionPredicateCheck.TryCreate)
-                        .Where(n => n != null);
+            private readonly IExpression _expression;
 
-            _unaryOperatorExpressionFactory =
-                ex => ex.ProcessRecursively<IUnaryOperatorExpression>()
-                        .Select(MethodCallPredicateCheck.TryCreate)
-                        .Where(n => n != null);
+            public ExpressionMatcher(IExpression expression)
+            {
+                Contract.Requires(expression != null);
 
-            _invocationExpressionFactory = 
-                ex => ex.ProcessRecursively<IInvocationExpression>()
-                        .Select(MethodCallPredicateCheck.TryCreate)
-                        .Where(n => n != null);
+                _expression = expression;
+            }
 
-            _csharpExpressionFactory =
-                ex => ex.ProcessRecursively<ICSharpExpression>()
-                    .Select(ExpressionPredicateCheck.TryCreate)
-                    .Where(n => n != null);
+            public T Match<T>(
+                Func<IEqualityExpression, T> equalityMatch,
+                Func<IUnaryOperatorExpression, T> unaryOpertorMatch,
+                Func<IInvocationExpression, T> invocationMatch,
+                Func<ICSharpExpression, T> defaultMatch) where T : class
+            {
+                Contract.Requires(equalityMatch != null);
+                Contract.Requires(unaryOpertorMatch != null);
+                Contract.Requires(invocationMatch != null);
+                Contract.Requires(defaultMatch != null);
+
+                if (_expression is IEqualityExpression)
+                    return equalityMatch((IEqualityExpression) _expression);
+                if (_expression is IUnaryOperatorExpression)
+                    return unaryOpertorMatch((IUnaryOperatorExpression) _expression);
+                if (_expression is IInvocationExpression)
+                    return invocationMatch((IInvocationExpression) _expression);
+                if (_expression is ICSharpExpression)
+                    return defaultMatch((ICSharpExpression) _expression);
+
+                return default(T);
+            }
         }
 
         public static IEnumerable<PredicateCheck> Create(IExpression expression)
@@ -43,25 +53,23 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
             Contract.Requires(expression != null);
             Contract.Ensures(Contract.Result<IEnumerable<PredicateCheck>>() != null);
 
-            var factory = GetFactoryMethodFor(expression);
-            return factory(expression);
+            return
+                expression.ProcessRecursively<IExpression>()
+                .Select(CreateFrom)
+                .Where(pc => pc != null)
+                .ToList();
         }
 
-        private static Func<IExpression, IEnumerable<PredicateCheck>> GetFactoryMethodFor(IExpression expression)
+        private static PredicateCheck CreateFrom(IExpression expression)
         {
             Contract.Requires(expression != null);
-            Contract.Ensures(Contract.Result<Func<IExpression, IEnumerable<PredicateCheck>>>() != null);
 
-            if (expression is IEqualityExpression)
-                return _equalityExpressionFactory;
-
-            if (expression is IUnaryOperatorExpression)
-                return _unaryOperatorExpressionFactory;
-
-            if (expression is IInvocationExpression)
-                return _invocationExpressionFactory;
-
-            return _csharpExpressionFactory;
+            var matcher = new ExpressionMatcher(expression);
+            return matcher.Match(
+                equality => (PredicateCheck) EqualityExpressionPredicateCheck.TryCreate(equality),
+                unaryOperator => MethodCallPredicateCheck.TryCreate(unaryOperator),
+                invocation => MethodCallPredicateCheck.TryCreate(invocation),
+                csharpExpression => null);
         }
     }
 }
