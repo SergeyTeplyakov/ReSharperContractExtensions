@@ -32,7 +32,6 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
         Member
     }
 
-
     internal sealed class MemberWithAccess
     {
         private readonly IDeclaredElement _declaredElement;
@@ -67,7 +66,6 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
             return new MemberWithAccess(declaredElement, GetMemberType(declaredElement), 
                 accessRightsOwner.GetAccessRights());
         }
-
 
         public string MemberName { get; private set; }
 
@@ -112,7 +110,6 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
             return MemberType.Member;
         }
     }
-
 
     /// <summary>
     /// Checks inconsistent visibility in Contract.Requires.

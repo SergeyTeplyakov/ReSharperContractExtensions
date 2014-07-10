@@ -1,0 +1,9 @@
+using System.Diagnostics.Contracts;
+
+class A
+{
+  [ContractPublicPropertyName("IsValid")]
+  private bool |_isValid|(0);
+}
+---------------------------------------------------------
+(0): ReSharper Underlined Error Highlighting: Field '_isValid' is marked [ContractPublicPropertyName("IsValid")], but no public field/property named 'IsValid' with type 'bool' can be found

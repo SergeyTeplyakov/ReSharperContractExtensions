@@ -61,6 +61,9 @@
     <Compile Include="src\Ensures\EnsuresContextActionAvailabilityTest.cs" />
     <Compile Include="src\Ensures\EnsuresContextActionExecuteTest.cs" />
     <Compile Include="src\ProblemAnalyzers\CSharpHighlightingTestBase.cs" />
+    <Compile Include="src\ProblemAnalyzers\PreconditionAnalyzers\ContractPublicPropertyNameCheckers\ContractPublicPropertyNameCheckerTests.cs" />
+    <Compile Include="src\ProblemAnalyzers\PreconditionAnalyzers\ContractPublicPropertyNameCheckers\ContractPublicPropertyNameQuickFixAvailabilityTests.cs" />
+    <Compile Include="src\ProblemAnalyzers\PreconditionAnalyzers\ContractPublicPropertyNameCheckers\ContractPublicPropertyNameQuickFixExecutionTests.cs" />
     <Compile Include="src\ProblemAnalyzers\PreconditionAnalyzers\FixRedundantRequiresTests.cs" />
     <Compile Include="src\ProblemAnalyzers\PreconditionAnalyzers\InconsistentVisilibilityChecker\AccessVisibilityCheckerTests.cs" />
     <Compile Include="src\ProblemAnalyzers\PreconditionAnalyzers\InconsistentVisilibilityChecker\FixInconsistentVisibilityTests.cs" />

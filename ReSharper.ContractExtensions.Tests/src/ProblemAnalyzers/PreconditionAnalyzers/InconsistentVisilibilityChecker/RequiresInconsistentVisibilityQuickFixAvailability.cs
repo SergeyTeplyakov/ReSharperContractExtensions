@@ -22,6 +22,5 @@ namespace ReSharper.ContractExtensions.Tests.ProblemAnalyzers.PreconditionAnalyz
         {
             DoTestFiles(fileName);
         }
-
     }
 }

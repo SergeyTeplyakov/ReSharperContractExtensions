@@ -141,7 +141,9 @@
     <Compile Include="ContextActions\Requires\ArgumentRequiresContextAction.cs" />
     <Compile Include="ContextActions\Requires\ArgumentRequiresExecutor.cs" />
     <Compile Include="ContractsEx\ContractExtensions.cs" />
-    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\ContractPublicPropertyNameChecker.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\ContractPublicPropertyNameCheckers\ContractPublicPropertyNameChecker.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\ContractPublicPropertyNameCheckers\ContractPublicPropertyNameHighlighing.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\ContractPublicPropertyNameCheckers\ContractPublicPropertyNameQuickFix.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\RequiresInconsistentVisibiityQuickFix.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\RequiresInconsistentVisibiityChecker.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\RedundantRequiresChecker.cs" />
