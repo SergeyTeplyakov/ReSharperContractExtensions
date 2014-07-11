@@ -7,10 +7,10 @@ using JetBrains.ReSharper.Daemon;
 using JetBrains.ReSharper.Daemon.Stages;
 using JetBrains.ReSharper.Daemon.Stages.Dispatcher;
 using JetBrains.ReSharper.Psi;
-using JetBrains.ReSharper.Psi.CSharp;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Tree;
 using ReSharper.ContractExtensions.ContractsEx;
+using ReSharper.ContractExtensions.ContractsEx.Assertions;
 using ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers;
 using ReSharper.ContractExtensions.Utilities;
 
@@ -144,7 +144,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
             enclosingMember = null;
 
             var contractAssertion = ContractAssertionExpression.FromInvocationExpression(expression);
-            if (contractAssertion == null)
+            if (contractAssertion == null || contractAssertion.AssertionType != AssertionType.Precondition)
                 return false;
             
             var preconditionHolder =
@@ -209,47 +209,6 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
         {
             return t => original(t) && another(t);
         }
-    }
-
-    [ConfigurableSeverityHighlighting("RequiresInconsistentVisibilityHighlighting", CSharpLanguage.Name)]
-    public sealed class RequiresInconsistentVisibiityHighlighting : IHighlighting
-    {
-        private readonly ICSharpStatement _preconditionStatement;
-        private readonly MemberWithAccess _preconditionContainer;
-        private readonly MemberWithAccess _enclosingMember;
-
-        internal RequiresInconsistentVisibiityHighlighting(ICSharpStatement preconditionStatement, 
-            MemberWithAccess preconditionContainer, MemberWithAccess enclosingMember)
-        {
-            Contract.Requires(preconditionStatement != null);
-            Contract.Requires(preconditionContainer != null);
-            Contract.Requires(enclosingMember != null);
-
-            _preconditionStatement = preconditionStatement;
-            _preconditionContainer = preconditionContainer;
-            _enclosingMember = enclosingMember;
-        }
-
-        public const string ServerityId = "RequiresInconsistentVisibilityHighlighting";
-        // Sample: Member 'ConsoleApplication6.Demo.Analyzers.Demo.Check' has less visibility than the enclosing method 'ConsoleApplication6.Demo.Analyzers.Demo.Foo(System.String)'.
-        const string ToolTipWarningFormat = "Member '{0}' has less visibility than the enclosing {1} '{2}'";
-
-        public bool IsValid()
-        {
-            return true;
-        }
-
-        internal MemberWithAccess PreconditionContainer { get { return _preconditionContainer; } }
-        internal MemberWithAccess EnclosingMember { get { return _enclosingMember; } }
-
-        public string ToolTip
-        {
-            get { return string.Format(ToolTipWarningFormat, _preconditionContainer.MemberName, 
-                _enclosingMember.MemberTypeName, _enclosingMember.MemberName); }
-        }
-
-        public string ErrorStripeToolTip { get { return ToolTip; } }
-        public int NavigationOffsetPatch { get { return 0; } }
     }
 
     public sealed class AccessVisibilityChecker
