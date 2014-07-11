@@ -14,6 +14,7 @@ namespace ReSharper.ContractExtensions.Tests.ProblemAnalyzers.PreconditionAnalyz
         }
 
         [TestCase("FixPropertyVisibility.cs")]
+        [TestCase("FixByAddingPublicProperty.cs")]
         public void Test(string fileName)
         {
             DoTestFiles(fileName);

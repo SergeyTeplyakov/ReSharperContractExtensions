@@ -5,6 +5,7 @@ using JetBrains.ProjectModel;
 using JetBrains.ReSharper.Feature.Services.Bulbs;
 using JetBrains.ReSharper.Intentions.Extensibility;
 using JetBrains.ReSharper.Psi;
+using JetBrains.ReSharper.Psi.CSharp;
 using JetBrains.ReSharper.Psi.CSharp.Impl;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.TextControl;
@@ -43,7 +44,8 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
 
             if (_generateProperty)
             {
-                //Contract.Assert(false, "Not implemented yet!!");
+                Contract.Assert(_highlighing.ReferingFieldOrProperty == null);
+                GenerateRefereingProperty();
             }
             return null;
         }
@@ -78,6 +80,21 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
 
             _changeVisibility = true;
             return true;
+        }
+
+        private void GenerateRefereingProperty()
+        {
+            var fieldDeclaration = _highlighing.FieldDeclaration;
+            var factory = CSharpElementFactory.GetInstance(fieldDeclaration);
+
+            var propertyDeclaration =
+                (IClassMemberDeclaration)factory.CreateTypeMemberDeclaration(
+                    "public $0 $1 {get {return $2;}}",
+                    fieldDeclaration.Type, _highlighing.PropertyName, fieldDeclaration.NameIdentifier);
+
+            var typeDeclaration = (IClassLikeDeclaration)fieldDeclaration.GetContainingTypeDeclaration();
+
+            typeDeclaration.AddClassMemberDeclarationAfter(propertyDeclaration, fieldDeclaration);
         }
     }
 }
