@@ -1,5 +1,5 @@
 ﻿using System.Reflection;
-
+using System.Runtime.CompilerServices;
 using JetBrains.Application.PluginSupport;
 
 [assembly: AssemblyTitle("ReSharper.ContractExtensions")]
@@ -13,3 +13,4 @@ using JetBrains.Application.PluginSupport;
 [assembly: PluginDescription("Bring enhanced experience for Design by Contract development with .NET!")]
 [assembly: PluginVendor("Sergey Teplyakov")]
 
+[assembly: InternalsVisibleTo("ReSharper.ContractExtensions.Tests")]

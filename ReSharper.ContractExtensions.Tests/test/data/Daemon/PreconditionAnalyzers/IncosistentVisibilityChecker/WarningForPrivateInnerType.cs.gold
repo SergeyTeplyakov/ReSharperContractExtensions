@@ -1,0 +1,17 @@
+using System.Diagnostics.Contracts;
+
+public class A
+{
+  public void Foo(string s)
+  {
+    |Contract.Requires(!Inner.IsValid(s))|(0);
+  }
+
+  private class Inner
+  {
+    public static bool IsValid(string s) {return s != null;}
+  }
+}
+
+---------------------------------------------------------
+(0): ReSharper Underlined Error Highlighting: Member 'Inner.IsValid' has less visibility than the enclosing method 'A.Foo'

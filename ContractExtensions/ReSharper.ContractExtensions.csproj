@@ -141,9 +141,16 @@
     <Compile Include="ContextActions\Requires\ArgumentRequiresContextAction.cs" />
     <Compile Include="ContextActions\Requires\ArgumentRequiresExecutor.cs" />
     <Compile Include="ContractsEx\ContractExtensions.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\AccessVisibilityChecker.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\ContractPublicPropertyNameCheckers\ContractPublicPropertyNameChecker.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\ContractPublicPropertyNameCheckers\ContractPublicPropertyNameHighlighing.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\ContractPublicPropertyNameCheckers\ContractPublicPropertyNameQuickFix.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\MalformedMethodContractChecker.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\MalformedMethodContractHighlighting.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\MalformedObjectInvariantChecker.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MemberWithAccess.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\RedundantRequiresCheckerHighlighting.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\RequiresInconsistentVisibiityHighlighting.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\RequiresInconsistentVisibiityQuickFix.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\RequiresInconsistentVisibiityChecker.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\RedundantRequiresChecker.cs" />
@@ -154,6 +161,7 @@
     <Compile Include="Settings\ContractExtensionsSettings.cs" />
     <Compile Include="Utilities\AccessRightsEx.cs" />
     <Compile Include="Utilities\AttributeExtensions.cs" />
+    <Compile Include="Utilities\ClassEx.cs" />
     <Compile Include="Utilities\ClassLikeDeclarationExtensions.cs" />
     <Compile Include="Utilities\CSharpContextActionDataProviderExtensions.cs" />
     <Compile Include="Utilities\ExpressionEx.cs" />
@@ -168,7 +176,9 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="ProblemAnalyzers\PreconditionAnalyzers\PurityAnalyzers\" />
+  </ItemGroup>
   <ItemGroup>
     <Page Include="Settings\ContractExtensionsOptionsPage.xaml">
       <Generator>MSBuild:Compile</Generator>

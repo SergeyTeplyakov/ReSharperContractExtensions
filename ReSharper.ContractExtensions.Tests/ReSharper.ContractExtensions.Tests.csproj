@@ -65,10 +65,10 @@
     <Compile Include="src\ProblemAnalyzers\PreconditionAnalyzers\ContractPublicPropertyNameCheckers\ContractPublicPropertyNameQuickFixAvailabilityTests.cs" />
     <Compile Include="src\ProblemAnalyzers\PreconditionAnalyzers\ContractPublicPropertyNameCheckers\ContractPublicPropertyNameQuickFixExecutionTests.cs" />
     <Compile Include="src\ProblemAnalyzers\PreconditionAnalyzers\FixRedundantRequiresTests.cs" />
-    <Compile Include="src\ProblemAnalyzers\PreconditionAnalyzers\InconsistentVisilibilityChecker\AccessVisibilityCheckerTests.cs" />
-    <Compile Include="src\ProblemAnalyzers\PreconditionAnalyzers\InconsistentVisilibilityChecker\FixInconsistentVisibilityTests.cs" />
-    <Compile Include="src\ProblemAnalyzers\PreconditionAnalyzers\InconsistentVisilibilityChecker\RequiresInconsistentVisibilityQuickFixAvailability.cs" />
-    <Compile Include="src\ProblemAnalyzers\PreconditionAnalyzers\InconsistentVisilibilityChecker\RequiresInconsistentVisibilityCheckerTests.cs" />
+    <Compile Include="src\ProblemAnalyzers\PreconditionAnalyzers\InconsistentVisilibility\AccessVisibilityCheckerTests.cs" />
+    <Compile Include="src\ProblemAnalyzers\PreconditionAnalyzers\InconsistentVisilibility\FixInconsistentVisibilityTests.cs" />
+    <Compile Include="src\ProblemAnalyzers\PreconditionAnalyzers\InconsistentVisilibility\RequiresInconsistentVisibilityQuickFixAvailability.cs" />
+    <Compile Include="src\ProblemAnalyzers\PreconditionAnalyzers\InconsistentVisilibility\RequiresInconsistentVisibilityCheckerTests.cs" />
     <Compile Include="src\ProblemAnalyzers\PreconditionAnalyzers\RedundantRequiresCheckerTests.cs" />
     <Compile Include="src\ProblemAnalyzers\PreconditionAnalyzers\RedundantRequiresQuickFixAvailabilityTests.cs" />
     <Compile Include="src\ProblemAnalyzers\QuickFixAvailabilityTestBase.cs" />

@@ -13,5 +13,5 @@ class B
   internal static bool IsValid {get; private set;}
 }
 ------------------------------------------------
-0: Member 'Foo' has less visibility than the enclosing property 'IsValid'
+0: Member 'B.IsValid' has less visibility than the enclosing method 'A.Foo'
 NO QUICKFIXES

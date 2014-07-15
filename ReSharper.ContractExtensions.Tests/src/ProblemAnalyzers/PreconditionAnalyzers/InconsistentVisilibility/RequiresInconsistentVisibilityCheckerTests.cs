@@ -4,7 +4,7 @@ using JetBrains.ReSharper.Daemon.CSharp;
 using NUnit.Framework;
 using ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers;
 
-namespace ReSharper.ContractExtensions.Tests.ProblemAnalyzers.PreconditionAnalyzers
+namespace ReSharper.ContractExtensions.Tests.ProblemAnalyzers.PreconditionAnalyzers.InconsistentVisibility
 {
     [TestFixture]
     public class RequiresInconsistentVisibilityCheckerTests : CSharpHighlightingTestBase<RequiresInconsistentVisibiityHighlighting>
@@ -14,7 +14,6 @@ namespace ReSharper.ContractExtensions.Tests.ProblemAnalyzers.PreconditionAnalyz
             get { return @"Daemon\PreconditionAnalyzers\IncosistentVisibilityChecker"; }
         }
 
-        [Test]
         public void Debug(string testName)
         {
             DoTestSolution(testName);
@@ -24,6 +23,9 @@ namespace ReSharper.ContractExtensions.Tests.ProblemAnalyzers.PreconditionAnalyz
         [TestCase("NoWarningWithContractPublicPropertyName.cs")]
 
         [TestCase("PublicPrivatePropertyWarning.cs")]
+        [TestCase("WarningForPrivateInnerType.cs")]
+        [TestCase("WarningForDifferentTypeVisibility.cs")]
+        [TestCase("WarningFromPropertyPrecondition.cs")]
         [TestCase("PublicPrivateFieldWarning.cs")]
 
         [TestCase("PublicProtectedWarning.cs")]

@@ -1,0 +1,19 @@
+using System.Diagnostics.Contracts;
+
+public class A
+{
+  public void Foo(string s)
+  {
+    |Contract.Requires(!Inner.IsValid(s))|(0);
+  }
+
+  private class Inner
+  {
+    internal static bool IsValid(string s) {return s != null;}
+  }
+}
+
+------------------------------------------------
+0: Member 'Inner.IsValid' has less visibility than the enclosing method 'A.Foo'
+QUICKFIXES:
+Change visibility of the referenced method 'IsValid' to 'public' and type 'Inner' to 'public'

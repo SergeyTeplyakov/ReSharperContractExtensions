@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using JetBrains.Application.Progress;
@@ -7,15 +8,22 @@ using JetBrains.ReSharper.Feature.Services.Bulbs;
 using JetBrains.ReSharper.Intentions.Extensibility;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp.Impl;
+using JetBrains.ReSharper.Refactorings.Util;
 using JetBrains.TextControl;
 using JetBrains.Util;
 using ReSharper.ContractExtensions.Utilities;
 
 namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
 {
+    /// <summary>
+    /// Fix inconsistent visibility of the referenced member in the precondition.
+    /// </summary>
     [QuickFix]
     public sealed class RequiresInconsistentVisibiityQuickFix : QuickFixBase
     {
+        private AccessRights? _destinationTypeAccess;
+        private AccessRights? _destinationMemberAccess;
+
         private readonly RequiresInconsistentVisibiityHighlighting _highlighting;
 
         public RequiresInconsistentVisibiityQuickFix(RequiresInconsistentVisibiityHighlighting highlighting)
@@ -27,53 +35,144 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
 
         protected override Action<ITextControl> ExecutePsiTransaction(ISolution solution, IProgressIndicator progress)
         {
+            Contract.Assert(_destinationMemberAccess != null || _destinationTypeAccess != null);
+
             // TODO: R# documentation saying that GetDeclarations is VERY expensive!
             // Can I do the same but in some other way???
-            var declaration = _highlighting.EnclosingMember.DeclaredElement.GetDeclarations().FirstOrDefault();
+
+            if (_destinationMemberAccess != null)
+                FixReferencedMemberAccess(_destinationMemberAccess.Value);
+
+            if (_destinationTypeAccess != null)
+                FixReferencedTypeAccess(_destinationTypeAccess.Value);
+
+            return null;
+        }
+
+        private void FixReferencedTypeAccess(AccessRights newTypeAccess)
+        {
+            var declaration =
+                _highlighting.LessVisibleReferencedMember.DeclaredElement
+                .With(x => x.GetContainingType())
+                .With(x => x.GetDeclarations().FirstOrDefault());
 
             Contract.Assert(declaration != null);
 
             ModifiersUtil.SetAccessRights(
                 declaration,
-                _highlighting.PreconditionContainer.AccessRights);
+                newTypeAccess);
+        }
 
-            return null;
+        private void FixReferencedMemberAccess(AccessRights memberAccessRights)
+        {
+            var declaration =
+                _highlighting.LessVisibleReferencedMember.DeclaredElement
+                    .GetDeclarations().FirstOrDefault();
+
+            Contract.Assert(declaration != null);
+
+            ModifiersUtil.SetAccessRights(
+                declaration,
+                memberAccessRights);
         }
 
         public override string Text
         {
             get
             {
-                var enclosingMember = _highlighting.EnclosingMember;
+                Contract.Assert(_destinationMemberAccess != null || _destinationTypeAccess != null);
 
-                return string.Format("Change visibility of the enclosing {0} '{1}' to '{2}'", 
-                    enclosingMember.MemberTypeName, enclosingMember.MemberName, 
-                    _highlighting.PreconditionContainer.AccessRights.ToCSharpString());
+                var referencedMember = _highlighting.LessVisibleReferencedMember;
+
+                if (_destinationTypeAccess == null)
+                {
+                    return string.Format("Change visibility of the referenced {0} '{1}' to '{2}'",
+                        referencedMember.MemberTypeString, referencedMember.MemberName,
+                        _destinationMemberAccess.Value.ToCSharpString());
+                }
+
+                if (_destinationMemberAccess == null)
+                {
+                    return string.Format("Change visibility of the referenced type '{0}' to '{1}'",
+                        referencedMember.MemberTypeName, _destinationTypeAccess.Value.ToCSharpString());
+                }
+
+                return string.Format(
+                    "Change visibility of the referenced {0} '{1}' to '{2}' and type '{3}' to '{4}'",
+                    referencedMember.MemberTypeString, referencedMember.MemberName,
+                    _destinationMemberAccess.Value.ToCSharpString(), referencedMember.MemberTypeName, 
+                    _destinationTypeAccess.Value.ToCSharpString());
             }
         }
 
         public override bool IsAvailable(IUserDataHolder cache)
         {
-            return BelongToTheSameType(_highlighting.PreconditionContainer, _highlighting.EnclosingMember);
+            return ComputeDestinationTypeAndMemberAccess(out _destinationTypeAccess, out _destinationMemberAccess);
         }
 
-        private bool BelongToTheSameType(MemberWithAccess preconditionContainer, MemberWithAccess enclosingMember)
+        private bool ComputeDestinationTypeAndMemberAccess(out AccessRights? typeAccess, out AccessRights? memberAccess)
         {
-            var preconditionContainingType =
-                preconditionContainer.DeclaredElement
-                    .With(x => x as IClrDeclaredElement)
-                    .Return(x => x.GetContainingType());
+            typeAccess = null;
+            memberAccess = null;
 
-            var enclosingMemberContiningType =
-                enclosingMember.DeclaredElement
-                    .With(x => x as IClrDeclaredElement)
-                    .Return(x => x.GetContainingType());
+            var preconditionContainer = _highlighting.PreconditionContainer;
+            var referencedMember = _highlighting.LessVisibleReferencedMember;
 
-            if (preconditionContainingType == null || enclosingMemberContiningType == null)
+            if (preconditionContainer.BelongToTheSameType(referencedMember))
+            {
+                memberAccess = _highlighting.PreconditionContainer.MemberAccessRights;
+                return true;
+            }
+
+            // We can't fix visibility for members from the different projects
+            // (potentially, it's possible, but I don't care about this case for now)
+
+            if (!preconditionContainer.BelongToTheSameProject(referencedMember))
+            {
                 return false;
+            }
 
-            return preconditionContainingType.GetClrName().FullName ==
-                   enclosingMemberContiningType.GetClrName().FullName;
+            // Referenced member is defined in another type.
+            // Lets find out, is it possible to fix this issue!
+
+            // If contract holder is protected we're really limited in our fixes!
+            if (preconditionContainer.MemberAccessRights == AccessRights.PROTECTED)
+            {
+                // The only way we can fix visibility of the referenced member,
+                // when the referenced member defined in the base class!
+
+                var referencedType = (IClass)referencedMember.DeclaredElement.GetContainingType();
+                var preconditionsClass = (IClass)preconditionContainer.DeclaredElement.GetContainingType();
+
+                if (preconditionsClass.IsSuperType(referencedType))
+                {
+                    // Referenced member declared in one of the base types for member with contract!
+                    memberAccess = preconditionContainer.MemberAccessRights;
+                    return true;
+                }
+
+                return false;
+            }
+
+            // Simple case: members have the same access, the only one fix required: fix of the type access
+            if (preconditionContainer.MemberAccessRights == referencedMember.MemberAccessRights)
+            {
+                typeAccess = preconditionContainer.TypeAccessRights;
+                return true;
+            }
+
+            if (preconditionContainer.TypeAccessRights != referencedMember.TypeAccessRights)
+            {
+                typeAccess = preconditionContainer.TypeAccessRights;
+            }
+
+            memberAccess = preconditionContainer.MemberAccessRights;
+            
+            return true;
         }
+
+        
     }
+
+    
 }

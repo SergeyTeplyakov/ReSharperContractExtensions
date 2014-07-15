@@ -6,9 +6,11 @@ class A
   {
     |Contract.Requires(IsValid)|(0);
   }
+
   private bool IsValid {get; private set;}
 }
+
 ------------------------------------------------
-0: Member 'Foo' has less visibility than the enclosing property 'IsValid'
+0: Member 'IsValid' has less visibility than the enclosing method 'Foo'
 QUICKFIXES:
-Change visibility of the enclosing property 'IsValid' to 'protected'
+Change visibility of the referenced property 'IsValid' to 'protected'

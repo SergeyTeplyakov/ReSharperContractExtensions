@@ -9,4 +9,4 @@ class A
   internal bool IsValid() {return true;}
 }
 ---------------------------------------------------------
-(0): ReSharper Underlined Error Highlighting: Member 'Foo' has less visibility than the enclosing method 'IsValid'
+(0): ReSharper Underlined Error Highlighting: Member 'IsValid' has less visibility than the enclosing method 'Foo'

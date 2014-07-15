@@ -9,4 +9,4 @@ class A
   private bool IsValid {get; private set;}
 }
 ---------------------------------------------------------
-(0): ReSharper Underlined Error Highlighting: Member 'Foo' has less visibility than the enclosing property 'IsValid'
+(0): ReSharper Underlined Error Highlighting: Member 'IsValid' has less visibility than the enclosing method 'Foo'

@@ -1,0 +1,58 @@
+using System.Diagnostics.Contracts;
+using JetBrains.ReSharper.Daemon;
+using JetBrains.ReSharper.Psi.CSharp;
+using JetBrains.ReSharper.Psi.CSharp.Tree;
+
+namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
+{
+    [ConfigurableSeverityHighlighting("RequiresInconsistentVisibilityHighlighting", CSharpLanguage.Name)]
+    public sealed class RequiresInconsistentVisibiityHighlighting : IHighlighting
+    {
+        private readonly MemberWithAccess _preconditionContainer;
+        private readonly MemberWithAccess _lessVisibleReferencedMember;
+
+        internal RequiresInconsistentVisibiityHighlighting(ICSharpStatement preconditionStatement, 
+            MemberWithAccess preconditionContainer, MemberWithAccess lessVisibleReferencedMember)
+        {
+            Contract.Requires(preconditionStatement != null);
+            Contract.Requires(preconditionContainer != null);
+            Contract.Requires(lessVisibleReferencedMember != null);
+
+            _preconditionContainer = preconditionContainer;
+            _lessVisibleReferencedMember = lessVisibleReferencedMember;
+        }
+
+        public const string ServerityId = "RequiresInconsistentVisibilityHighlighting";
+        // Sample: Member 'ConsoleApplication6.Demo.Analyzers.Demo.Check' has less visibility than the enclosing method 'ConsoleApplication6.Demo.Analyzers.Demo.Foo(System.String)'.
+        const string ToolTipWarningFormat = "Member '{0}' has less visibility than the enclosing {1} '{2}'";
+
+        public bool IsValid()
+        {
+            return true;
+        }
+
+        internal MemberWithAccess PreconditionContainer { get { return _preconditionContainer; } }
+        internal MemberWithAccess LessVisibleReferencedMember { get { return _lessVisibleReferencedMember; } }
+
+        public string ToolTip
+        {
+            get
+            {
+                // For members from different type TypeName.Member notation should be used!
+                string referencedName = _lessVisibleReferencedMember.MemberName;
+                string preconditionContainerName = _preconditionContainer.MemberName;
+
+                if (!_lessVisibleReferencedMember.BelongToTheSameType(_preconditionContainer))
+                {
+                    referencedName = _lessVisibleReferencedMember.TypeAndMemberName;
+                    preconditionContainerName = _preconditionContainer.TypeAndMemberName;
+                }
+
+                return string.Format(ToolTipWarningFormat, referencedName, 
+                    _preconditionContainer.MemberTypeString, preconditionContainerName); }
+        }
+
+        public string ErrorStripeToolTip { get { return ToolTip; } }
+        public int NavigationOffsetPatch { get { return 0; } }
+    }
+}

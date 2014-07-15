@@ -11,7 +11,6 @@ namespace ReSharper.ContractExtensions.Tests.ProblemAnalyzers.PreconditionAnalyz
             get { return @"Daemon\PreconditionAnalyzers\ContractPublicPropertyNameCheckers"; }
         }
 
-        [Test]
         public void Debug(string testName)
         {
             DoTestSolution(testName);

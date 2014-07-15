@@ -1,0 +1,18 @@
+using System.Diagnostics.Contracts;
+
+public class A
+{
+  public void Foo()
+  {
+    |Contract.Requires(B.IsValid)|(0);
+  }
+}
+
+class B
+{
+  public static bool IsValid {get; private set;}
+}
+------------------------------------------------
+0: Member 'B.IsValid' has less visibility than the enclosing method 'A.Foo'
+QUICKFIXES:
+Change visibility of the referenced type 'B' to 'public'

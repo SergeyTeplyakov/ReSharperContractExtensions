@@ -1,0 +1,16 @@
+using System.Diagnostics.Contracts;
+
+class A
+{
+  public string Foo
+  {
+    get 
+    {
+      |Contract.Requires(IsValid())|(0);
+      return "";
+    }
+  }
+  internal bool IsValid() {return true;}
+}
+---------------------------------------------------------
+(0): ReSharper Underlined Error Highlighting: Member 'IsValid' has less visibility than the enclosing property 'Foo'
