@@ -145,6 +145,14 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
 
     internal static class MemberWithAccessEx
     {
+        public static AccessRights GetCombinedAccessRights(this MemberWithAccess member)
+        {
+            Contract.Requires(member != null);
+
+            return AccessVisibilityChecker.CombineTypeAndMemberAccessRights(member.TypeAccessRights,
+                member.MemberAccessRights);
+        }
+
         public static bool BelongToTheSameType(this MemberWithAccess preconditionContainer, MemberWithAccess referencedMember)
         {
             Contract.Requires(preconditionContainer != null);

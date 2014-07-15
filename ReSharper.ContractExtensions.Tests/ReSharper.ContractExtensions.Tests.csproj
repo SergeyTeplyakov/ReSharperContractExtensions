@@ -67,6 +67,8 @@
     <Compile Include="src\ProblemAnalyzers\PreconditionAnalyzers\FixRedundantRequiresTests.cs" />
     <Compile Include="src\ProblemAnalyzers\PreconditionAnalyzers\InconsistentVisilibility\AccessVisibilityCheckerTests.cs" />
     <Compile Include="src\ProblemAnalyzers\PreconditionAnalyzers\InconsistentVisilibility\FixInconsistentVisibilityTests.cs" />
+    <Compile Include="src\ProblemAnalyzers\PreconditionAnalyzers\InconsistentVisilibility\RequiresExceptionInconsistentVisibilityCheckerTests.cs" />
+    <Compile Include="src\ProblemAnalyzers\PreconditionAnalyzers\InconsistentVisilibility\RequiresExceptionInconsistentVisibilityCheckerQuickFixAvailability.cs" />
     <Compile Include="src\ProblemAnalyzers\PreconditionAnalyzers\InconsistentVisilibility\RequiresInconsistentVisibilityQuickFixAvailability.cs" />
     <Compile Include="src\ProblemAnalyzers\PreconditionAnalyzers\InconsistentVisilibility\RequiresInconsistentVisibilityCheckerTests.cs" />
     <Compile Include="src\ProblemAnalyzers\PreconditionAnalyzers\RedundantRequiresCheckerTests.cs" />

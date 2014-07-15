@@ -1,0 +1,16 @@
+using System.Diagnostics.Contracts;
+
+public class A
+{
+  public void Foo(string s)
+  {
+    |Contract.Requires<CustomException>(s != null)|(0);
+  }
+}
+
+class CustomException : ArgumentException
+{
+  public CustomException(string message, string paramName) : base(message, paramName) {}
+}
+---------------------------------------------------------
+(0): ReSharper Underlined Error Highlighting: Exception type 'CustomException' in Requires<E> has less visibility than the enclosing method 'A.Foo'

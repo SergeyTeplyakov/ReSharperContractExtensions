@@ -60,7 +60,7 @@ namespace ReSharper.ContractExtensions.ContractsEx
                 return new ContractRequiresExpression(assertionType.Value, predicates, originalExpression,
                     ExtractMessage(invocationExpression))
                 {
-                    GenericArgumentType = genericRequiresType,
+                    GenericArgumentDeclaredType = genericRequiresType,
                 };
             }
 
@@ -69,15 +69,15 @@ namespace ReSharper.ContractExtensions.ContractsEx
         }
 
         [System.Diagnostics.Contracts.Pure]
-        private static IClrTypeName GetGenericRequiresType(IInvocationExpression invocationExpression)
+        [CanBeNull]
+        private static IDeclaredType GetGenericRequiresType(IInvocationExpression invocationExpression)
         {
             Contract.Requires(invocationExpression != null);
-            var type = invocationExpression.Reference
-                .With(x => x.Invocation)
-                .With(x => x.TypeArguments.FirstOrDefault());
 
-            return type.With(x => x as IDeclaredType)
-                .With(x => x.GetClrName());
+            return invocationExpression.Reference
+                .With(x => x.Invocation)
+                .With(x => x.TypeArguments.FirstOrDefault())
+                .Return(x => x as IDeclaredType);
         }
 
         public IExpression PredicateExpression

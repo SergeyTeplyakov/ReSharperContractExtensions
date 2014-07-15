@@ -6,6 +6,19 @@ using JetBrains.ReSharper.Psi;
 
 namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
 {
+    internal static class FuncEx
+    {
+        public static Func<T, bool> Or<T>(this Func<T, bool> original, Func<T, bool> another)
+        {
+            return t => original(t) || another(t);
+        }
+
+        public static Func<T, bool> And<T>(this Func<T, bool> original, Func<T, bool> another)
+        {
+            return t => original(t) && another(t);
+        }
+    }
+
     internal sealed class AccessVisibilityChecker
     {
         private static readonly Dictionary<AccessRights, Func<AccessRights, bool>> _accessRightsCompatibility = FillRules();
@@ -70,12 +83,8 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
                         .IsAccessibleFrom(contractHolder.MemberAccessRights);
             }
 
-            var referencedMemberCombinedVisibility = 
-                CombineTypeAndMemberAccessRights(_referencedMember.TypeAccessRights,
-                    _referencedMember.MemberAccessRights);
-            var contractHolderCombinedVisibility = 
-                CombineTypeAndMemberAccessRights(contractHolder.TypeAccessRights,
-                    contractHolder.MemberAccessRights);
+            var referencedMemberCombinedVisibility = _referencedMember.GetCombinedAccessRights();
+            var contractHolderCombinedVisibility = contractHolder.GetCombinedAccessRights();
 
             return MemberWith(referencedMemberCombinedVisibility).IsAccessibleFrom(contractHolderCombinedVisibility);
         }

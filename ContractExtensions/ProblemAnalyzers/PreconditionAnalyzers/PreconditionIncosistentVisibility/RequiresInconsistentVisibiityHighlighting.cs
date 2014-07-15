@@ -2,6 +2,16 @@ using System.Diagnostics.Contracts;
 using JetBrains.ReSharper.Daemon;
 using JetBrains.ReSharper.Psi.CSharp;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
+using ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers;
+
+[assembly: RegisterConfigurableSeverity(RequiresInconsistentVisibiityHighlighting.ServerityId,
+  null,
+  HighlightingGroupIds.CompilerWarnings, // this is actually a Code Contract compiler error CC1038
+  RequiresInconsistentVisibiityHighlighting.ServerityId,
+  "Warning for inconsistent visibility members in the precondition check",
+  Severity.ERROR,
+  false)]
+
 
 namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
 {

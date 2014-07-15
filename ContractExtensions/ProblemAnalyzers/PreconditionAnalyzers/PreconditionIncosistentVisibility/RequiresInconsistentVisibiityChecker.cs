@@ -2,26 +2,15 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using JetBrains.ReSharper.Daemon;
 using JetBrains.ReSharper.Daemon.Stages;
 using JetBrains.ReSharper.Daemon.Stages.Dispatcher;
-using JetBrains.ReSharper.Intentions.Xaml.QuickFixes;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Tree;
-using JetBrains.ReSharper.Refactorings.Util;
 using ReSharper.ContractExtensions.ContractsEx;
 using ReSharper.ContractExtensions.ContractsEx.Assertions;
-using ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers;
 using ReSharper.ContractExtensions.Utilities;
 
-[assembly: RegisterConfigurableSeverity(RequiresInconsistentVisibiityHighlighting.ServerityId,
-  null,
-  HighlightingGroupIds.CompilerWarnings, // this is actually a Code Contract compiler error CC1038
-  RequiresInconsistentVisibiityHighlighting.ServerityId,
-  "Warning for inconsistent visibility members in the precondition check",
-  Severity.ERROR,
-  false)]
 
 namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
 {
@@ -51,7 +40,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
             }
         }
 
-        [System.Diagnostics.Contracts.Pure]
+        [Pure]
         private bool IsAvailable(IInvocationExpression expression, out MemberWithAccess preconditionContainer, 
             out MemberWithAccess lessVisibleMember)
         {
@@ -100,7 +89,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
             }
         }
 
-        [System.Diagnostics.Contracts.Pure]
+        [Pure]
         private bool FieldFromPreconditionMarkedWithContractPublicPropertyName(MemberWithAccess member)
         {
             if (member.MemberType != MemberType.Field)
@@ -109,19 +98,6 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
             var field = (IField)member.DeclaredElement;
             return field.HasAttributeInstance(
                 new ClrTypeName(typeof (ContractPublicPropertyNameAttribute).FullName), false);
-        }
-    }
-
-    internal static class FuncEx
-    {
-        public static Func<T, bool> Or<T>(this Func<T, bool> original, Func<T, bool> another)
-        {
-            return t => original(t) || another(t);
-        }
-
-        public static Func<T, bool> And<T>(this Func<T, bool> original, Func<T, bool> another)
-        {
-            return t => original(t) && another(t);
         }
     }
 }
