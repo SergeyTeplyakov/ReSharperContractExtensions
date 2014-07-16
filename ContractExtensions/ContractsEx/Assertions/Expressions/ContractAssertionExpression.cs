@@ -25,7 +25,7 @@ namespace ReSharper.ContractExtensions.ContractsEx
         private readonly IExpression _predicateExpression;
 
         protected ContractAssertionExpression(AssertionType assertionType, List<PredicateCheck> predicates, 
-            IExpression predicateExpression, string message)
+            IExpression predicateExpression, Message message)
             : base(assertionType, predicates, message)
         {
             Contract.Requires(predicateExpression != null);

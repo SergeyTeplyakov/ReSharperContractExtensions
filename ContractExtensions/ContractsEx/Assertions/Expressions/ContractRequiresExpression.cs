@@ -10,7 +10,7 @@ namespace ReSharper.ContractExtensions.ContractsEx
     public sealed class ContractRequiresExpression : ContractAssertionExpression
     {
         internal ContractRequiresExpression(AssertionType assertionType, List<PredicateCheck> predicates, 
-            IExpression predicateExpression, string message) 
+            IExpression predicateExpression, Message message) 
             : base(assertionType, predicates, predicateExpression, message)
         {}
 

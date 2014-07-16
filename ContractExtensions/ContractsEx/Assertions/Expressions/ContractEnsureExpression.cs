@@ -13,7 +13,7 @@ namespace ReSharper.ContractExtensions.ContractsEx
     {
         private readonly List<PredicateCheck> _predicates;
 
-        public ContractEnsureExpression(List<PredicateCheck> predicates, string message) 
+        public ContractEnsureExpression(List<PredicateCheck> predicates, Message message) 
             : base(AssertionType.Postcondition, predicates, message)
         {
             Contract.Requires(predicates != null);

@@ -13,6 +13,7 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
     public abstract class ContractAssertion
     {
         protected readonly ContractAssertionExpressionBase _assertionExpression;
+        private Message _message;
 
         protected ContractAssertion(AssertionType assertionType,
             ICSharpStatement statement, ContractAssertionExpressionBase assertionExpression)
@@ -24,14 +25,20 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
 
             Statement = statement;
             AssertionType = assertionType;
-            Message = assertionExpression.Message;
+            _message = assertionExpression.Message;
         }
 
         public AssertionType AssertionType { get; private set; }
         public ICSharpStatement Statement { get; private set; }
 
-        [CanBeNull]
-        public string Message { get; private set; }
+        public Message Message
+        {
+            get
+            {
+                Contract.Ensures(Contract.Result<Message>() != null);
+                return _message;
+            }
+        }
 
         /// <summary>
         /// Returns true if current Assertion checks for null something with specified <paramref name="name"/>.

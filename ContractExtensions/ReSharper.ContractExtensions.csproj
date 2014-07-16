@@ -119,6 +119,7 @@
     <Compile Include="ContractsEx\Assertions\Expressions\ContractEnsureExpression.cs" />
     <Compile Include="ContractsEx\Assertions\Expressions\ContractRequiresExpression.cs" />
     <Compile Include="ContractsEx\Assertions\Expressions\IfThrowPreconditionExpression.cs" />
+    <Compile Include="ContractsEx\Assertions\Expressions\Message.cs" />
     <Compile Include="ContractsEx\Assertions\Preconditions\ContractRequiresPreconditionAssertion.cs" />
     <Compile Include="ContractsEx\Assertions\ContractInvariantAssertion.cs" />
     <Compile Include="ContractsEx\Assertions\ContractEnsuresAssertion.cs" />
@@ -155,12 +156,15 @@
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\PreconditionIncosistentVisibility\RequiresExceptionInconsistentVisibiityHighlighting.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\PreconditionIncosistentVisibility\RequiresExceptionValidityQuickFix.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\PreconditionIncosistentVisibility\RequiresExceptionInconsistentVisibilityQuickFix.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\PreconditionProblemAnalyzer.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\RedundantRequiresCheckerHighlighting.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\PreconditionIncosistentVisibility\RequiresInconsistentVisibiityHighlighting.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\PreconditionIncosistentVisibility\RequiresInconsistentVisibiityQuickFix.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\PreconditionIncosistentVisibility\RequiresInconsistentVisibiityChecker.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\RedundantRequiresChecker.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\RedundantRequiresQuickFix.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\RequiresMessageAnalyzer\InvalidRequiresMessageChecker.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\RequiresMessageAnalyzer\InvalidRequiresMessageHighlighting.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings\ContractExtensionsOptionsPage.xaml.cs" />
     <Compile Include="Settings\ContractExtensionsOptionsViewModel.cs" />

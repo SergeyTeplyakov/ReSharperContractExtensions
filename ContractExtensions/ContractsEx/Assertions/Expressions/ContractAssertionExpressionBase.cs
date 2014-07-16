@@ -18,13 +18,14 @@ namespace ReSharper.ContractExtensions.ContractsEx
     {
         private readonly AssertionType _assertionType;
         private readonly List<PredicateCheck> _predicates;
-        private readonly string _message;
+        private readonly Message _message;
 
         protected ContractAssertionExpressionBase(AssertionType assertionType, 
-            List<PredicateCheck> predicates, string message)
+            List<PredicateCheck> predicates, Message message)
         {
             Contract.Requires(Enum.IsDefined(typeof (AssertionType), assertionType));
             Contract.Requires(predicates != null);
+            Contract.Requires(message != null);
 
             _assertionType = assertionType;
             _predicates = predicates;
@@ -61,10 +62,13 @@ namespace ReSharper.ContractExtensions.ContractsEx
             return _predicates.Any(pc => pc.ChecksForNotNull() && comparer(pc.Argument));
         }
 
-        [CanBeNull]
-        public string Message
+        public Message Message
         {
-            get { return _message; }
+            get
+            {
+                Contract.Ensures(Contract.Result<Message>() != null);
+                return _message;
+            }
         }
 
         protected static AssertionType? GetAssertionType(IInvocationExpression invocationExpression)
@@ -97,16 +101,27 @@ namespace ReSharper.ContractExtensions.ContractsEx
             }
         }
 
-        protected static string ExtractMessage(IInvocationExpression invocationExpression)
+        protected static Message ExtractMessage(ICSharpArgument argument)
+        {
+            Contract.Requires(argument != null);
+            Contract.Ensures(Contract.Result<Message>() != null);
+
+            return argument.Expression
+                .With(x => x as ICSharpLiteralExpression)
+                .With(x => x.Literal.GetText())
+                .Return(x => new StringMessage(x) as Message, NoMessage.Instance);
+        }
+
+        protected static Message ExtractMessage(IInvocationExpression invocationExpression)
         {
             Contract.Requires(invocationExpression != null);
+            Contract.Ensures(Contract.Result<Message>() != null);
             Contract.Assert(invocationExpression.Arguments.Count != 0);
 
-            var message = invocationExpression.Arguments.Skip(1).FirstOrDefault()
+            return invocationExpression.Arguments.Skip(1).FirstOrDefault()
                 .With(x => x.Expression as ICSharpLiteralExpression)
-                .With(x => x.Literal.GetText());
-
-            return message;
+                .With(x => x.Literal.GetText())
+                .Return(x => new StringMessage(x) as Message, NoMessage.Instance);
         }
     }
 }

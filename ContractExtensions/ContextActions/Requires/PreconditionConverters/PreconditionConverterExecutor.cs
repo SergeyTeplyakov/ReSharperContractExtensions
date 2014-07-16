@@ -9,6 +9,7 @@ using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.CSharp.Util;
 using JetBrains.ReSharper.Psi.ExtensionsAPI.Tree;
 using ReSharper.ContractExtensions.ContextActions.Infrastructure;
+using ReSharper.ContractExtensions.ContractsEx;
 using ReSharper.ContractExtensions.ContractsEx.Assertions;
 
 namespace ReSharper.ContractExtensions.ContextActions.Requires
@@ -127,9 +128,13 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         }
 
         [System.Diagnostics.Contracts.Pure]
-        private ICSharpStatement CreateGenericContractRequires(IClrTypeName exceptionType, string predicateExpression, string message)
+        private ICSharpStatement CreateGenericContractRequires(IClrTypeName exceptionType, string predicateExpression, 
+            Message message)
         {
-            string optionalMessage = message != null ? string.Format(", {0}", message) : null;
+            Contract.Requires(message != null);
+            string stringMessage = message.GetStringLiteral();
+
+            string optionalMessage = stringMessage != null ? string.Format(", {0}", stringMessage) : null;
 
             var format = string.Format("$0.Requires<$1>({0}{1});", predicateExpression, optionalMessage);
 
@@ -137,9 +142,13 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         }
 
         [System.Diagnostics.Contracts.Pure]
-        public ICSharpStatement CreateNonGenericContractRequires(string predicateExpression, string message)
+        public ICSharpStatement CreateNonGenericContractRequires(string predicateExpression, Message message)
         {
-            string optionalMessage = message != null ? string.Format(", {0}", message) : null;
+            Contract.Requires(message != null);
+
+            string stringMessage = message.GetStringLiteral();
+
+            string optionalMessage = stringMessage != null ? string.Format(", {0}", stringMessage) : null;
 
             var stringStatement = string.Format("$0.Requires({0}{1});",
                     predicateExpression, optionalMessage);

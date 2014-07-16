@@ -17,11 +17,12 @@ namespace ReSharper.ContractExtensions.ContractsEx
         //private readonly IExpression _predicateExpression;
 
         private IfThrowPreconditionExpression(List<PredicateCheck> predicates, 
-            string message, IIfStatement ifStatement, IClrTypeName exceptionTypeName)
+            Message message, IIfStatement ifStatement, IClrTypeName exceptionTypeName)
             : base(AssertionType.Precondition, predicates, message)
         {
             Contract.Requires(ifStatement != null);
             Contract.Requires(exceptionTypeName != null);
+
             _ifStatement = ifStatement;
             _exceptionTypeName = exceptionTypeName;
         }
@@ -53,7 +54,9 @@ namespace ReSharper.ContractExtensions.ContractsEx
                 return null;
             }
 
-            string message = arguments.Skip(1).FirstOrDefault(); // message is optional and should be second argument
+            var message = 
+                arguments.Skip(1).FirstOrDefault()
+                .Return(ExtractMessage, NoMessage.Instance); // message is optional and should be second argument
 
             return new IfThrowPreconditionExpression(preconditionChecks, message, ifStatement, exceptionType);
         }
@@ -150,20 +153,24 @@ namespace ReSharper.ContractExtensions.ContractsEx
             return clrExceptionType.FullName == exceptionType.FullName;
         }
 
-        public static IEnumerable<string> GetArguments(this IThrowStatement throwStatement)
+        public static IEnumerable<ICSharpArgument> GetArguments(this IThrowStatement throwStatement)
+        {
+            Contract.Requires(throwStatement != null);
+            Contract.Ensures(Contract.Result<IEnumerable<ICSharpArgument>>() != null);
+
+            return
+                throwStatement
+                    .With(x => x.Exception)
+                    .With(x => x as IObjectCreationExpression)
+                    .Return(x => x.Arguments, Enumerable.Empty<ICSharpArgument>());
+        }
+
+        public static IEnumerable<string> GetLiteralArguments(this IThrowStatement throwStatement)
         {
             Contract.Requires(throwStatement != null);
             Contract.Ensures(Contract.Result<IEnumerable<string>>() != null);
 
-            var objectCreationExpression =
-                throwStatement
-                    .With(x => x.Exception)
-                    .With(x => x as IObjectCreationExpression);
-
-            if (objectCreationExpression == null)
-                return Enumerable.Empty<string>();
-
-            return objectCreationExpression.Arguments
+            return GetArguments(throwStatement)
                 .Select(a => a.Value as ICSharpLiteralExpression)
                 .Where(x => x != null)
                 .Select(x => x.Literal.GetText());
