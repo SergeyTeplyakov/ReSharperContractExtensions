@@ -34,7 +34,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
 
         public const string ServerityId = "RequiresExceptionInconsistentVisibiityHighlighting";
         // Sample: Exception type CodeContractInvestigations.CustomException in Requires<E> has less visibility than enclosing method CodeContractInvestigations.InconsistentPreconditionVisibility.InconsistentAccessibilityIssues
-        const string ToolTipWarningFormat = "Exception type '{0}' in Requires<E> has less visibility than the enclosing {1} '{2}'";
+        const string ToolTipWarningFormat = "Exception type '{0}' used in Requires<E> has less visibility than the enclosing {1} '{2}'";
 
         public bool IsValid()
         {

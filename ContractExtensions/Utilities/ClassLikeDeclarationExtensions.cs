@@ -38,25 +38,22 @@ namespace ReSharper.ContractExtensions.Utilities
                 .Return(x => x.Methods.FirstOrDefault(isOverridesCurrentFunction)) != null;
         }
 
-        /// <summary>
-        /// Return list of members from the <paramref name="declaration"/>, that overridable from its base class 
-        /// (<paramref name="baseDeclaration"/>).
-        /// </summary>
         public static List<OverridableMemberInstance> GetMissingMembersOf(
             this IClassLikeDeclaration declaration,
-            IClassLikeDeclaration baseDeclaration)
+            IClrTypeName baseClassName)
         {
             Contract.Requires(declaration != null);
             Contract.Requires(declaration.DeclaredElement != null);
-            Contract.Requires(baseDeclaration != null);
-            Contract.Requires(baseDeclaration.DeclaredElement != null);
+            Contract.Requires(baseClassName != null);
+            Contract.Requires(baseClassName.FullName != null);
+            
 
             Contract.Ensures(Contract.Result<List<OverridableMemberInstance>>() != null);
 
             var potentialOverrides =
                 GenerateUtil.GetOverridableMembersOrder(declaration.DeclaredElement, false)
                     .Where(e => e.DeclaringType.GetClrName().FullName ==
-                            baseDeclaration.DeclaredElement.GetClrName().FullName)
+                            baseClassName.FullName)
                     // This code provides two elements for property! So I'm trying to remove another instance!
                     .Where(x => !x.Member.ShortName.StartsWith("get_"))
                     .Where(x => !x.Member.ShortName.StartsWith("set_"))
@@ -73,7 +70,25 @@ namespace ReSharper.ContractExtensions.Utilities
             }
 
             return notOverridenMembers;
+
         }
+
+        /// <summary>
+        /// Return list of members from the <paramref name="declaration"/>, that overridable from its base class 
+        /// (<paramref name="baseDeclaration"/>).
+        /// </summary>
+        public static List<OverridableMemberInstance> GetMissingMembersOf(
+            this IClassLikeDeclaration declaration,
+            IClassLikeDeclaration baseDeclaration)
+        {
+            Contract.Requires(declaration != null);
+            Contract.Requires(declaration.DeclaredElement != null);
+            Contract.Requires(baseDeclaration != null);
+            Contract.Requires(baseDeclaration.DeclaredElement != null);
+
+            Contract.Ensures(Contract.Result<List<OverridableMemberInstance>>() != null);
+
+            return GetMissingMembersOf(declaration, baseDeclaration.DeclaredElement.GetClrName());        }
 
         public static IEnumerable<OverridableMemberInstance> GetOverridenMembers(
             this IClassLikeDeclaration classLikeDeclaration)

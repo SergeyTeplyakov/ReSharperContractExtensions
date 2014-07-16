@@ -12,6 +12,6 @@ class A
   }
 }
 ------------------------------------------------
-0: Exception type 'CustomException' in Requires<E> has less visibility than the enclosing method 'A.Foo'
+0: Exception type 'CustomException' used in Requires<E> has less visibility than the enclosing method 'A.Foo'
 QUICKFIXES:
 Change visibility of the referenced exception type 'CustomException' to 'internal'

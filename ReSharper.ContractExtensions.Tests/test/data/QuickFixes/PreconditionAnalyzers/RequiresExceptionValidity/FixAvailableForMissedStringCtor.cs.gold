@@ -1,0 +1,18 @@
+using System.Diagnostics.Contracts;
+using System;
+
+public class A
+{
+  public void Foo(string s)
+  {
+    |Contract.Requires<CustomException>(s != null)|(0);
+  }
+}
+
+public class CustomException : Exception
+{}
+------------------------------------------------
+0: Exception type 'CustomException' used in Requires<E> should have ctor(string, string) or ctor(string).
+System.ArgumentException would be used!
+QUICKFIXES:
+Generate ctor(string) for the referenced exception type 'CustomException'

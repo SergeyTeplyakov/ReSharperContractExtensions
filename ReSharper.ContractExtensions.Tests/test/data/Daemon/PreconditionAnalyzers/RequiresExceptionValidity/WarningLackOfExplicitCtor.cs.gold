@@ -1,0 +1,16 @@
+using System.Diagnostics.Contracts;
+using System;
+
+public class A
+{
+  public void Foo(string s)
+  {
+    |Contract.Requires<CustomException>(s != null)|(0);
+  }
+}
+
+public class CustomException : Exception
+{}
+---------------------------------------------------------
+(0): ReSharper Warning: Exception type 'CustomException' used in Requires<E> should have ctor(string, string) or ctor(string).
+System.ArgumentException would be used!

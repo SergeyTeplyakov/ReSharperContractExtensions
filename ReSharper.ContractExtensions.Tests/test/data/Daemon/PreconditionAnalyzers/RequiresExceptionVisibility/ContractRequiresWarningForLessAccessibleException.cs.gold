@@ -13,4 +13,4 @@ class CustomException : ArgumentException
   public CustomException(string message, string paramName) : base(message, paramName) {}
 }
 ---------------------------------------------------------
-(0): ReSharper Underlined Error Highlighting: Exception type 'CustomException' in Requires<E> has less visibility than the enclosing method 'A.Foo'
+(0): ReSharper Underlined Error Highlighting: Exception type 'CustomException' used in Requires<E> has less visibility than the enclosing method 'A.Foo'

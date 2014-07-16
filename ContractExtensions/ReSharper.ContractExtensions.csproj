@@ -148,9 +148,12 @@
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\MalformedMethodContractChecker.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\MalformedMethodContractHighlighting.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\MalformedObjectInvariantChecker.cs" />
-    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\PreconditionIncosistentVisibility\RequiresExceptionInconsistentVisibilityChecker.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\PreconditionIncosistentVisibility\ContractUtils.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\PreconditionIncosistentVisibility\RequiresExceptionChecker.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\PreconditionIncosistentVisibility\MemberWithAccess.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\PreconditionIncosistentVisibility\RequiresExceptionValidityHighlighting.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\PreconditionIncosistentVisibility\RequiresExceptionInconsistentVisibiityHighlighting.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\PreconditionIncosistentVisibility\RequiresExceptionValidityQuickFix.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\PreconditionIncosistentVisibility\RequiresExceptionInconsistentVisibilityQuickFix.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\RedundantRequiresCheckerHighlighting.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\PreconditionIncosistentVisibility\RequiresInconsistentVisibiityHighlighting.cs" />

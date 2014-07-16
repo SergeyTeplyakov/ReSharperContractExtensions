@@ -1,0 +1,24 @@
+using System.Diagnostics.Contracts;
+using System;
+
+public class A
+{
+  public void Foo(string s)
+  {
+    |Contract.Requires<CustomException>(s != null)|(0);
+  }
+}
+
+public class CustomExceptionBase : Exception
+{
+  private CustomException(string msg) {}
+  public CustomException() {}
+}
+
+public class CustomException : CustomExceptionBase
+{
+}
+------------------------------------------------
+0: Exception type 'CustomException' used in Requires<E> should have ctor(string, string) or ctor(string).
+System.ArgumentException would be used!
+NO QUICKFIXES
