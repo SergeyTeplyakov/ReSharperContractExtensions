@@ -2,10 +2,9 @@ using System.Diagnostics.Contracts;
 
 class A
 {
-  internal static string Message = "message";
+  public string Message {get; private set;}
   public void Foo(string s)
   {
     Contract.Requires(s != null, Message);
   }
 }
----------------------------------------------------------

@@ -76,7 +76,7 @@
     <Compile Include="src\ProblemAnalyzers\PreconditionAnalyzers\InconsistentVisilibility\RequiresInconsistentVisibilityCheckerTests.cs" />
     <Compile Include="src\ProblemAnalyzers\PreconditionAnalyzers\RedundantRequiresCheckerTests.cs" />
     <Compile Include="src\ProblemAnalyzers\PreconditionAnalyzers\RedundantRequiresQuickFixAvailabilityTests.cs" />
-    <Compile Include="src\ProblemAnalyzers\PreconditionAnalyzers\RequiresMessageAnalyzer\RequiresMessageCheckerTests.cs" />
+    <Compile Include="src\ProblemAnalyzers\PreconditionAnalyzers\RequiresMessageAnalyzer\RequiresMessageHighlightingTests.cs" />
     <Compile Include="src\ProblemAnalyzers\QuickFixAvailabilityTestBase.cs" />
     <Compile Include="src\ProblemAnalyzers\QuickFixNet45TestBase.cs" />
     <Compile Include="src\Requires\PreconditionConverters\ContractConverterContextActionAvailabilityTest.cs" />

@@ -1,7 +1,7 @@
 using System.Diagnostics.Contracts;
 using JetBrains.ReSharper.Daemon;
 using JetBrains.ReSharper.Psi.CSharp;
-using JetBrains.ReSharper.Psi.CSharp.Tree;
+using ReSharper.ContractExtensions.ContractsEx;
 using ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers;
 
 [assembly: RegisterConfigurableSeverity(InvalidRequiresMessageHighlighting.ServerityId,
@@ -20,22 +20,19 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
     [ConfigurableSeverityHighlighting("InvalidRequiresMessageHighlighting", CSharpLanguage.Name)]
     public sealed class InvalidRequiresMessageHighlighting : IHighlighting
     {
-        private readonly ICSharpStatement _preconditionStatement;
-        private readonly string _argumentName;
+        private readonly Message _contractMessage;
 
-        public InvalidRequiresMessageHighlighting(ICSharpStatement preconditionStatement, string argumentName)
+        public InvalidRequiresMessageHighlighting(Message contractMessage)
         {
-            Contract.Requires(preconditionStatement != null);
-            Contract.Requires(!string.IsNullOrEmpty(argumentName));
-
-            _preconditionStatement = preconditionStatement;
-            _argumentName = argumentName;
+            _contractMessage = contractMessage;
+            Contract.Requires(contractMessage != null);
         }
 
         public const string ServerityId = "InvalidRequiresMessageHighlighting";
         // error CC1065: User message to contract call can only be string literal, 
         // or a static field, or static property that is at least internally visible.
-        public const string ToolTipWarning = "Suspicios requires for nullable argument";
+        public const string ToolTipWarning =
+            "User message to contract call can only be string literal, or static field,\r\nor static property that is at least internally visible";
 
         public bool IsValid()
         {
@@ -44,24 +41,10 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
 
         public string ToolTip
         {
-            get { return string.Format("{0} '{1}'", ToolTipWarning, ArgumentName); }
+            get { return ToolTipWarning; }
         }
 
         public string ErrorStripeToolTip { get { return ToolTip; } }
         public int NavigationOffsetPatch { get { return 0; } }
-
-        public ICSharpStatement PreconditionStatement
-        {
-            get
-            {
-                Contract.Ensures(Contract.Result<ICSharpStatement>() != null);
-                return _preconditionStatement;
-            }
-        }
-
-        public string ArgumentName
-        {
-            get { return _argumentName; }
-        }
     }
 }

@@ -163,7 +163,6 @@
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\PreconditionIncosistentVisibility\RequiresInconsistentVisibiityChecker.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\RedundantRequiresChecker.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\RedundantRequiresQuickFix.cs" />
-    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\RequiresMessageAnalyzer\InvalidRequiresMessageChecker.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\RequiresMessageAnalyzer\InvalidRequiresMessageHighlighting.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings\ContractExtensionsOptionsPage.xaml.cs" />

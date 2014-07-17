@@ -1,0 +1,13 @@
+using System.Diagnostics.Contracts;
+
+class A
+{
+  public string Message {get; private set;}
+  public void Foo(string s)
+  {
+    |Contract.Requires(s != null, Message)|(0);
+  }
+}
+---------------------------------------------------------
+(0): ReSharper Underlined Error Highlighting: User message to contract call can only be string literal, or static field,
+or static property that is at least internally visible

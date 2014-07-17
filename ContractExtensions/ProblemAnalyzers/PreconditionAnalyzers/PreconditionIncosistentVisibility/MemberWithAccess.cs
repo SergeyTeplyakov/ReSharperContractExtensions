@@ -17,7 +17,7 @@ using ReSharper.ContractExtensions.Utilities;
 
 namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
 {
-    internal enum MemberType
+    public enum MemberType
     {
         Method,
         Property,
@@ -25,7 +25,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
         Member
     }
 
-    internal sealed class MemberWithAccess
+    public sealed class MemberWithAccess
     {
         private readonly IClrDeclaredElement _declaredElement;
 
@@ -143,7 +143,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
         }
     }
 
-    internal static class MemberWithAccessEx
+    public static class MemberWithAccessEx
     {
         public static AccessRights GetCombinedAccessRights(this MemberWithAccess member)
         {

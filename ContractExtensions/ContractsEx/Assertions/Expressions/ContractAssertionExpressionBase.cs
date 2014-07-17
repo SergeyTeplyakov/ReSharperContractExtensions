@@ -119,9 +119,8 @@ namespace ReSharper.ContractExtensions.ContractsEx
             Contract.Assert(invocationExpression.Arguments.Count != 0);
 
             return invocationExpression.Arguments.Skip(1).FirstOrDefault()
-                .With(x => x.Expression as ICSharpLiteralExpression)
-                .With(x => x.Literal.GetText())
-                .Return(x => new StringMessage(x) as Message, NoMessage.Instance);
+                .With(x => x.Expression)
+                .Return(Message.Create, NoMessage.Instance);
         }
     }
 }

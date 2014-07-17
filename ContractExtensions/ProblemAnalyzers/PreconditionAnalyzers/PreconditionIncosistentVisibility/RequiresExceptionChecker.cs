@@ -1,13 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using JetBrains.ReSharper.Daemon;
 using JetBrains.ReSharper.Daemon.Stages;
 using JetBrains.ReSharper.Daemon.Stages.Dispatcher;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Tree;
 using ReSharper.ContractExtensions.ContractsEx;
-using ReSharper.ContractExtensions.ContractsEx.Assertions;
 using ReSharper.ContractExtensions.Utilities;
 
 namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
@@ -15,68 +16,39 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
     [ElementProblemAnalyzer(new[] { typeof(IInvocationExpression) },
         HighlightingTypes = new[] {
             typeof(RequiresExceptionInconsistentVisibiityHighlighting),
-            typeof(RequiresExceptionValidityHighlighting) })]
-    public sealed class RequiresExceptionInconsistentVisibilityChecker : ElementProblemAnalyzer<IInvocationExpression>
+            typeof(RequiresExceptionValidityHighlighting),
+            typeof(InvalidRequiresMessageHighlighting),
+        })]
+    public sealed class RequiresExceptionInconsistentVisibilityChecker : PreconditionProblemAnalyzer
     {
-        protected override void Run(IInvocationExpression element, ElementProblemAnalyzerData data, 
-            IHighlightingConsumer consumer)
+        protected override IEnumerable<IHighlighting> DoRun(ContractRequiresExpression contractAssertion,
+            MemberWithAccess preconditionContainer)
         {
-            IClass exception;
-            MemberWithAccess preconditionContainer;
-            ContractRequiresExpression contractAssertion;
-
-            if (!ParseInvocationExpression(element, out contractAssertion, out preconditionContainer, out exception))
-                return;
-
-            if (ExceptionIsLessVisible(preconditionContainer, exception))
-            {
-                consumer.AddHighlighting(
-                    new RequiresExceptionInconsistentVisibiityHighlighting(exception, preconditionContainer),
-                    element.GetDocumentRange(), element.GetContainingFile());
-            }
-
-
-            if (DoesntHaveAppropriateConstructor(exception))
-            {
-                consumer.AddHighlighting(
-                    new RequiresExceptionValidityHighlighting(exception, preconditionContainer),
-                    element.GetDocumentRange(), element.GetContainingFile());
-            }
-        }
-
-        private bool ParseInvocationExpression(IInvocationExpression invocationExpression, 
-            out ContractRequiresExpression requiresExpression,
-            out MemberWithAccess preconditionContainer, out IClass preconditionException)
-        {
-            Contract.Ensures(!Contract.Result<bool>() || 
-                (Contract.ValueAtReturn(out requiresExpression) != null) &&
-                (Contract.ValueAtReturn(out preconditionContainer) != null) &&
-                (Contract.ValueAtReturn(out preconditionException) != null),
-                "If method returns true, all out arguments should be well-defined!");
-
-            preconditionContainer = null;
-            preconditionException = null;
-
-            requiresExpression = ContractAssertionExpression.FromInvocationExpression(invocationExpression) 
-                as ContractRequiresExpression;
-
-            if (requiresExpression == null ||
-                requiresExpression.AssertionType != AssertionType.Precondition ||
-                requiresExpression.GenericArgumentType == null)
-                return false;
-
-            preconditionContainer =
-                invocationExpression
-                    .With(x => x.GetContainingStatement())
-                    .With(x => x.GetContainingTypeMemberDeclaration())
-                    .With(x => x.DeclaredElement)
-                    .With(MemberWithAccess.FromDeclaredElement);
-
-            preconditionException = requiresExpression.GenericArgumentDeclaredType
+            var preconditionException = 
+                contractAssertion.GenericArgumentDeclaredType
                 .With(x => x.Resolve())
                 .With(x => x.DeclaredElement as IClass);
 
-            return preconditionContainer != null && preconditionException != null;
+            if (preconditionException != null)
+            {
+                if (ExceptionIsLessVisible(preconditionContainer, preconditionException))
+                {
+                    yield return
+                        new RequiresExceptionInconsistentVisibiityHighlighting(preconditionException,
+                            preconditionContainer);
+                }
+
+                if (DoesntHaveAppropriateConstructor(preconditionException))
+                {
+                    yield return new RequiresExceptionValidityHighlighting(preconditionException, preconditionContainer);
+                }
+            }
+
+            if (!MessageIsAppropriateForContractRequires(contractAssertion.Message))
+            {
+                yield return new InvalidRequiresMessageHighlighting(contractAssertion.Message);
+            }
+
         }
 
         /// <summary>
@@ -97,6 +69,11 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
 
             return !AccessVisibilityChecker.MemberWith(exception.GetAccessRights())
                 .IsAccessibleFrom(preconditionContainer.GetCombinedAccessRights());
+        }
+
+        private bool MessageIsAppropriateForContractRequires(Message message)
+        {
+            return message.IsValidForRequires();
         }
     }
 }

@@ -4,7 +4,7 @@ using ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers;
 namespace ReSharper.ContractExtensions.Tests.ProblemAnalyzers.PreconditionAnalyzers
 {
     [TestFixture]
-    public class RequiresMessageCheckerTests : CSharpHighlightingTestBase<InvalidRequiresMessageHighlighting>
+    public class RequiresMessageHighlightingTests : CSharpHighlightingTestBase<InvalidRequiresMessageHighlighting>
     {
         protected override string RelativeTestDataPath
         {
@@ -20,6 +20,11 @@ namespace ReSharper.ContractExtensions.Tests.ProblemAnalyzers.PreconditionAnalyz
         [TestCase("NoWarningStaticField.cs")]
         [TestCase("NoWarningStaticProperty.cs")]
         [TestCase("NoWarningStringLiteral.cs")]
+
+        [TestCase("WarningOnInstanceField.cs")]
+        [TestCase("WarningOnInstanceProperty.cs")]
+        [TestCase("WarningOnMethodCall.cs")]
+        [TestCase("WarningOnPrivateStaticField.cs")]
         public void Test(string testName)
         {
             DoTestSolution(testName);

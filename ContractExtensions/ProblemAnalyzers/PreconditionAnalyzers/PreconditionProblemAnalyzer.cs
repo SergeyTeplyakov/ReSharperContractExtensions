@@ -6,19 +6,29 @@ using JetBrains.ReSharper.Daemon.Stages.Dispatcher;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Tree;
 using ReSharper.ContractExtensions.ContractsEx;
+using ReSharper.ContractExtensions.Utilities;
 
 namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
 {
     [ContractClass(typeof(PreconditionProblemAnalyzerContract))]
     public abstract class PreconditionProblemAnalyzer : ElementProblemAnalyzer<IInvocationExpression>
     {
-        protected override void Run(IInvocationExpression element, ElementProblemAnalyzerData data, IHighlightingConsumer consumer)
+        protected override sealed void Run(IInvocationExpression element, ElementProblemAnalyzerData data, IHighlightingConsumer consumer)
         {
             var contractAssertion = ContractAssertionExpression.FromInvocationExpression(element) as ContractRequiresExpression;
             if (contractAssertion == null)
                 return;
 
-            var highlightings = DoRun(contractAssertion);
+            var preconditionContainer = element
+                .With(x => x.GetContainingStatement())
+                .With(x => x.GetContainingTypeMemberDeclaration())
+                .With(x => x.DeclaredElement)
+                .With(MemberWithAccess.FromDeclaredElement);
+            if (preconditionContainer == null)
+                return;
+
+
+            var highlightings = DoRun(contractAssertion, preconditionContainer);
 
             foreach (var highlighting in highlightings)
             {
@@ -27,17 +37,18 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
             }
         }
 
-        protected abstract IEnumerable<IHighlighting> DoRun(ContractRequiresExpression contractAssertion);
+        protected abstract IEnumerable<IHighlighting> DoRun(ContractRequiresExpression contractAssertion, 
+            MemberWithAccess preconditionContainer);
     }
 
     [ContractClassFor(typeof (PreconditionProblemAnalyzer))]
     abstract class PreconditionProblemAnalyzerContract : PreconditionProblemAnalyzer
     {
-        protected override IEnumerable<IHighlighting> DoRun(ContractRequiresExpression contractAssertion)
+        protected override IEnumerable<IHighlighting> DoRun(ContractRequiresExpression contractAssertion, MemberWithAccess preconditionContainer)
         {
             Contract.Requires(contractAssertion != null);
+            Contract.Requires(preconditionContainer != null);
             Contract.Ensures(Contract.Result<IEnumerable<IHighlighting>>() != null);
-
             throw new System.NotImplementedException();
         }
     }
