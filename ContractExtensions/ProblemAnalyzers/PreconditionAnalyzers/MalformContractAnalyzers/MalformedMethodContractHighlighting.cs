@@ -17,7 +17,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
     public sealed class MalformedMethodContractHighlighting : IHighlighting
     {
         public const string Id = "MalformedMethodContractHighlighting";
-        private const string _toolTipBase = "Malformed contract";
+        private const string _toolTipBase = "Malformed contract. Void-returned method call in the contract section";
 
         public MalformedMethodContractHighlighting()
         {

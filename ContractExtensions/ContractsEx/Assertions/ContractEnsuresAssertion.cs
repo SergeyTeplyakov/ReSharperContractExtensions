@@ -8,7 +8,7 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
     {
         private readonly ContractEnsureExpression _contractEnsure;
 
-        private ContractEnsuresAssertion(ICSharpStatement statement, ContractEnsureExpression contractEnsure) 
+        internal ContractEnsuresAssertion(ICSharpStatement statement, ContractEnsureExpression contractEnsure) 
             : base(AssertionType.Precondition, statement, contractEnsure)
         {
             Contract.Requires(contractEnsure != null);

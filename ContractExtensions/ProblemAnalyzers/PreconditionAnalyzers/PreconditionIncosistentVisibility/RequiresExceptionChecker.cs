@@ -21,7 +21,8 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
         })]
     public sealed class RequiresExceptionInconsistentVisibilityChecker : PreconditionProblemAnalyzer
     {
-        protected override IEnumerable<IHighlighting> DoRun(ContractRequiresExpression contractAssertion,
+        protected override IEnumerable<IHighlighting> DoRun(IInvocationExpression invocationExpression, 
+            ContractRequiresExpression contractAssertion,
             MemberWithAccess preconditionContainer)
         {
             var preconditionException = 

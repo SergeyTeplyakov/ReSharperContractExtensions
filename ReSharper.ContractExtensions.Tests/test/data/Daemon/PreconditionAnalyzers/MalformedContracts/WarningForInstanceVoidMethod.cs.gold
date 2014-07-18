@@ -1,0 +1,14 @@
+using System.Diagnostics.Contracts;
+
+class A
+{
+  public void Foo(string s)
+  {
+    |InstanceMethod();|(0)
+    Contract.Requires(s != null);
+    Contract.Ensures(false);
+  }
+  private void InstanceMethod() {}
+}
+---------------------------------------------------------
+(0): ReSharper Underlined Error Highlighting: Malformed contract. Void-returned method call in the contract section

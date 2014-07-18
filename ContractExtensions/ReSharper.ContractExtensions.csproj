@@ -115,6 +115,7 @@
     <Compile Include="ContextActions\Requires\RequiresContextActionBase.cs" />
     <Compile Include="ContractsEx\Assertions\AssertionType.cs" />
     <Compile Include="ContractsEx\Assertions\ContractAssertion.cs" />
+    <Compile Include="ContractsEx\Assertions\ContractAssertionFactory.cs" />
     <Compile Include="ContractsEx\Assertions\Expressions\ContractAssertionExpressionBase.cs" />
     <Compile Include="ContractsEx\Assertions\Expressions\ContractEnsureExpression.cs" />
     <Compile Include="ContractsEx\Assertions\Expressions\ContractRequiresExpression.cs" />
@@ -157,6 +158,7 @@
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\PreconditionIncosistentVisibility\RequiresExceptionValidityQuickFix.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\PreconditionIncosistentVisibility\RequiresExceptionInconsistentVisibilityQuickFix.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\PreconditionProblemAnalyzer.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\PreconditionProblemAnalyzerBase.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\RedundantRequiresCheckerHighlighting.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\PreconditionIncosistentVisibility\RequiresInconsistentVisibiityHighlighting.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\PreconditionIncosistentVisibility\RequiresInconsistentVisibiityQuickFix.cs" />

@@ -44,7 +44,6 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
             return _assertionExpression.Predicates.Any(p => p.ChecksForNotNull(name));
         }
 
-
         public override PreconditionType PreconditionType
         {
             get { return PreconditionType.IfThrowStatement; }

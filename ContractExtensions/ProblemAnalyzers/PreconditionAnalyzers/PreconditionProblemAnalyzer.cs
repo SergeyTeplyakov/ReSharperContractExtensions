@@ -27,8 +27,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
             if (preconditionContainer == null)
                 return;
 
-
-            var highlightings = DoRun(contractAssertion, preconditionContainer);
+            var highlightings = DoRun(element, contractAssertion, preconditionContainer);
 
             foreach (var highlighting in highlightings)
             {
@@ -37,15 +36,18 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
             }
         }
 
-        protected abstract IEnumerable<IHighlighting> DoRun(ContractRequiresExpression contractAssertion, 
+        protected abstract IEnumerable<IHighlighting> DoRun(IInvocationExpression invocationExpression,
+            ContractRequiresExpression contractAssertion, 
             MemberWithAccess preconditionContainer);
     }
 
     [ContractClassFor(typeof (PreconditionProblemAnalyzer))]
     abstract class PreconditionProblemAnalyzerContract : PreconditionProblemAnalyzer
     {
-        protected override IEnumerable<IHighlighting> DoRun(ContractRequiresExpression contractAssertion, MemberWithAccess preconditionContainer)
+        protected override IEnumerable<IHighlighting> DoRun(IInvocationExpression invocationExpression, 
+            ContractRequiresExpression contractAssertion, MemberWithAccess preconditionContainer)
         {
+            Contract.Requires(invocationExpression != null);
             Contract.Requires(contractAssertion != null);
             Contract.Requires(preconditionContainer != null);
             Contract.Ensures(Contract.Result<IEnumerable<IHighlighting>>() != null);

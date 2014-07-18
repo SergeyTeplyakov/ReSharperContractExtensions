@@ -28,6 +28,7 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
             _message = assertionExpression.Message;
         }
 
+        public ContractAssertionExpressionBase AssertionExpression { get { return _assertionExpression; } }
         public AssertionType AssertionType { get; private set; }
         public ICSharpStatement Statement { get; private set; }
 
@@ -80,7 +81,7 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
                 AssertionType, Statement);
         }
 
-        protected static IInvocationExpression AsInvocationExpression(ICSharpStatement statement)
+        public static IInvocationExpression AsInvocationExpression(ICSharpStatement statement)
         {
             var expressionStatement = statement as IExpressionStatement;
             if (expressionStatement == null)

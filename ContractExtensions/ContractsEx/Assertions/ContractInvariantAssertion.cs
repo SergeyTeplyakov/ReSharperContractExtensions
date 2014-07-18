@@ -6,7 +6,7 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
 {
     public sealed class ContractInvariantAssertion : ContractAssertion
     {
-        private ContractInvariantAssertion(ICSharpStatement statement, ContractAssertionExpression assertExpression) 
+        internal ContractInvariantAssertion(ICSharpStatement statement, ContractAssertionExpression assertExpression) 
             : base(AssertionType.Invariant, statement, assertExpression)
         {}
 

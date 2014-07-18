@@ -31,7 +31,7 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
     {
         private readonly ContractAssertionExpression _contractAssertionExpression;
 
-        private ContractRequiresPreconditionAssertion(ICSharpStatement statement, 
+        internal ContractRequiresPreconditionAssertion(ICSharpStatement statement, 
             ContractAssertionExpression contractAssertionExpression)
             : base(statement, contractAssertionExpression)
         {
