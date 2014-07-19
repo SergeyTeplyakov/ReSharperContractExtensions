@@ -6,14 +6,15 @@ using ReSharper.ContractExtensions.ContextActions.Requires;
 namespace ReSharper.ContractExtensions.Tests.Preconditions
 {
     [TestFixture]
-    public class RequiresContextActionAvailabilityTest : CSharpContextActionAvailabilityTestBase<ArgumentRequiresContextAction>
+    public class RequiresContextActionAvailabilityTest 
+        : CSharpContextActionAvailabilityTestBase<ArgumentRequiresContextAction>
     {
         protected override string ExtraPath
         {
             get { return "Requires"; }
         }
 
-        [TestCase("Availability")]
+        
         [TestCase("AvailabilityDebug")]
         public void TestSimpleAvailability(string testSrc)
         {
@@ -27,6 +28,7 @@ namespace ReSharper.ContractExtensions.Tests.Preconditions
             DoOneTest(testSrc);
         }
 
+        [TestCase("Availability")]
         [TestCase("AvailabilityFull")]
         [TestCase("AvailabilityOnAbstractClass")]
         [TestCase("AvailabilityOnInterface")]

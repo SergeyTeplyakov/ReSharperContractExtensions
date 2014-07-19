@@ -10,15 +10,14 @@ using ReSharper.ContractExtensions.Utilities;
 
 namespace ReSharper.ContractExtensions.ContractsEx
 {
-    public sealed class IfThrowPreconditionExpression : ContractAssertionExpressionBase
+    public sealed class IfThrowPreconditionExpression : ContractExpressionBase
     {
         private readonly IIfStatement _ifStatement;
         private readonly IClrTypeName _exceptionTypeName;
-        //private readonly IExpression _predicateExpression;
 
-        private IfThrowPreconditionExpression(List<PredicateCheck> predicates, 
-            Message message, IIfStatement ifStatement, IClrTypeName exceptionTypeName)
-            : base(AssertionType.Precondition, predicates, message)
+        private IfThrowPreconditionExpression(IIfStatement ifStatement, 
+            List<PredicateCheck> predicates, Message message, IClrTypeName exceptionTypeName)
+            : base(predicates, message)
         {
             Contract.Requires(ifStatement != null);
             Contract.Requires(exceptionTypeName != null);
@@ -30,8 +29,6 @@ namespace ReSharper.ContractExtensions.ContractsEx
         [CanBeNull]
         public static IfThrowPreconditionExpression FromStatement(ICSharpStatement statement)
         {
-            Contract.Requires(statement != null);
-
             Contract.Requires(statement != null);
 
             var ifStatement = statement as IIfStatement;
@@ -58,7 +55,7 @@ namespace ReSharper.ContractExtensions.ContractsEx
                 arguments.Skip(1).FirstOrDefault()
                 .Return(ExtractMessage, NoMessage.Instance); // message is optional and should be second argument
 
-            return new IfThrowPreconditionExpression(preconditionChecks, message, ifStatement, exceptionType);
+            return new IfThrowPreconditionExpression(ifStatement, preconditionChecks, message, exceptionType);
         }
 
         /// <summary>
@@ -81,7 +78,7 @@ namespace ReSharper.ContractExtensions.ContractsEx
                 .Return(x => x as IThrowStatement);
         }
 
-        //public IExpression PredicateExpression
+        //public IExpression originalPredicateExpression
         //{
         //    get
         //    {

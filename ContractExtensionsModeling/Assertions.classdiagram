@@ -15,6 +15,17 @@
         <classMoniker Id="187ba0b0-02b5-456b-b1a1-67c74aab10fe" LastKnownName="GuardBasedPreconditionAssertion" />
       </annotatedElements>
     </comment>
+    <comment Id="20763b21-f779-4306-8292-aa3014f90327">
+      <elementDefinition Id="0870bce0-51fb-44f9-9819-019522df2a89" />
+      <body>Implemented as "descriminated union" with following subtypes:
+NoMessage,
+LiteralMessage,
+ReferenceMessage,
+InvocationMessage</body>
+      <annotatedElements>
+        <classMoniker Id="7aca5cee-55f9-433c-ac90-913eafc4c535" LastKnownName="Message" />
+      </annotatedElements>
+    </comment>
   </ownedCommentsInternal>
   <packagedElements>
     <logicalClassDesignerModelHasTypes>
@@ -334,6 +345,22 @@
             </relationshipOwnedElementsInternal>
             <elementDefinition Id="e0ae54ba-47a1-45a5-bd71-17be7130912d" />
           </association>
+          <association Id="9f2260be-0b75-48da-a002-d32d9b886c81" isDerived="false" sourceEndRoleName="ContractAssertionExpression" targetEndRoleName="Message" isLeaf="false" isAbstract="false">
+            <classMoniker Id="7aca5cee-55f9-433c-ac90-913eafc4c535" LastKnownName="Message" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="afdf026d-119c-425d-8c74-aee232bfa97b" name="ContractAssertionExpression" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="Composite" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="947a4127-1ef5-4f09-bca3-860534f2586e" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="88f7ba32-6d04-411f-8164-13f844bb7399" name="Message" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="true">
+                  <elementDefinition Id="096188a2-fd30-44a7-bb8c-c00b1369b56b" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="d41d3166-522d-443e-8769-2fc109060dc8" />
+          </association>
         </targetEnds>
         <ownedOperationsInternal>
           <operation Id="08f035eb-a13c-4016-ab1d-ddfd551920c2" name="IsNullCheck" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
@@ -382,6 +409,27 @@
             <elementDefinition Id="ddbe536c-efda-47ce-a70c-be6fb115f9b3" />
           </generalization>
         </generalsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="edbaf162-ba84-40d7-a1f5-7917451eeeb0" name="EnumValidationPredicateCheck" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="1a2965f8-6c79-45d6-be6f-654bf8e09048" />
+        <suppliersInternal>
+          <interfaceRealization Id="118f5123-f9cc-41a3-aac9-5b47d046b3fe">
+            <interfaceMoniker Id="c5f3ddf8-0494-415d-b74f-45ede34a874c" LastKnownName="IPredicateCheck" />
+            <elementDefinition Id="2a9b0828-5c1d-4bdf-b673-2fe351944774" />
+          </interfaceRealization>
+        </suppliersInternal>
+        <ownedOperationsInternal>
+          <operation Id="768baafb-b01c-445e-93f7-d4d1e478f96b" name="IsNullCheck" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="4210015e-db95-476d-af26-6fa88eea0dd2" />
+          </operation>
+        </ownedOperationsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="7aca5cee-55f9-433c-ac90-913eafc4c535" name="Message" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="b9946e95-37c7-4f32-8eb9-055a1ca645e8" />
       </class>
     </logicalClassDesignerModelHasTypes>
   </packagedElements>

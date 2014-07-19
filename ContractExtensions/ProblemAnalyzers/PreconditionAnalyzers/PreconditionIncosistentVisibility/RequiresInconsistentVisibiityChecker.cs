@@ -47,8 +47,8 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
             preconditionContainer = null;
             lessVisibleMember = null;
 
-            var contractAssertion = ContractAssertionExpression.FromInvocationExpression(expression);
-            if (contractAssertion == null || contractAssertion.AssertionType != AssertionType.Precondition)
+            var contractAssertion = CodeContractExpression.FromInvocationExpression(expression) as CodeContractExpression;
+            if (contractAssertion == null || contractAssertion.AssertionType != AssertionType.Requires)
                 return false;
             
             var preconditionHolder =
@@ -64,7 +64,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
             // Looking for a "enclosing" members that are less visible then a contract holder.
             // The only exception is a field with ContractPublicPropertyName attribute.
             lessVisibleMember = 
-                ProcessReferenceExpressions(contractAssertion.PredicateExpression)
+                ProcessReferenceExpressions(contractAssertion.OriginalPredicateExpression)
                 .FirstOrDefault(member => 
                 !FieldFromPreconditionMarkedWithContractPublicPropertyName(member) && 
                 !AccessVisibilityChecker.Member(member).IsAccessibleFrom(preconditionHolder));

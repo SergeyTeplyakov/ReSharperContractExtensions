@@ -8,6 +8,14 @@ using ReSharper.ContractExtensions.Utilities;
 
 namespace ReSharper.ContractExtensions.ContractsEx
 {
+    /// <summary>
+    /// Represents message in the contract expression.
+    /// </summary>
+    /// <remarks>
+    /// This hierarchy is an OO implementation of the descriminated union with a list of following cases:
+    /// <see cref="NoMessage"/>, <see cref="LiteralMessage"/>, <see cref="ReferenceMessage"/> and 
+    /// <see cref="InvocationMessage"/>.
+    /// </remarks>
     public abstract class Message
     {
         public static Message Create(IExpression expression)
@@ -17,7 +25,7 @@ namespace ReSharper.ContractExtensions.ContractsEx
 
             var literal = expression as ICSharpLiteralExpression;
             if (literal != null)
-                return new StringMessage(literal.Literal.GetText());
+                return new LiteralMessage(literal.Literal.GetText());
 
             var reference = expression as IReferenceExpression;
             if (reference != null)
@@ -31,94 +39,6 @@ namespace ReSharper.ContractExtensions.ContractsEx
         }
     }
 
-    internal static class MessageExtensions
-    {
-        public static T Match<T>(this Message message,
-            Func<StringMessage, T> stringFunc,
-            Func<ReferenceMessage, T> referenceFunc,
-            Func<InvocationMessage, T> invocationFunc,
-            Func<T> noMessageFunc)
-        {
-            Contract.Requires(message != null);
-            Contract.Requires(stringFunc != null);
-            Contract.Requires(referenceFunc != null);
-            Contract.Requires(invocationFunc != null);
-            Contract.Requires(noMessageFunc != null);
-
-            var stringMessage = message as StringMessage;
-            if (stringMessage != null)
-                return stringFunc(stringMessage);
-
-            var referenceMessage = message as ReferenceMessage;
-            if (referenceMessage != null)
-                return referenceFunc(referenceMessage);
-
-            var invocationReference = message as InvocationMessage;
-            if (invocationReference != null)
-                return invocationFunc(invocationReference);
-
-            if (message is NoMessage)
-                return noMessageFunc();
-
-            Contract.Assert(false, "Unknown message type: " + message.GetType());
-            return noMessageFunc();
-        }
-
-        [CanBeNull]
-        public static string GetStringLiteral(this Message message)
-        {
-            Contract.Requires(message != null);
-            var literal = message as StringMessage;
-            return literal != null ? literal.Literal : null;
-        }
-
-        public static bool IsValidForRequires(this Message message)
-        {
-            Contract.Requires(message != null);
-                        
-            return message.Match(
-                _ => true, // string literals are valid
-                r => IsValidReference(r.Reference), // references should be checked separately
-                _ => false, // message calls are invalid
-                () => true); // "NoMessage" is valid
-
-        }
-
-        /// <summary>
-        /// Returns true if <paramref name="referenceExpression"/> points to the static field or property
-        /// with at least internal access.
-        /// </summary>
-        private static bool IsValidReference(IReferenceExpression referenceExpression)
-        {
-            Contract.Requires(referenceExpression != null);
-
-            var modifiersOwner =
-                referenceExpression
-                .With(x => x.Reference)
-                .With(x => x.Resolve())
-                .With(x => x.DeclaredElement as IModifiersOwner);
-
-            if (modifiersOwner == null)
-                return false;
-            
-            // Supported only fields or properties
-            if (!(modifiersOwner is IField) && !(modifiersOwner is IProperty))
-                return false;
-
-            // Checking access rights and is this stuff is static
-            var accessRights = modifiersOwner.GetAccessRights();
-            if (accessRights == AccessRights.PUBLIC ||
-                accessRights == AccessRights.INTERNAL ||
-                accessRights == AccessRights.PROTECTED_OR_INTERNAL)
-            {
-                if (modifiersOwner.IsStatic)
-                    return true;
-            }
-
-            return false;
-        }
-    }
-
     public sealed class NoMessage : Message
     {
         private NoMessage()
@@ -127,11 +47,11 @@ namespace ReSharper.ContractExtensions.ContractsEx
         public static readonly NoMessage Instance = new NoMessage();
     }
 
-    public sealed class StringMessage : Message
+    public sealed class LiteralMessage : Message
     {
         private readonly string _literal;
 
-        public StringMessage(string literal)
+        public LiteralMessage(string literal)
         {
             Contract.Requires(!string.IsNullOrEmpty(literal));
             _literal = literal;
@@ -177,6 +97,93 @@ namespace ReSharper.ContractExtensions.ContractsEx
                 Contract.Ensures(Contract.Result<IReferenceExpression>() != null);
                 return _reference;
             }
+        }
+    }
+
+    internal static class MessageExtensions
+    {
+        public static T Match<T>(this Message message,
+            Func<LiteralMessage, T> stringFunc,
+            Func<ReferenceMessage, T> referenceFunc,
+            Func<InvocationMessage, T> invocationFunc,
+            Func<T> noMessageFunc)
+        {
+            Contract.Requires(message != null);
+            Contract.Requires(stringFunc != null);
+            Contract.Requires(referenceFunc != null);
+            Contract.Requires(invocationFunc != null);
+            Contract.Requires(noMessageFunc != null);
+
+            var stringMessage = message as LiteralMessage;
+            if (stringMessage != null)
+                return stringFunc(stringMessage);
+
+            var referenceMessage = message as ReferenceMessage;
+            if (referenceMessage != null)
+                return referenceFunc(referenceMessage);
+
+            var invocationReference = message as InvocationMessage;
+            if (invocationReference != null)
+                return invocationFunc(invocationReference);
+
+            if (message is NoMessage)
+                return noMessageFunc();
+
+            Contract.Assert(false, "Unknown message type: " + message.GetType());
+            return noMessageFunc();
+        }
+
+        [CanBeNull]
+        public static string GetStringLiteral(this Message message)
+        {
+            Contract.Requires(message != null);
+            var literal = message as LiteralMessage;
+            return literal != null ? literal.Literal : null;
+        }
+
+        public static bool IsValidForRequires(this Message message)
+        {
+            Contract.Requires(message != null);
+                        
+            return Match(message, _ => true, // string literals are valid
+                r => IsValidReference(r.Reference), // references should be checked separately
+                _ => false, // message calls are invalid
+                () => true); // "NoMessage" is valid
+
+        }
+
+        /// <summary>
+        /// Returns true if <paramref name="referenceExpression"/> points to the static field or property
+        /// with at least internal access.
+        /// </summary>
+        private static bool IsValidReference(IReferenceExpression referenceExpression)
+        {
+            Contract.Requires(referenceExpression != null);
+
+            var modifiersOwner =
+                referenceExpression
+                    .With(x => x.Reference)
+                    .With(x => x.Resolve())
+                    .With(x => x.DeclaredElement as IModifiersOwner);
+
+            if (modifiersOwner == null)
+                return false;
+            
+            // Supported only fields or properties
+            if (!(modifiersOwner is IField) && !(modifiersOwner is IProperty))
+                return false;
+
+            // Checking access rights and is this stuff is static
+            var accessRights = modifiersOwner.GetAccessRights();
+            if (accessRights == AccessRights.PUBLIC ||
+                accessRights == AccessRights.INTERNAL ||
+                accessRights == AccessRights.PROTECTED_OR_INTERNAL)
+            {
+                if (modifiersOwner.IsStatic)
+                    return true;
+            }
+
+            return false;
         }
     }
 }

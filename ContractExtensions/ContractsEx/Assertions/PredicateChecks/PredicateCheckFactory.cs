@@ -47,9 +47,13 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
                 return default(T);
             }
         }
-
+        
+        /// <summary>
+        /// Parses specified <paramref name="expression"/> into sequence of <see cref="PredicateCheck"/>.
+        /// </summary>
         public static IEnumerable<PredicateCheck> Create(IExpression expression)
         {
+            // TODO: potential enhancement: simplify condition first and convert !(result == null)
             Contract.Requires(expression != null);
             Contract.Ensures(Contract.Result<IEnumerable<PredicateCheck>>() != null);
 

@@ -97,7 +97,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Ensures
         }
 
         protected virtual bool ResultIsAlreadyCheckedByContractEnsures(
-            IEnumerable<ContractEnsuresAssertion> ensureAssertions, IDeclaredType methodReturnType)
+            IEnumerable<ContractEnsuresStatement> ensureAssertions, IDeclaredType methodReturnType)
         {
             Contract.Requires(ensureAssertions != null);
             Contract.Requires(methodReturnType != null);
@@ -116,7 +116,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Ensures
             : base(provider, returnTypeEnsuresAvailability)
         {}
 
-        protected override bool ResultIsAlreadyCheckedByContractEnsures(IEnumerable<ContractEnsuresAssertion> ensureAssertions, IDeclaredType methodReturnType)
+        protected override bool ResultIsAlreadyCheckedByContractEnsures(IEnumerable<ContractEnsuresStatement> ensureAssertions, IDeclaredType methodReturnType)
         {
             // Ensures for enums should be available for System.Enum and for System.Enum?
             // thats why we should extract underlying type out of the nullable type.

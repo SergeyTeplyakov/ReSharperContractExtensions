@@ -6,9 +6,8 @@ using NUnit.Framework;
 
 namespace ReSharper.ContractExtensions.Tests.ProblemAnalyzers
 {
-    [TestFixture]
     [TestNetFramework45]
-    public class QuickFixAvailabilityTestBase<THighlighting> : QuickFixAvailabilityTestBase where THighlighting : IHighlighting
+    public abstract class QuickFixAvailabilityTestBase<THighlighting> : QuickFixAvailabilityTestBase where THighlighting : IHighlighting
     {
         protected override bool HighlightingPredicate(IHighlighting highlighting, IPsiSourceFile psiSourceFile)
         {

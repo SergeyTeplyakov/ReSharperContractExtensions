@@ -16,7 +16,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
     /// <summary>
     /// Warns if method contract is malformed:
     /// - Contract statements are not the first statements in the method
-    /// - Postcondition statement is after precondition check
+    /// - Ensures statement is after precondition check
     /// </summary>
     [ElementProblemAnalyzer(new[] { typeof(ICSharpFunctionDeclaration) },
     HighlightingTypes = new[] { typeof(MalformedMethodContractHighlighting) })]
@@ -60,7 +60,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
                     voidStatement = statement.Statement;
                 }
 
-                if (voidReturnMethodFound && IsContractRequiresOrEnsures(statement))
+                if (voidReturnMethodFound && IsContractRequiresEnsuresOrEndContractBlock(statement))
                 {
                     faultedStatement = voidStatement; 
                     return true;
@@ -71,14 +71,15 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
             return false;
         }
 
-        private bool IsContractRequiresOrEnsures(ProcessedStatement statement)
+        private bool IsContractRequiresEnsuresOrEndContractBlock(ProcessedStatement statement)
         {
             if (statement.Assertion == null)
                 return false;
 
             // TODO: this is terrible!!!! Rethink assertions and stuff!
-            return statement.Assertion.AssertionType == AssertionType.Postcondition ||
-                   statement.Assertion.AssertionExpression is ContractRequiresExpression;
+            return statement.Assertion is ContractRequiresStatement || 
+                statement.Assertion is ContractEnsuresStatement ||
+                statement.Assertion is EndContractBlockStatement;
         }
 
         private bool IsNotContractAndVoidReturnMethod(ProcessedStatement statement)
@@ -109,14 +110,14 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
     internal class ProcessedStatement
     {
         public ICSharpStatement Statement { get; private set; }
-        public ContractAssertion Assertion { get; private set; }
+        public ContractStatementBase Assertion { get; private set; }
 
         public static ProcessedStatement Create(ICSharpStatement statement)
         {
             return new ProcessedStatement
             {
                 Statement = statement,
-                Assertion = ContractAssertionFactory.FromCSharpStatement(statement),
+                Assertion = ContractStatementFactory.FromCSharpStatement(statement),
             };
         }
     }

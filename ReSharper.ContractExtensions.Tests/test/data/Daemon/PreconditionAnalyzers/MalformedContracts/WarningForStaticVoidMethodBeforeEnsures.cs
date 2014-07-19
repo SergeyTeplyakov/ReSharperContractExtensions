@@ -4,7 +4,7 @@ class A
 {
   public void Foo(string s)
   {
-    InstanceMethod();
+    StaticMethod();
     Contract.Ensures(false);
   }
   private static void StaticMethod() {}

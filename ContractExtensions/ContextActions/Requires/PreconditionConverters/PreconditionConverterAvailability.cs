@@ -10,7 +10,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
 {
     internal sealed class PreconditionConverterAvailability : ContextActionAvailabilityBase<PreconditionConverterAvailability>
     {
-        private ContractPreconditionAssertion _contractPreconditionAssertion;
+        private ContractPreconditionStatementBase _contractPreconditionAssertion;
 
         public PreconditionConverterAvailability()
         {}
@@ -24,11 +24,11 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             _isAvailable = _contractPreconditionAssertion != null;
         }
 
-        public ContractPreconditionAssertion PreconditionAssertion
+        public ContractPreconditionStatementBase PreconditionAssertion
         {
             get
             {
-                Contract.Ensures(!IsAvailable || Contract.Result<ContractPreconditionAssertion>() != null);
+                Contract.Ensures(!IsAvailable || Contract.Result<ContractPreconditionStatementBase>() != null);
                 return _contractPreconditionAssertion;
             }
         }
@@ -43,7 +43,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         }
 
         [CanBeNull]
-        private ContractPreconditionAssertion GetSelectedPreconditionAssertion()
+        private ContractPreconditionStatementBase GetSelectedPreconditionAssertion()
         {
             var statement = _provider.GetSelectedElement<ICSharpStatement>(true, true);
             if (statement == null)
@@ -53,7 +53,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
                         .Return(x => x.GetContainingStatement());
             }
 
-            return statement.Return(ContractPreconditionAssertion.TryCreate);
+            return statement.Return(ContractPreconditionStatementBase.TryCreate);
         }
     }
 }

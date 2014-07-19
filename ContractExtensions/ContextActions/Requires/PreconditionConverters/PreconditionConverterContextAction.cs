@@ -35,7 +35,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         {
             get
             {
-                var requires = (ContractRequiresPreconditionAssertion)_availability.PreconditionAssertion;
+                var requires = (ContractRequiresStatement)_availability.PreconditionAssertion;
                 string exceptionType = requires.PotentialGenericVersionException().ShortName;
                 return string.Format("Convert to Contract.Requires<{0}>", exceptionType);
             }
@@ -107,7 +107,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
                 if (!_requiresShouldBeGeneric)
                     return "Convert to Contract.Requires";
 
-                var requires = (IfThrowPreconditionAssertion) _availability.PreconditionAssertion;
+                var requires = (IfThrowPreconditionStatement) _availability.PreconditionAssertion;
                 string exceptionType = requires.ExceptionType.ShortName;
                 return string.Format("Convert to Contract.Requires<{0}>", exceptionType);
             }

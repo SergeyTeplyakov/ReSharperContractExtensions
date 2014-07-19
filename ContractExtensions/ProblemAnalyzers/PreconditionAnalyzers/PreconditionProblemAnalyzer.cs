@@ -15,7 +15,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
     {
         protected override sealed void Run(IInvocationExpression element, ElementProblemAnalyzerData data, IHighlightingConsumer consumer)
         {
-            var contractAssertion = ContractAssertionExpression.FromInvocationExpression(element) as ContractRequiresExpression;
+            var contractAssertion = CodeContractExpression.FromInvocationExpression(element) as ContractRequiresExpression;
             if (contractAssertion == null)
                 return;
 

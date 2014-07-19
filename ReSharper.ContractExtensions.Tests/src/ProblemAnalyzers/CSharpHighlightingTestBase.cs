@@ -6,7 +6,7 @@ using JetBrains.ReSharper.TestFramework;
 namespace ReSharper.ContractExtensions.Tests.ProblemAnalyzers
 {
     [TestReferences(@"%PRODUCT%\JetBrains.Annotations.dll")]
-    public class CSharpHighlightingTestBase<THighlighting> : CSharpHighlightingTestNet45Base where THighlighting : IHighlighting
+    public abstract class CSharpHighlightingTestBase<THighlighting> : CSharpHighlightingTestNet45Base where THighlighting : IHighlighting
     {
         protected override bool HighlightingPredicate(IHighlighting highlighting, IContextBoundSettingsStore settingsstore)
         {

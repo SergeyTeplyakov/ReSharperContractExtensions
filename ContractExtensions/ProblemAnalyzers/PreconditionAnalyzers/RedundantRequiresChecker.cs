@@ -35,7 +35,8 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
         private bool IsAvailable(IInvocationExpression invocationExpression, out string argumentName)
         {
             argumentName = null;
-            var contractAssertion = ContractAssertionExpression.FromInvocationExpression(invocationExpression);
+
+            var contractAssertion = CodeContractExpression.FromInvocationExpression(invocationExpression) as CodeContractExpression;
             if (contractAssertion == null)
                 return false;
 

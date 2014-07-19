@@ -9,15 +9,20 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
     /// The only "guards" that considered as preconditions by Code Contracts library should be 
     /// decorated with ContractArgumentValidatorAttribute.
     /// </remarks>
-    public sealed class GuardBasedPreconditionAssertion : ContractPreconditionAssertion
+    public sealed class GuardBasedPreconditionStatement : ContractPreconditionStatementBase
     {
-        public GuardBasedPreconditionAssertion(ICSharpStatement statement, ContractAssertionExpression expression)
+        public GuardBasedPreconditionStatement(ICSharpStatement statement, CodeContractExpression expression)
             : base(statement, expression)
         {}
 
         public override bool AssertsArgumentIsNotNull(string name)
         {
             throw new System.NotImplementedException();
+        }
+
+        public override bool IsCodeContractBasedPrecondition
+        {
+            get { return false; }
         }
 
         public override PreconditionType PreconditionType

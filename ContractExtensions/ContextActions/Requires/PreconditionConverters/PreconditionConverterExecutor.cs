@@ -33,7 +33,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             }
         }
 
-        private readonly Dictionary<Key, Action<ContractPreconditionAssertion>> _converters = new Dictionary<Key, Action<ContractPreconditionAssertion>>();
+        private readonly Dictionary<Key, Action<ContractPreconditionStatementBase>> _converters = new Dictionary<Key, Action<ContractPreconditionStatementBase>>();
 
         private readonly PreconditionConverterAvailability _availability;
         private readonly PreconditionType _destinationPreconditionType;
@@ -60,10 +60,10 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         }
 
         [CanBeNull]
-        private Action<ContractPreconditionAssertion> GetConverter(PreconditionType sourcePreconditionType, PreconditionType destinationPreconditionType)
+        private Action<ContractPreconditionStatementBase> GetConverter(PreconditionType sourcePreconditionType, PreconditionType destinationPreconditionType)
         {
             var key = Key.From(sourcePreconditionType).To(destinationPreconditionType);
-            Action<ContractPreconditionAssertion> result;
+            Action<ContractPreconditionStatementBase> result;
             _converters.TryGetValue(key, out result);
             return result;
         }
@@ -82,7 +82,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
                 a => FromIfThrowToRequires(a, isGeneric: true);
         }
 
-        private void FromIfThrowToRequires(ContractPreconditionAssertion assertion, bool isGeneric)
+        private void FromIfThrowToRequires(ContractPreconditionStatementBase assertion, bool isGeneric)
         {
             // Convertion from if-throw precondition to Contract.Requires
             // contains following steps:
@@ -91,7 +91,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             // 3. Add required using statements if necessary (for Contract class and Exception type)
             // 4. Replace if-throw statement with newly created contract statement
 
-            var ifThrowAssertion = (IfThrowPreconditionAssertion) assertion;
+            var ifThrowAssertion = (IfThrowPreconditionStatement) assertion;
 
             ICSharpExpression negatedExpression = 
                 CSharpExpressionUtil.CreateLogicallyNegatedExpression(ifThrowAssertion.IfStatement.Condition);
@@ -114,12 +114,12 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             ReplaceStatements(ifThrowAssertion.Statement, newStatement);
         }
 
-        private void FromGenericRequiresToRequires(ContractPreconditionAssertion assertion)
+        private void FromGenericRequiresToRequires(ContractPreconditionStatementBase assertion)
         {
-            var requiresAssertion = (ContractRequiresPreconditionAssertion)assertion;
+            var requiresAssertion = (ContractRequiresStatement)assertion;
             Contract.Assert(requiresAssertion.IsGeneric);
 
-            string predicateCheck = requiresAssertion.ContractAssertionExpression.PredicateExpression.GetText();
+            string predicateCheck = requiresAssertion.ContractRequiresExpression.OriginalPredicateExpression.GetText();
             var newStatement = CreateNonGenericContractRequires(predicateCheck, requiresAssertion.Message);
             
             ReplaceStatements(requiresAssertion.Statement, newStatement);
@@ -156,14 +156,14 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             return _factory.CreateStatement(stringStatement, ContractType);
         }
 
-        private void FromRequiresToGenericRequires(ContractPreconditionAssertion assertion)
+        private void FromRequiresToGenericRequires(ContractPreconditionStatementBase assertion)
         {
-            var requiresAssertion = (ContractRequiresPreconditionAssertion) assertion;
+            var requiresAssertion = (ContractRequiresStatement) assertion;
             Contract.Assert(!requiresAssertion.IsGeneric);
 
             var exceptionType = requiresAssertion.PotentialGenericVersionException();
 
-            string predicate = requiresAssertion.ContractAssertionExpression.PredicateExpression.GetText();
+            string predicate = requiresAssertion.ContractRequiresExpression.OriginalPredicateExpression.GetText();
             var newStatement = CreateGenericContractRequires(exceptionType, predicate, requiresAssertion.Message);
 
             ReplaceStatements(requiresAssertion.Statement, newStatement);

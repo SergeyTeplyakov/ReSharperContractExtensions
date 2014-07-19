@@ -5,7 +5,7 @@ class A
 {
   public void Foo(string s)
   {
-    Console.WriteLine("Hello");
+    |Console.WriteLine("Hello");|(0)
     Contract.EndContractBlock();
   }
 }

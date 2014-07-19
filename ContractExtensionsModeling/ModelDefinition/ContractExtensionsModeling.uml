@@ -24,6 +24,20 @@
           LastKnownLocation="ContractExtensionsModeling.uml" />
       </annotatedElements>
     </comment>
+    <comment
+      Id="0870bce0-51fb-44f9-9819-019522df2a89">
+      <body>Implemented as "descriminated union" with following subtypes:
+NoMessage,
+LiteralMessage,
+ReferenceMessage,
+InvocationMessage</body>
+      <annotatedElements>
+        <classMoniker
+          Id="b9946e95-37c7-4f32-8eb9-055a1ca645e8"
+          LastKnownName="Message"
+          LastKnownLocation="ContractExtensionsModeling.uml" />
+      </annotatedElements>
+    </comment>
   </ownedCommentsInternal>
   <profileInstances>
     <packageHasProfileInstances
@@ -642,6 +656,45 @@
               </associationHasOwnedEnds>
             </relationshipOwnedElementsInternal>
           </association>
+          <association
+            Id="d41d3166-522d-443e-8769-2fc109060dc8"
+            isDerived="false"
+            sourceEndRoleName="ContractAssertionExpression"
+            targetEndRoleName="Message"
+            isLeaf="false"
+            isAbstract="false">
+            <classMoniker
+              Id="b9946e95-37c7-4f32-8eb9-055a1ca645e8"
+              LastKnownName="Message"
+              LastKnownLocation="ContractExtensionsModeling.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="947a4127-1ef5-4f09-bca3-860534f2586e"
+                  name="ContractAssertionExpression"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Composite"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="096188a2-fd30-44a7-bb8c-c00b1369b56b"
+                  name="Message"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="true" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
         </targetEnds>
         <ownedOperationsInternal>
           <operation
@@ -727,6 +780,42 @@
           </generalization>
         </generalsInternal>
       </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="1a2965f8-6c79-45d6-be6f-654bf8e09048"
+        name="EnumValidationPredicateCheck"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <suppliersInternal>
+          <interfaceRealization
+            Id="2a9b0828-5c1d-4bdf-b673-2fe351944774">
+            <interfaceMoniker
+              Id="ab354c26-587c-4a37-8f2d-596211f87958"
+              LastKnownName="IPredicateCheck"
+              LastKnownLocation="ContractExtensionsModeling.uml" />
+          </interfaceRealization>
+        </suppliersInternal>
+        <ownedOperationsInternal>
+          <operation
+            Id="4210015e-db95-476d-af26-6fa88eea0dd2"
+            name="IsNullCheck"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+        </ownedOperationsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="b9946e95-37c7-4f32-8eb9-055a1ca645e8"
+        name="Message"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
     </packageHasNamedElement>
   </packagedElements>
   <primitiveType

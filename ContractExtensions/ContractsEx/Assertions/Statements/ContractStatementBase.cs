@@ -1,43 +1,55 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using JetBrains.Annotations;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using ReSharper.ContractExtensions.ContractsEx.Impl;
 
 namespace ReSharper.ContractExtensions.ContractsEx.Assertions
 {
+    // TODO: the whole hierarchy of contract statements seems unnecessary! Maybe expressions should be enough!!
     /// <summary>
-    /// Base class that represent any Code Contract Assertion like Contract.Requires, Contract.Ensures, Contract.Invariant etc.
+    /// Base class that represents any contract statement including Code Contract
+    /// statements like Contract.Requires/Ensures, as well as other form of contracts, like
+    /// if-throw contracts and gurad-based contracts.
     /// </summary>
-    public abstract class ContractAssertion
+    public abstract class ContractStatementBase : IContractStatement
     {
-        protected readonly ContractAssertionExpressionBase _assertionExpression;
-        private Message _message;
+        private readonly ICSharpStatement _statement;
+        protected readonly ContractExpressionBase _expression;
 
-        protected ContractAssertion(AssertionType assertionType,
-            ICSharpStatement statement, ContractAssertionExpressionBase assertionExpression)
+        protected ContractStatementBase(ICSharpStatement statement, ContractExpressionBase expression)
         {
             Contract.Requires(statement != null);
-            Contract.Requires(assertionExpression != null);
+            Contract.Requires(expression != null);
 
-            _assertionExpression = assertionExpression;
-
-            Statement = statement;
-            AssertionType = assertionType;
-            _message = assertionExpression.Message;
+            _statement = statement;
+            _expression = expression;
         }
 
-        public ContractAssertionExpressionBase AssertionExpression { get { return _assertionExpression; } }
-        public AssertionType AssertionType { get; private set; }
-        public ICSharpStatement Statement { get; private set; }
+        public ContractExpressionBase Expression
+        {
+            get
+            {
+                Contract.Ensures(Contract.Result<ContractExpressionBase>() != null);
+                return _expression;
+            }
+        }
+
+        public ICSharpStatement Statement
+        {
+            get
+            {
+                Contract.Ensures(Contract.Result<ICSharpStatement>() != null);
+                return _statement;
+            }
+        }
 
         public Message Message
         {
             get
             {
                 Contract.Ensures(Contract.Result<Message>() != null);
-                return _message;
+                return _expression.Message;
             }
         }
 
@@ -48,14 +60,14 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
         {
             Contract.Requires(!string.IsNullOrEmpty(name));
 
-            return _assertionExpression.Predicates.Any(p => p.ChecksForNotNull(name));
+            return _expression.Predicates.Any(p => p.ChecksForNotNull(name));
         }
 
         public virtual bool AssertsArgumentIsNull(string name)
         {
             Contract.Requires(!string.IsNullOrEmpty(name));
 
-            return _assertionExpression.Predicates.Any(p => p.ChecksForNull(name));
+            return _expression.Predicates.Any(p => p.ChecksForNull(name));
         }
 
         /// <summary>
@@ -72,13 +84,12 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
         public virtual bool AssertsArgumentIsNotNull(Func<PredicateArgument, bool> comparer)
         {
             Contract.Requires(comparer != null);
-            return _assertionExpression.CheckArgumentIsNotNull(comparer);
+            return _expression.CheckArgumentIsNotNull(comparer);
         }
 
         public override string ToString()
         {
-            return string.Format("Assertion type: {0}\nC# statement:\n{1}",
-                AssertionType, Statement);
+            return string.Format("'C# statement:\n{0}", Statement);
         }
 
         public static IInvocationExpression AsInvocationExpression(ICSharpStatement statement)
