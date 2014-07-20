@@ -61,7 +61,7 @@ namespace ReSharper.ContractExtensions.ContractsEx.Statements
                 var innerBlock = s as IBlock;
 
                 if (innerBlock != null)
-                    return innerBlock.StatementsEnumerable;
+                    return GetStatements(innerBlock);
 
                 return new [] {s}.AsEnumerable();
             });
