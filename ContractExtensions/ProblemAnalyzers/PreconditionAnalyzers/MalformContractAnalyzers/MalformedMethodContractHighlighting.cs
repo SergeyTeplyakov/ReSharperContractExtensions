@@ -52,6 +52,10 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
                 case MalformedContractError.AssertOrAssumeInContractBlock:
                     return string.Format("Contract.Assert/Contract.Assume cannot be used in contract section of method '{0}'. Use only Requires and Ensures",
                         contractMethodName);
+                case MalformedContractError.AssignmentInContractBlock:
+                    // Code Contract error: Malformed contract. Found Requires after assignment in method 'CodeContractInvestigations.MalformedContractErrors.AssignmentInContractBlock'.
+                    return string.Format("Malformed contract. Assignment cannot be used in contract section of method '{0}'", 
+                        contractMethodName);
                 default:
                     throw new ArgumentOutOfRangeException("error");
             }

@@ -17,6 +17,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
     {
         VoidReturnMethodCall,
         AssertOrAssumeInContractBlock,
+        AssignmentInContractBlock,
     }
     /// <summary>
     /// Warns if method contract is malformed:
@@ -87,6 +88,15 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
                         return ValidationResult.CreateError(s.CSharpStatement, MalformedContractError.AssertOrAssumeInContractBlock);
                     return ValidationResult.NoError;
                 };
+
+            yield return
+                s =>
+                {
+                    if (s.ContractStatement == null && IsAssignmentStatement(s.CSharpStatement))
+                        return ValidationResult.CreateError(s.CSharpStatement,
+                            MalformedContractError.AssignmentInContractBlock);
+                    return ValidationResult.NoError;
+                };
         }
 
         private static ValidationResult ValidateStatement(ProcessedStatement statement)
@@ -110,10 +120,17 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
                 if (vr.ErrorType == ErrorType.Error)
                 {
                     consumer.AddHighlighting(
-                        new MalformedMethodContractHighlighting(vr.MalformedContractError, element.NameIdentifier.Name),
+                        new MalformedMethodContractHighlighting(vr.MalformedContractError, element.DeclaredName),
                         vr.Statement.GetDocumentRange(), element.GetContainingFile());
                 }
             }
+        }
+
+        private static bool IsAssignmentStatement(ICSharpStatement statement)
+        {
+            Contract.Requires(statement != null);
+            return statement.With(x => x as IExpressionStatement)
+                    .With(x => x.Expression as IAssignmentExpression) != null;
         }
 
         private IEnumerable<ValidationResult> ValidateContractBlockStatements(

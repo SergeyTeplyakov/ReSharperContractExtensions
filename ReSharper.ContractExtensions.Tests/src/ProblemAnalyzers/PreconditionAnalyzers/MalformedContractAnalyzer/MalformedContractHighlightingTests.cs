@@ -28,13 +28,19 @@ namespace ReSharper.ContractExtensions.Tests.ProblemAnalyzers.PreconditionAnalyz
         [TestCase("WarningForTwoMethods.cs")]
         [TestCase("WarningOnConsoleWriteLineBeforeEndContractBlock.cs")]
         [TestCase("WarningForTwoInterplacedMethods.cs")]
-        public void Test(string testName)
+        public void Test_Void_Return_Method_In_Contract_Block(string testName)
         {
             DoTestSolution(testName);
         }
 
         [TestCase("WarnForAssertOrAssumeInContractBlock.cs")]
         public void Test_Assert_Assume(string testName)
+        {
+            DoTestSolution(testName);
+        }
+
+        [TestCase("WarningForAssignmentInContractBlock.cs")]
+        public void Test_Assignment_In_Contract_Block(string testName)
         {
             DoTestSolution(testName);
         }

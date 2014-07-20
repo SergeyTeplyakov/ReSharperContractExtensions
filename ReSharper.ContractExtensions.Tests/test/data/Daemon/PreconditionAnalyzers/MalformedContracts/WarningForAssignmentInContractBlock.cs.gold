@@ -2,11 +2,12 @@ using System.Diagnostics.Contracts;
 
 class A
 {
+  private static string _foo;
   public void Foo(string s)
   {
-    InstanceMethod();
+    |_foo = s;|(0)
     Contract.Requires(s != null);
-    Contract.Ensures(false);
   }
-  private void InstanceMethod() {}
 }
+---------------------------------------------------------
+(0): ReSharper Underlined Error Highlighting: Malformed contract. Assignment cannot be used in contract section of method 'Foo'
