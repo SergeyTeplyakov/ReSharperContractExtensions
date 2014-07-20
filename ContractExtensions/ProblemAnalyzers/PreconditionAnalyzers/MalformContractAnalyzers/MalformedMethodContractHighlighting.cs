@@ -20,13 +20,13 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
     {
         private readonly string _additionalMessage;
         public const string Id = "MalformedMethodContractHighlighting";
-        private const string _toolTipBase = "Malformed contract. ";
+        private string _toolTip;
 
         internal MalformedMethodContractHighlighting(MalformedContractError error, string contractMethodName)
         {
             Contract.Requires(!string.IsNullOrEmpty(contractMethodName));
 
-            _additionalMessage = GetErrorText(error, contractMethodName);
+            _toolTip = GetErrorText(error, contractMethodName);
         }
 
         public bool IsValid()
@@ -36,7 +36,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
 
         public string ToolTip
         {
-            get { return _toolTipBase + _additionalMessage; }
+            get { return _toolTip; }
         }
 
         public string ErrorStripeToolTip { get { return ToolTip; } }
@@ -47,7 +47,10 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
             switch (error)
             {
                 case MalformedContractError.VoidReturnMethodCall:
-                    return string.Format("Detected expression statement evaluated for side-effect in contracts of method '{0}'", 
+                    return string.Format("Malformed contract. Detected expression statement evaluated for side-effect in contracts of method '{0}'", 
+                        contractMethodName);
+                case MalformedContractError.AssertOrAssumeInContractBlock:
+                    return string.Format("Contract.Assert/Contract.Assume cannot be used in contract section of method '{0}'. Use only Requires and Ensures",
                         contractMethodName);
                 default:
                     throw new ArgumentOutOfRangeException("error");

@@ -16,6 +16,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
     internal enum MalformedContractError
     {
         VoidReturnMethodCall,
+        AssertOrAssumeInContractBlock,
     }
     /// <summary>
     /// Warns if method contract is malformed:
@@ -61,28 +62,42 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
             }
         }
 
-        private static List<Func<ICSharpStatement, ValidationResult>> _malformStatementDetectors = 
+        private static List<Func<ProcessedStatement, ValidationResult>> _malformStatementDetectors = 
             GetMalformStatementDetectors().ToList();
 
-        private static IEnumerable<Func<ICSharpStatement, ValidationResult>> GetMalformStatementDetectors()
+        private static IEnumerable<Func<ProcessedStatement, ValidationResult>> GetMalformStatementDetectors()
         {
             yield return
                 s =>
                 {
-                    if (!IsMarkedWithContractValidationAttributeMethod(s) && IsVoidReturnMethod(s))
-                        return ValidationResult.CreateError(s, MalformedContractError.VoidReturnMethodCall);
+                    // Or boy, I NEED Discriminated union here!!!
+                    if (s.ContractStatement == null &&
+                        !IsMarkedWithContractValidationAttributeMethod(s.CSharpStatement) && 
+                        IsVoidReturnMethod(s.CSharpStatement))
+                        return ValidationResult.CreateError(s.CSharpStatement, MalformedContractError.VoidReturnMethodCall);
+                    return ValidationResult.NoError;
+                };
+
+            yield return
+                s =>
+                {
+                    if (s.ContractStatement != null &&
+                        (s.ContractStatement.StatementType == CodeContractStatementType.Assert ||
+                        s.ContractStatement.StatementType == CodeContractStatementType.Assume))
+                        return ValidationResult.CreateError(s.CSharpStatement, MalformedContractError.AssertOrAssumeInContractBlock);
                     return ValidationResult.NoError;
                 };
         }
 
-        private static ValidationResult ValidateStatement(ICSharpStatement statement)
+        private static ValidationResult ValidateStatement(ProcessedStatement statement)
         {
             Contract.Requires(statement != null);
             Contract.Ensures(Contract.Result<ValidationResult>() != null);
 
             return _malformStatementDetectors
                 .Select(detector => detector(statement))
-                .FirstOrDefault(vr => vr.ErrorType != ErrorType.NoError) ?? ValidationResult.CreatNoError(statement);
+                .FirstOrDefault(vr => vr.ErrorType != ErrorType.NoError) 
+                    ?? ValidationResult.CreatNoError(statement.CSharpStatement);
         }
 
         protected override void Run(ICSharpFunctionDeclaration element, ElementProblemAnalyzerData data, IHighlightingConsumer consumer)
@@ -105,8 +120,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
         {
             var query = 
                 from statement in contractBlockStatements
-                where statement.ContractStatement == null
-                let validationResult = ValidateStatement(statement.CSharpStatement)
+                let validationResult = ValidateStatement(statement)
                 select validationResult;
 
             return query.ToList();

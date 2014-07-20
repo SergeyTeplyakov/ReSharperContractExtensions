@@ -1,0 +1,15 @@
+using System.Diagnostics.Contracts;
+
+class A
+{
+  public void Foo(string s)
+  {
+    InstanceMethod();
+    {
+      Contract.Requires(false);
+    }
+  }
+  private void InstanceMethod() {}
+}
+---------------------------------------------------------
+(0): ReSharper Underlined Error Highlighting: Malformed contract. Detected expression statement evaluated for side-effect in contracts of method 'Foo'

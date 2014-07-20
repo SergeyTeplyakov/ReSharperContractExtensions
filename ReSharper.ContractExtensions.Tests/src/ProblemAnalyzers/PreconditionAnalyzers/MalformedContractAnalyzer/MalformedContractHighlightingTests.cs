@@ -18,7 +18,10 @@ namespace ReSharper.ContractExtensions.Tests.ProblemAnalyzers.PreconditionAnalyz
         }
 
         [TestCase("NoWarning.cs")]
+        [TestCase("NoWarningForVoidMethodWithArgumentValidation.cs")]
+
         [TestCase("WarningForInstanceVoidMethod.cs")]
+        [TestCase("WarningForInstanceMethodAndContractInInnerBlock.cs")]
         [TestCase("WarningForStaticVoidMethodBeforeEnsures.cs")]
         [TestCase("WarningOnConsoleWriteLineBeforeEndContractBlock.cs")]
 
@@ -29,6 +32,14 @@ namespace ReSharper.ContractExtensions.Tests.ProblemAnalyzers.PreconditionAnalyz
         {
             DoTestSolution(testName);
         }
+
+        [TestCase("WarnForAssertOrAssumeInContractBlock.cs")]
+        public void Test_Assert_Assume(string testName)
+        {
+            DoTestSolution(testName);
+        }
+
+
 
     }
 }
