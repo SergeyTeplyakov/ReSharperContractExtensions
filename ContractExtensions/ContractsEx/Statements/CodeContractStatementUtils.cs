@@ -36,8 +36,7 @@ namespace ReSharper.ContractExtensions.ContractsEx.Statements
             Contract.Ensures(Contract.Result<IList<ProcessedStatement>>() != null);
 
             var statements =
-                functionDeclaration.Body
-                .Return(x => x.Statements.AsEnumerable(), Enumerable.Empty<ICSharpStatement>())
+                GetStatements(functionDeclaration.Body)
                 .Select(ProcessedStatement.Create)
                 .ToList();
 
@@ -50,5 +49,23 @@ namespace ReSharper.ContractExtensions.ContractsEx.Statements
             // Because we're taking +1 item we can skip check for -1!
             return statements.Take(lastContractIndex + 1).ToList();
         }
+
+        private static IEnumerable<ICSharpStatement> GetStatements(IBlock block)
+        {
+            Contract.Ensures(Contract.Result<IEnumerable<ICSharpStatement>>() != null);
+            if (block == null)
+                return Enumerable.Empty<ICSharpStatement>();
+
+            return block.Statements.SelectMany(s =>
+            {
+                var innerBlock = s as IBlock;
+
+                if (innerBlock != null)
+                    return innerBlock.StatementsEnumerable;
+
+                return new [] {s}.AsEnumerable();
+            });
+        }
+
     }
 }

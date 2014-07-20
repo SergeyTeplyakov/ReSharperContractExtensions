@@ -103,6 +103,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
         protected override void Run(ICSharpFunctionDeclaration element, ElementProblemAnalyzerData data, IHighlightingConsumer consumer)
         {
             var contractBlockStatements = element.GetContractBlockStatements();
+
             foreach (var vr in ValidateContractBlockStatements(contractBlockStatements)
                         .Where(v => v.ErrorType != ErrorType.NoError))
             {
@@ -124,25 +125,6 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
                 select validationResult;
 
             return query.ToList();
-        } 
-
-
-        private IEnumerable<List<ICSharpStatement>> VoidMethodCallsInsideContractBlock(IList<ProcessedStatement> processedStatements)
-        {
-            var faultedStatements = new List<ICSharpStatement>();
-            
-            foreach (var statement in processedStatements)
-            {
-                if (IsNotContractAndVoidReturnMethod(statement))
-                {
-                    faultedStatements.Add(statement.CSharpStatement);
-                }
-                else if (statement.ContractStatement != null && faultedStatements.Count != 0)
-                {
-                    yield return faultedStatements;
-                    faultedStatements = new List<ICSharpStatement>();
-                }
-            }
         }
 
         private static bool IsMarkedWithContractValidationAttributeMethod(ICSharpStatement statement)
@@ -171,24 +153,6 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
                 .With(x => x.Resolve())
                 .With(x => x.DeclaredElement as IMethod);
         }
-
-        private bool IsNotContractAndVoidReturnMethod(ProcessedStatement statement)
-        {
-            if (statement.ContractStatement != null)
-                return false;
-
-            var declaredElement = 
-                statement.CSharpStatement
-                .With(x => x as IExpressionStatement)
-                .With(x => x.Expression as IInvocationExpression)
-                .With(x => x.InvocationExpressionReference)
-                .With(x => x.Resolve())
-                .With(x => x.DeclaredElement as IMethod);
-
-            return declaredElement != null ? declaredElement.ReturnType.IsVoid() : false;
-        }
-
-
     }
 
     
