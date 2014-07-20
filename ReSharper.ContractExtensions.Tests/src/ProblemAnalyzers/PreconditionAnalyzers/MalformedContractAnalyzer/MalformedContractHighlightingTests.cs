@@ -21,6 +21,10 @@ namespace ReSharper.ContractExtensions.Tests.ProblemAnalyzers.PreconditionAnalyz
         [TestCase("WarningForInstanceVoidMethod.cs")]
         [TestCase("WarningForStaticVoidMethodBeforeEnsures.cs")]
         [TestCase("WarningOnConsoleWriteLineBeforeEndContractBlock.cs")]
+
+        [TestCase("WarningForTwoMethods.cs")]
+        [TestCase("WarningOnConsoleWriteLineBeforeEndContractBlock.cs")]
+        [TestCase("WarningForTwoInterplacedMethods.cs")]
         public void Test(string testName)
         {
             DoTestSolution(testName);

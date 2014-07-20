@@ -10,4 +10,4 @@ class A
   private static void StaticMethod() {}
 }
 ---------------------------------------------------------
-(0): ReSharper Underlined Error Highlighting: Malformed contract. Void-returned method call in the contract section
+(0): ReSharper Underlined Error Highlighting: Malformed contract. Detected expression statement evaluated for side-effect in contracts of method 'Foo'

@@ -27,24 +27,19 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
         {
             Contract.Requires(statement != null);
 
-            var ifThrowExpression = IfThrowPreconditionExpression.FromStatement(statement);
+            var ifThrowExpression = IfThrowPreconditionExpression.FromCSharpStatement(statement);
             if (ifThrowExpression != null)
                 return new IfThrowPreconditionStatement(statement, ifThrowExpression);
 
-            var invocationExpression = ContractStatementBase.AsInvocationExpression(statement);
-            if (invocationExpression == null)
-                return null;
-
-            var codeContractExpression = CodeContractExpression.FromInvocationExpression(invocationExpression);
+            var codeContractExpression = CodeContractExpression.FromCSharpStatement(statement);
             if (codeContractExpression != null)
                 return CreateCodeContractStatement(statement, codeContractExpression);
-
 
             return null;
         }
 
         private static ContractStatementBase CreateCodeContractStatement(ICSharpStatement statement, 
-            ICodeContractExpression codeContractExpression)
+            CodeContractExpression codeContractExpression)
         {
             Contract.Requires(statement != null);
             Contract.Requires(codeContractExpression != null);
@@ -62,8 +57,6 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
                     return new ContractAssertStatement(statement, (ContractAssertExpression)codeContractExpression);
                 case AssertionType.Assume:
                     return new ContractAssumeStatement(statement, (ContractAssumeExpression)codeContractExpression);
-                case AssertionType.EndContractBlock:
-                    return new EndContractBlockStatement(statement, (EndContractBlockExpression)codeContractExpression);
                 default:
                     Contract.Assert(false, "Unknown assertion type: " + codeContractExpression.AssertionType);
                     throw new InvalidOperationException("Unknown assertion type: " + 

@@ -1,0 +1,19 @@
+using System.Diagnostics.Contracts;
+
+class A
+{
+  public void Foo(string s)
+  {
+    |InstanceMethod();|(0)
+    Contract.Requires(false);
+    |InstanceMethod();|(1)
+    |StaticMethod();|(2)
+    Contract.EndContractBlock();
+  }
+  private void InstanceMethod() {}
+  private void StaticMethod() {}
+}
+---------------------------------------------------------
+(0): ReSharper Underlined Error Highlighting: Malformed contract. Detected expression statement evaluated for side-effect in contracts of method 'Foo'
+(1): ReSharper Underlined Error Highlighting: Malformed contract. Detected expression statement evaluated for side-effect in contracts of method 'Foo'
+(2): ReSharper Underlined Error Highlighting: Malformed contract. Detected expression statement evaluated for side-effect in contracts of method 'Foo'

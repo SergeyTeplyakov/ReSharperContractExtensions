@@ -27,7 +27,7 @@ namespace ReSharper.ContractExtensions.ContractsEx
         }
 
         [CanBeNull]
-        public static IfThrowPreconditionExpression FromStatement(ICSharpStatement statement)
+        public static IfThrowPreconditionExpression FromCSharpStatement(ICSharpStatement statement)
         {
             Contract.Requires(statement != null);
 

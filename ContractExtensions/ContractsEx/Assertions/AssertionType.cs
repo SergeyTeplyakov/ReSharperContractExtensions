@@ -10,6 +10,5 @@
         Invariant,
         Assert,
         Assume,
-        EndContractBlock,
     }
 }

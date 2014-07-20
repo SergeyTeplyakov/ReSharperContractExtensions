@@ -47,7 +47,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
             preconditionContainer = null;
             lessVisibleMember = null;
 
-            var contractAssertion = CodeContractExpression.FromInvocationExpression(expression) as CodeContractExpression;
+            var contractAssertion = CodeContractExpression.FromInvocationExpression(expression);
             if (contractAssertion == null || contractAssertion.AssertionType != AssertionType.Requires)
                 return false;
             
@@ -66,8 +66,8 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
             lessVisibleMember = 
                 ProcessReferenceExpressions(contractAssertion.OriginalPredicateExpression)
                 .FirstOrDefault(member => 
-                !FieldFromPreconditionMarkedWithContractPublicPropertyName(member) && 
-                !AccessVisibilityChecker.Member(member).IsAccessibleFrom(preconditionHolder));
+                    !FieldFromPreconditionMarkedWithContractPublicPropertyName(member) && 
+                    !AccessVisibilityChecker.Member(member).IsAccessibleFrom(preconditionHolder));
 
             return lessVisibleMember != null;
         }

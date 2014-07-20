@@ -36,7 +36,27 @@ namespace ReSharper.ContractExtensions.Utilities
             return selector(callSite) ?? @default;
         }
 
+        public static U? ReturnStruct<T, U>(this T callSite, Func<T, U> selector) where T : class where U : struct
+        {
+            Contract.Requires(selector != null);
+
+            if (callSite == null)
+                return null;
+
+            return selector(callSite);
+        }
+
         public static U Return<T, U>(this T callSite, Func<T, U> selector) where T : class where U : class
+        {
+            Contract.Requires(selector != null);
+
+            if (callSite == null)
+                return default(U);
+
+            return selector(callSite);
+        }
+
+        public static U Return<T, U>(this T? callSite, Func<T?, U> selector) where T : struct where U : class
         {
             Contract.Requires(selector != null);
 

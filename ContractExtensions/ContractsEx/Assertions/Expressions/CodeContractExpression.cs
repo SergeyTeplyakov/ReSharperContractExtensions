@@ -11,11 +11,6 @@ using ReSharper.ContractExtensions.Utilities;
 
 namespace ReSharper.ContractExtensions.ContractsEx
 {
-    public interface ICodeContractExpression
-    {
-        AssertionType AssertionType { get; }
-    }
-
     /// <summary>
     /// Represents one Assertion from Code Contract library, like Contract.Requires, Contract.Invariant etc.
     /// </summary>
@@ -26,7 +21,7 @@ namespace ReSharper.ContractExtensions.ContractsEx
     /// Note that this class is not suitable for Contract.Ensures because it has slightly 
     /// different internal structure.
     /// </remarks>
-    public abstract class CodeContractExpression : ContractExpressionBase, ICodeContractExpression
+    public abstract class CodeContractExpression : ContractExpressionBase
     {
         private readonly IExpression _originalPredicateExpression;
 
@@ -51,22 +46,30 @@ namespace ReSharper.ContractExtensions.ContractsEx
         public abstract AssertionType AssertionType { get; }
 
         [CanBeNull]
-        public static ICodeContractExpression FromInvocationExpression(IInvocationExpression invocationExpression)
+        public static CodeContractExpression FromCSharpStatement(ICSharpStatement statement)
+        {
+            Contract.Requires(statement != null);
+
+            return ContractStatementBase.AsInvocationExpression(statement).Return(FromInvocationExpression);
+        }
+
+        [CanBeNull]
+        public static CodeContractExpression FromInvocationExpression(IInvocationExpression invocationExpression)
         {
             Contract.Requires(invocationExpression != null);
-
+            
             AssertionType? assertionType = GetContractAssertionType(invocationExpression);
             if (assertionType == null)
                 return null;
 
-            if (assertionType == AssertionType.EndContractBlock)
-                return new EndContractBlockExpression();
-
+            Contract.Assert(invocationExpression.Arguments.Count != 0, "Invocation expression should have at least one argument!");
+            
             IExpression originalPredicateExpression = invocationExpression.Arguments[0].Expression;
 
             var predicates = PredicateCheckFactory.Create(originalPredicateExpression).ToList();
             var message = ExtractMessage(invocationExpression);
 
+            // TODO: switch to dictionary of factory methods?
             switch (assertionType.Value)
             {
                 case AssertionType.Requires:
@@ -105,7 +108,7 @@ namespace ReSharper.ContractExtensions.ContractsEx
             return null;
         }
 
-        protected static Message ExtractMessage(IInvocationExpression invocationExpression)
+        private static Message ExtractMessage(IInvocationExpression invocationExpression)
         {
             Contract.Requires(invocationExpression != null);
             Contract.Ensures(Contract.Result<Message>() != null);

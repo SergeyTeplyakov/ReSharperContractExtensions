@@ -114,7 +114,6 @@
     <Compile Include="ContextActions\Requires\PropertySetterRequiresAvailability.cs" />
     <Compile Include="ContextActions\Requires\RequiresContextActionBase.cs" />
     <Compile Include="ContractsEx\Assertions\AssertionType.cs" />
-    <Compile Include="ContractsEx\Assertions\Expressions\EndContractBlockExpression.cs" />
     <Compile Include="ContractsEx\Assertions\Statements\ContractAssertStatement.cs" />
     <Compile Include="ContractsEx\Assertions\Statements\ContractAssumeStatement.cs" />
     <Compile Include="ContractsEx\Assertions\Statements\ContractPreconditionAssertionVisitorExtension.cs" />
@@ -135,7 +134,6 @@
     <Compile Include="ContractsEx\Assertions\Statements\ContractEnsuresStatement.cs" />
     <Compile Include="ContractsEx\Assertions\PredicateChecks\EnumValidationPredicateCheck.cs" />
     <Compile Include="ContractsEx\Assertions\PredicateChecks\EqualityExpressionPredicateCheck.cs" />
-    <Compile Include="ContractsEx\Assertions\Statements\EndContractBlockStatement.cs" />
     <Compile Include="ContractsEx\Assertions\Statements\GuardBasedPreconditionStatement.cs" />
     <Compile Include="ContractsEx\Assertions\Statements\IContractStatement.cs" />
     <Compile Include="ContractsEx\Assertions\Statements\IfThrowPreconditionStatement.cs" />
@@ -146,8 +144,7 @@
     <Compile Include="ContractsEx\Assertions\Statements\ContractPreconditionStatementBase.cs" />
     <Compile Include="ContractsEx\Assertions\Statements\PreconditionType.cs" />
     <Compile Include="ContractsEx\Assertions\PredicateChecks\PredicateCheckFactory.cs" />
-    <Compile Include="ContractsEx\Statements\ContractStatement.cs" />
-    <Compile Include="ContractsEx\Statements\ExpressionBasedContractStatement.cs" />
+    <Compile Include="ContractsEx\Statements\CodeContractStatement.cs" />
     <Compile Include="ContractsEx\InvariantUtils.cs" />
     <Compile Include="ContractsEx\ContractStatementExtensions.cs" />
     <Compile Include="ContractsEx\Impl\InvocationVisitor.cs" />
@@ -156,13 +153,8 @@
     <Compile Include="ContextActions\Requires\ArgumentRequiresContextAction.cs" />
     <Compile Include="ContextActions\Requires\ArgumentRequiresExecutor.cs" />
     <Compile Include="ContractsEx\ContractExtensions.cs" />
-    <Compile Include="ContractsEx\Statements\AssertStatement.cs" />
-    <Compile Include="ContractsEx\Statements\AssumeStatement.cs" />
-    <Compile Include="ContractsEx\Statements\EndContractBlockStatement.cs" />
-    <Compile Include="ContractsEx\Statements\EnsuresStatement.cs" />
-    <Compile Include="ContractsEx\Statements\InvariantStatement.cs" />
-    <Compile Include="ContractsEx\Statements\RequiresStatement.cs" />
-    <Compile Include="ContractsEx\Statements\ValueOnReturnStatement.cs" />
+    <Compile Include="ContractsEx\Statements\CodeContractStatementUtils.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\MalformedWarningMethodContractHighlighting.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\PreconditionIncosistentVisibility\AccessVisibilityChecker.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\ContractPublicPropertyNameCheckers\ContractPublicPropertyNameChecker.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\ContractPublicPropertyNameCheckers\ContractPublicPropertyNameHighlighing.cs" />
@@ -195,6 +187,7 @@
     <Compile Include="Utilities\ClassEx.cs" />
     <Compile Include="Utilities\ClassLikeDeclarationExtensions.cs" />
     <Compile Include="Utilities\CSharpContextActionDataProviderExtensions.cs" />
+    <Compile Include="Utilities\EnumerableEx.cs" />
     <Compile Include="Utilities\ExpressionEx.cs" />
     <Compile Include="Utilities\MethodDeclarationEx.cs" />
     <Compile Include="Utilities\Monadic.cs" />

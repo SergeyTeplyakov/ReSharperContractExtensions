@@ -5,6 +5,7 @@ using JetBrains.Annotations;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using ReSharper.ContractExtensions.ContractsEx.Assertions;
 using ReSharper.ContractExtensions.ContractUtils;
+using ReSharper.ContractExtensions.Utilities;
 
 namespace ReSharper.ContractExtensions.ContractsEx
 {
@@ -69,17 +70,27 @@ namespace ReSharper.ContractExtensions.ContractsEx
             return null;
         }
 
+        public static IEnumerable<ContractStatementBase> GetContractStatements(
+            this ICSharpFunctionDeclaration functionDeclaration)
+        {
+            Contract.Requires(functionDeclaration != null);
+            Contract.Ensures(Contract.Result<IEnumerable<ContractStatementBase>>() != null);
+
+            Contract.Assert(functionDeclaration.Body != null);
+
+            return functionDeclaration.Body
+                .Return(x => x.Statements.AsEnumerable(), Enumerable.Empty<ICSharpStatement>())
+                .Select(ContractStatementFactory.FromCSharpStatement)
+                .ToList();
+        }
+
         public static IEnumerable<ContractEnsuresStatement> GetContractEnsures(
             this ICSharpFunctionDeclaration functionDeclaration)
         {
             Contract.Requires(functionDeclaration != null);
             Contract.Ensures(Contract.Result<IEnumerable<ContractEnsuresStatement>>() != null);
 
-            Contract.Assert(functionDeclaration.Body != null);
-
-            return functionDeclaration.Body.Statements
-                .Select(ContractEnsuresStatement.TryCreate)
-                .Where(a => a != null);
+            return GetContractStatements(functionDeclaration).OfType<ContractEnsuresStatement>();
         }
 
         /// <summary>
@@ -99,11 +110,7 @@ namespace ReSharper.ContractExtensions.ContractsEx
             Contract.Requires(invariantMethod != null);
             Contract.Ensures(Contract.Result<IEnumerable<ContractInvariantStatement>>() != null);
 
-            Contract.Assert(invariantMethod.Body != null);
-
-            return invariantMethod.Body.Statements
-                .Select(ContractInvariantStatement.TryCreate)
-                .Where(s => s != null);
+            return GetContractStatements(invariantMethod).OfType<ContractInvariantStatement>();
         }
     }
 }
