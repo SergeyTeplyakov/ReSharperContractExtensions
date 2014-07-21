@@ -199,6 +199,18 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
                             MalformedContractError.RequiresAfterEnsures);
                     return ValidationResult.NoError;
                 });
+
+            yield return ValidationRule.CheckContractBlock(
+                (contractBlock, currentStatement) =>
+                {
+                    // Ensures/Ensures on throw should not be before requires
+                    if ((currentStatement.ContractStatement.IsPrecondition || 
+                         currentStatement.ContractStatement.IsPostcondition) &&
+                        HasEndContractBlockBeforeCurrentStatement(contractBlock, currentStatement))
+                        return ValidationResult.CreateError(currentStatement.CSharpStatement,
+                            MalformedContractError.ReqruiesOrEnsuresAfterEndContractBlock);
+                    return ValidationResult.NoError;
+                });
         }
 
         private static bool HasPreconditionAfterCurrentStatement(IList<ProcessedStatement> contractBlock, ProcessedStatement currentStatement)
@@ -213,12 +225,33 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
 
         private static bool HasPostconditionsBeforeCurentStatement(IList<ProcessedStatement> contractBlock, ProcessedStatement currentStatement)
         {
-            var index = contractBlock.IndexOf(currentStatement);
-            Contract.Assert(index != -1, "Current statement should be inside contract block");
+            foreach (var c in contractBlock)
+            {
+                if (c.Equals(currentStatement))
+                    return false;
 
-            return
-                contractBlock.Take(index)
-                    .Any(cs => cs.ContractStatement != null && cs.ContractStatement.IsPostcondition);
+                if (c.ContractStatement != null && c.ContractStatement.IsPostcondition)
+                    return true;
+            }
+
+            Contract.Assert(false, "Current statement not found in the contract block");
+            throw new InvalidOperationException("Current statement not found in the contract block");
+        }
+
+        private static bool HasEndContractBlockBeforeCurrentStatement(IList<ProcessedStatement> contractBlock, ProcessedStatement currentStatement)
+        {
+            foreach (var c in contractBlock)
+            {
+                if (c.Equals(currentStatement))
+                    return false;
+
+                if (c.ContractStatement != null && 
+                    c.ContractStatement.StatementType == CodeContractStatementType.EndContractBlock)
+                    return true;
+            }
+
+            Contract.Assert(false, "Current statement not found in the contract block");
+            throw new InvalidOperationException("Current statement not found in the contract block");
         }
 
         private static ValidationResult ValidateStatement(IList<ProcessedStatement> contractBlock, ProcessedStatement currentStatement)

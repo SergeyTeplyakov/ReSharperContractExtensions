@@ -9,6 +9,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
         AssertOrAssumeInContractBlock,
         AssignmentInContractBlock,
         RequiresAfterEnsures,
+        ReqruiesOrEnsuresAfterEndContractBlock,
     }
 
     public enum MalformedContractWarning
@@ -41,6 +42,12 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
                     // error CC1014: Precondition found after postcondition.
                     return string.Format("Malformed contract. Precondition found after postcondition in contract section of method '{0}'",
                         contractMethodName);
+
+                case MalformedContractError.ReqruiesOrEnsuresAfterEndContractBlock:
+                    // error CC1012: Contract call found after prior EndContractBlock.
+                    return string.Format("Malformed contract. Contract call found after prior EndContractBlock in method '{0}'",
+                        contractMethodName);
+
                 default:
                     Contract.Assert(false, "Unknown malformed contract error: " + error);
                     throw new InvalidOperationException("Unknown malformed contract error: " + error);
