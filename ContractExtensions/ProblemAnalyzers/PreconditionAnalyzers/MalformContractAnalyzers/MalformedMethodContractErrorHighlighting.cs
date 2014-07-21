@@ -3,28 +3,31 @@ using JetBrains.ReSharper.Daemon;
 using JetBrains.ReSharper.Psi.CSharp;
 using ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.MalformContractAnalyzers;
 
-[assembly: RegisterConfigurableSeverity(MalformedWarningMethodContractHighlighting.Id,
+[assembly: RegisterConfigurableSeverity(MalformedMethodContractErrorHighlighting.Id,
   null,
   HighlightingGroupIds.CompilerWarnings,
-  MalformedWarningMethodContractHighlighting.Id,
+  MalformedMethodContractErrorHighlighting.Id,
   "Warn for malformed method contract",
-  Severity.WARNING,
+  Severity.ERROR,
   false)]
 
 
 namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.MalformContractAnalyzers
 {
+    /// <summary>
+    /// Shows errors, produced by Code Contract compiler.
+    /// </summary>
     [ConfigurableSeverityHighlighting(Id, CSharpLanguage.Name)]
-    public sealed class MalformedWarningMethodContractHighlighting : IHighlighting
+    public sealed class MalformedMethodContractErrorHighlighting : IHighlighting
     {
-        private readonly string _additionalMessage;
-        public const string Id = "MalformedWarningMethodContractHighlighting";
-        private const string _toolTipBase = "Malformed contract. ";
+        public const string Id = "MalformedMethodContractErrorHighlighting";
+        private string _toolTip;
 
-        public MalformedWarningMethodContractHighlighting(string additionalMessage)
+        internal MalformedMethodContractErrorHighlighting(MalformedContractError error, string contractMethodName)
         {
-            _additionalMessage = additionalMessage;
-            Contract.Requires(!string.IsNullOrEmpty(additionalMessage));
+            Contract.Requires(!string.IsNullOrEmpty(contractMethodName));
+
+            _toolTip = error.GetErrorText(contractMethodName);
         }
 
         public bool IsValid()
@@ -34,7 +37,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
 
         public string ToolTip
         {
-            get { return _toolTipBase + _additionalMessage; }
+            get { return _toolTip; }
         }
 
         public string ErrorStripeToolTip { get { return ToolTip; } }

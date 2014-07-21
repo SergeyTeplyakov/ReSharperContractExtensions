@@ -154,13 +154,15 @@
     <Compile Include="ContextActions\Requires\ArgumentRequiresExecutor.cs" />
     <Compile Include="ContractsEx\ContractExtensions.cs" />
     <Compile Include="ContractsEx\Statements\CodeContractStatementUtils.cs" />
-    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\MalformedWarningMethodContractHighlighting.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\ContractBlockValidator.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\MalformedContractErrors.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\MalformedMethodContractWarningHighlighting.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\PreconditionIncosistentVisibility\AccessVisibilityChecker.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\ContractPublicPropertyNameCheckers\ContractPublicPropertyNameChecker.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\ContractPublicPropertyNameCheckers\ContractPublicPropertyNameHighlighing.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\ContractPublicPropertyNameCheckers\ContractPublicPropertyNameQuickFix.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\MalformedMethodContractChecker.cs" />
-    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\MalformedMethodContractHighlighting.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\MalformedMethodContractErrorHighlighting.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\MalformedObjectInvariantChecker.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\PreconditionIncosistentVisibility\ContractUtils.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\PreconditionIncosistentVisibility\RequiresExceptionChecker.cs" />

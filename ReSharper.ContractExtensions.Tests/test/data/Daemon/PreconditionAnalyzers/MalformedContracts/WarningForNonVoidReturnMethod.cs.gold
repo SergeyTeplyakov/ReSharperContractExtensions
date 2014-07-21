@@ -1,0 +1,14 @@
+using System.Diagnostics.Contracts;
+
+class A
+{
+  public void Foo(string s)
+  {
+    |InstanceMethod();|(0)
+    Contract.Requires(s != null);
+    Contract.Ensures(false);
+  }
+  private bool InstanceMethod() { return true; }
+}
+---------------------------------------------------------
+(0): ReSharper Warning: Detected expression statement evaluated for potential side-effect in contracts of method 'Foo'
