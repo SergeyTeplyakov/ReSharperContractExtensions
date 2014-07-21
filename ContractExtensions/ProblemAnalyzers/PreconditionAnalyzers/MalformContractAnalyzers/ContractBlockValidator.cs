@@ -98,10 +98,11 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
                 return _statementValidationRule(currentStatement.CSharpStatement);
             }
 
+            if (currentStatement.ContractStatement == null)
+                return ValidationResult.NoError;
+
             if (_contractValidationRule != null)
             {
-                if (currentStatement.ContractStatement == null)
-                    return ValidationResult.NoError;
 
                 return _contractValidationRule(currentStatement.ContractStatement);
             }
@@ -291,7 +292,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
         {
             return
                 GetInvokedMethod(statement)
-                    .ReturnStruct(x => !x.ReturnType.IsVoid()) == false;
+                    .ReturnStruct(x => x.ReturnType.IsVoid()) == false;
         }
 
         [CanBeNull]

@@ -74,6 +74,7 @@
     <Compile Include="src\ProblemAnalyzers\PreconditionAnalyzers\InconsistentVisilibility\RequiresExceptionInconsistentVisibilityCheckerQuickFixAvailability.cs" />
     <Compile Include="src\ProblemAnalyzers\PreconditionAnalyzers\InconsistentVisilibility\RequiresInconsistentVisibilityQuickFixAvailability.cs" />
     <Compile Include="src\ProblemAnalyzers\PreconditionAnalyzers\InconsistentVisilibility\RequiresInconsistentVisibilityCheckerTests.cs" />
+    <Compile Include="src\ProblemAnalyzers\PreconditionAnalyzers\MalformedContractAnalyzer\FixMalformedContractsTests.cs" />
     <Compile Include="src\ProblemAnalyzers\PreconditionAnalyzers\MalformedContractAnalyzer\MalformedContractWarningHighlightingTests.cs" />
     <Compile Include="src\ProblemAnalyzers\PreconditionAnalyzers\MalformedContractAnalyzer\MalformedContractErrorHighlightingTests.cs" />
     <Compile Include="src\ProblemAnalyzers\PreconditionAnalyzers\RedundantRequiresCheckerTests.cs" />

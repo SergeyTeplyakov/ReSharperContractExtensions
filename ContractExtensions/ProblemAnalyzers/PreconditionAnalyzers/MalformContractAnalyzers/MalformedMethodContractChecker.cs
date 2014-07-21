@@ -35,13 +35,13 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
                 if (vr.ErrorType == ErrorType.CodeContractError)
                 {
                     consumer.AddHighlighting(
-                        new MalformedMethodContractErrorHighlighting(vr.MalformedContractError, methodName),
+                        new MalformedMethodContractErrorHighlighting(vr.MalformedContractError, methodName, element, contractBlockStatements, vr.Statement),
                         vr.Statement.GetDocumentRange(), element.GetContainingFile());
                 }
                 else if (vr.ErrorType == ErrorType.CodeContractWarning)
                 {
                     consumer.AddHighlighting(
-                        new MalformedMethodContractWarningHighlighting(vr.MalformedContractWarning, methodName), 
+                        new MalformedMethodContractWarningHighlighting(vr.MalformedContractWarning, methodName, element, contractBlockStatements, vr.Statement), 
                         vr.Statement.GetDocumentRange(), element.GetContainingFile());
                 }
             }
