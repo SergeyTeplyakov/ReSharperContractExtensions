@@ -36,13 +36,29 @@ namespace ReSharper.ContractExtensions.ContractsEx.Statements
             CodeContractStatementType statementType)
         {
             Contract.Requires(statement != null);
+
             _statement = statement;
+            _invokedExpression = invokedExpression;
             _statementType = statementType;
         }
 
         public CodeContractStatementType StatementType
         {
             get { return _statementType; }
+        }
+
+        public bool IsPostcondition
+        {
+            get
+            {
+                return StatementType == CodeContractStatementType.Ensures ||
+                       StatementType == CodeContractStatementType.EnsuresOnThrow;
+            }
+        }
+
+        public bool IsPrecondition
+        {
+            get { return StatementType == CodeContractStatementType.Requires; }
         }
 
         public ICSharpStatement Statement

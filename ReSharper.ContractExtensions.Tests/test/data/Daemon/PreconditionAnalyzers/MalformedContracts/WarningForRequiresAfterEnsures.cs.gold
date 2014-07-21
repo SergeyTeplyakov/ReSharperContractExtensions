@@ -1,0 +1,13 @@
+using System.Diagnostics.Contracts;
+
+class A
+{
+  public void Foo(string s)
+  {
+    |Contract.Ensures(false);|(0)
+    |Contract.Requires(s != null);|(1)
+  }
+}
+---------------------------------------------------------
+(0): ReSharper Underlined Error Highlighting: Malformed contract. Precondition found after postcondition in contract section of method 'Foo'
+(1): ReSharper Underlined Error Highlighting: Malformed contract. Precondition found after postcondition in contract section of method 'Foo'

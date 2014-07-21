@@ -11,7 +11,7 @@ namespace ReSharper.ContractExtensions.Utilities
             Contract.Requires(list != null);
             Contract.Requires(predicate != null);
 
-            for (int n = list.Count - 1; n > 0; n--)
+            for (int n = list.Count - 1; n >= 0; n--)
             {
                 if (predicate(list[n]))
                 {

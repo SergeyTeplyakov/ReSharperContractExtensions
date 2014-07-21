@@ -45,5 +45,12 @@ namespace ReSharper.ContractExtensions.Tests.ProblemAnalyzers.PreconditionAnalyz
         {
             DoTestSolution(testName);
         }
+
+        [TestCase("WarningForRequiresAfterEnsures.cs")]
+        [TestCase("WarningForRequiresAfterEnsuresOnThrow.cs")]
+        public void Test_Precondition_After_Postcondition(string testName)
+        {
+            DoTestSolution(testName);
+        }
     }
 }
