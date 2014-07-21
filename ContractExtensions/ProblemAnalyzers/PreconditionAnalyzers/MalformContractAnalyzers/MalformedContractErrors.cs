@@ -8,6 +8,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
         VoidReturnMethodCall,
         AssertOrAssumeInContractBlock,
         AssignmentInContractBlock,
+        RequiresAfterEnsures,
     }
 
     public enum MalformedContractWarning
@@ -34,6 +35,10 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
                 case MalformedContractError.AssignmentInContractBlock:
                     // Code Contract error: error CC1004: Malformed contract. Found Requires after assignment in method 'CodeContractInvestigations.InconsistentPreconditionVisibility.AssignmentBeforeRequires'.
                     return string.Format("Malformed contract. Assignment cannot be used in contract section of method '{0}'",
+                        contractMethodName);
+                case MalformedContractError.RequiresAfterEnsures:
+                    // error CC1014: Precondition found after postcondition.
+                    return string.Format("Malformed contract. Precondition found after postcondition in contract section of method '{0}'",
                         contractMethodName);
                 default:
                     Contract.Assert(false, "Unknown malformed contract error: " + error);

@@ -15,6 +15,7 @@ namespace ReSharper.ContractExtensions.ContractsEx.Statements
     {
         Requires,
         Ensures,
+        EnsuresOnThrow,
         Assert,
         Assume,
         Invariant,

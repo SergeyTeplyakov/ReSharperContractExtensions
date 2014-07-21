@@ -44,6 +44,7 @@ namespace ReSharper.ContractExtensions.ContractsEx.Statements
                 statements.LastIndexOf(s => s.ContractStatement != null &&
                             (s.ContractStatement.StatementType == CodeContractStatementType.Requires ||
                              s.ContractStatement.StatementType == CodeContractStatementType.Ensures ||
+                             s.ContractStatement.StatementType == CodeContractStatementType.EnsuresOnThrow ||
                              s.ContractStatement.StatementType == CodeContractStatementType.EndContractBlock));
 
             // Because we're taking +1 item we can skip check for -1!

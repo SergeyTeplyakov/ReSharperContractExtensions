@@ -21,6 +21,7 @@ namespace ReSharper.ContractExtensions.Tests.ProblemAnalyzers.PreconditionAnalyz
         [TestCase("NoWarningForVoidMethodWithArgumentValidation.cs")]
 
         [TestCase("WarningForInstanceVoidMethod.cs")]
+        [TestCase("WarningForInstanceVoidMethodBeforeEnsuresOnThrow.cs")]
         [TestCase("WarningForInstanceMethodAndContractInInnerBlock.cs")]
         [TestCase("WarningForStaticVoidMethodBeforeEnsures.cs")]
         [TestCase("WarningOnConsoleWriteLineBeforeEndContractBlock.cs")]
