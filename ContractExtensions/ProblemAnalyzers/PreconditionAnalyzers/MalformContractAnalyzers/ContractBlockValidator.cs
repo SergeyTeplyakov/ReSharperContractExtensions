@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using JetBrains.Annotations;
+using JetBrains.Application.Settings.Storage.Persistence;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using ReSharper.ContractExtensions.ContractsEx.Statements;
@@ -26,32 +28,140 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
     /// if ErrorType i CodeContractError then MalformedContractError property should be used.
     /// But for now I don't want more complicated implementations!
     /// </remarks>
-    internal sealed class ValidationResult
+    [ContractClass(typeof (ValidationResultContract))]
+    internal abstract class ValidationResult
     {
-        public ErrorType ErrorType { get; private set; }
-        public ICSharpStatement Statement { get; private set; }
-
-        public MalformedContractError MalformedContractError { get; private set; }
-        public MalformedContractWarning MalformedContractWarning { get; private set; }
-
-        public static ValidationResult NoError
+        private readonly ICSharpStatement _statement;
+        protected ValidationResult(ICSharpStatement statement)
         {
-            get { return new ValidationResult { ErrorType = ErrorType.NoError }; }
+            Contract.Requires(statement != null);
+
+            _statement = statement;
         }
 
-        public static ValidationResult CreatNoError(ICSharpStatement statement)
+        [ContractInvariantMethod]
+        private void ObjectInvariant()
         {
-            return new ValidationResult { Statement = statement, ErrorType = ErrorType.NoError };
+            Contract.Invariant(Statement != null);
+        }
+
+        public T Match<T>(
+            Func<NoErrorValidationResult, T> noErrorMatch,
+            Func<CodeContractErrorValidationResult, T> errorMatch,
+            Func<CodeContractWarningValidationResult, T> warningMatch)
+        {
+            Contract.Requires(noErrorMatch != null);
+            Contract.Requires(errorMatch != null);
+            Contract.Requires(warningMatch != null);
+
+            var noErrorResult = this as NoErrorValidationResult;
+            if (noErrorResult != null)
+                return noErrorMatch(noErrorResult);
+
+            var errorResult = this as CodeContractErrorValidationResult;
+            if (errorResult != null)
+                return errorMatch(errorResult);
+
+            var warningResult = this as CodeContractWarningValidationResult;
+            if (warningResult != null)
+                return warningMatch(warningResult);
+
+            Contract.Assert(false, "Unknown validation result type: " + GetType());
+            throw new InvalidOperationException("Unknown validation result type: " + GetType());
+        }
+
+        public abstract ErrorType ErrorType { get; }
+
+        public string GetErrorText()
+        {
+            return DoGetErrorText(GetEnclosingMethodName());
+        }
+
+        protected abstract string DoGetErrorText(string methodName);
+
+        public ICSharpStatement Statement { get { return _statement; } }
+
+        private string GetEnclosingMethodName()
+        {
+            return Statement.GetContainingTypeMemberDeclaration().DeclaredName;
+        }
+
+        public static ValidationResult CreateNoError(ICSharpStatement statement)
+        {
+            return new NoErrorValidationResult(statement);
         }
 
         public static ValidationResult CreateError(ICSharpStatement statement, MalformedContractError error)
         {
-            return new ValidationResult { Statement = statement, ErrorType = ErrorType.CodeContractError, MalformedContractError = error };
+            return new CodeContractErrorValidationResult(statement, error);
         }
 
         public static ValidationResult CreateWarning(ICSharpStatement statement, MalformedContractWarning warning)
         {
-            return new ValidationResult { Statement = statement, ErrorType = ErrorType.CodeContractWarning, MalformedContractWarning = warning };
+            return new CodeContractWarningValidationResult(statement, warning);
+        }
+    }
+
+    [ContractClassFor(typeof (ValidationResult))]
+    abstract class ValidationResultContract : ValidationResult
+    {
+        protected ValidationResultContract(ICSharpStatement statement) : base(statement)
+        {}
+
+        protected override string DoGetErrorText(string methodName)
+        {
+            Contract.Requires(!string.IsNullOrEmpty(methodName));
+            Contract.Ensures(Contract.Result<string>() != null);
+
+            throw new NotImplementedException();
+        }
+    }
+
+    internal sealed class NoErrorValidationResult : ValidationResult
+    {
+        public NoErrorValidationResult(ICSharpStatement statement) : base(statement)
+        {}
+
+        public override ErrorType ErrorType { get { return ErrorType.NoError; } }
+
+        protected override string DoGetErrorText(string methodName)
+        {
+            return string.Empty;
+        }
+    }
+
+    internal sealed class CodeContractErrorValidationResult : ValidationResult
+    {
+        public CodeContractErrorValidationResult(ICSharpStatement statement, MalformedContractError error) : base(statement)
+        {
+            Error = error;
+        }
+
+        public MalformedContractError Error { get; private set; }
+
+        public override ErrorType ErrorType { get { return ErrorType.CodeContractError; } }
+
+        protected override string DoGetErrorText(string methodName)
+        {
+            return Error.GetErrorText(methodName);
+        }
+    }
+
+    internal sealed class CodeContractWarningValidationResult : ValidationResult
+    {
+        public CodeContractWarningValidationResult(ICSharpStatement statement, MalformedContractWarning warning) 
+            : base(statement)
+        {
+            Warning = warning;
+        }
+
+        public override ErrorType ErrorType { get { return ErrorType.CodeContractWarning; } }
+
+        public MalformedContractWarning Warning { get; private set; }
+
+        protected override string DoGetErrorText(string methodName)
+        {
+            return Warning.GetErrorText(methodName);
         }
     }
 
@@ -94,12 +204,12 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
             if (_statementValidationRule != null)
             {
                 if (currentStatement.ContractStatement != null)
-                    return ValidationResult.NoError;
+                    return ValidationResult.CreateNoError(currentStatement.CSharpStatement);
                 return _statementValidationRule(currentStatement.CSharpStatement);
             }
 
             if (currentStatement.ContractStatement == null)
-                return ValidationResult.NoError;
+                return ValidationResult.CreateNoError(currentStatement.CSharpStatement);
 
             if (_contractValidationRule != null)
             {
@@ -127,9 +237,43 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
         }
     }
 
+    internal class ValidatedContractBlock
+    {
+        private readonly IList<ProcessedStatement> _contractBlock;
+        private readonly IList<ValidationResult> _validationResults;
+
+        public ValidatedContractBlock(IList<ProcessedStatement> contractBlock, IList<ValidationResult> validationResults)
+        {
+            Contract.Requires(contractBlock != null);
+            Contract.Requires(contractBlock.Count != 0);
+            Contract.Requires(contractBlock.Last().ContractStatement != null);
+            Contract.Requires(validationResults != null);
+            Contract.Requires(validationResults.Count == contractBlock.Count);
+
+            _contractBlock = contractBlock;
+            _validationResults = validationResults;
+        }
+
+        public ReadOnlyCollection<ProcessedStatement> ContractBlock
+        {
+            get { return new ReadOnlyCollection<ProcessedStatement>(_contractBlock); }
+        }
+
+        public ReadOnlyCollection<ValidationResult> ValidationResults
+        {
+            get { return new ReadOnlyCollection<ValidationResult>(_validationResults); }
+        }
+    }
+
     internal static class ContractBlockValidator
     {
         private static readonly List<ValidationRule> _validationRules = GetValidationRules().ToList();
+
+        public static ValidatedContractBlock ValidateContractBlock(IList<ProcessedStatement> contractBlock)
+        {
+            return new ValidatedContractBlock(contractBlock, 
+                ValidateContractBlockStatements(contractBlock).ToList());
+        }
 
         public static IEnumerable<ValidationResult> ValidateContractBlockStatements(
             IList<ProcessedStatement> contractBlock)
@@ -150,7 +294,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
                     // Void-return method are forbidden in contract block
                     if (!IsMarkedWithContractValidationAttributeMethod(s) && IsVoidReturnMethod(s))
                         return ValidationResult.CreateError(s, MalformedContractError.VoidReturnMethodCall);
-                    return ValidationResult.NoError;
+                    return ValidationResult.CreateNoError(s);
                 });
 
             yield return ValidationRule.CheckStatement(
@@ -159,7 +303,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
                     // Non-void return methods lead to warning from the compiler
                     if (!IsMarkedWithContractValidationAttributeMethod(s) && IsNonVoidReturnMethod(s))
                         return ValidationResult.CreateWarning(s, MalformedContractWarning.NonVoidReturnMethodCall);
-                    return ValidationResult.NoError;
+                    return ValidationResult.CreateNoError(s);
                 });
 
             yield return ValidationRule.CheckStatement(
@@ -168,7 +312,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
                     // Assignments are forbidden in contract block
                     if (IsAssignmentStatement(s))
                         return ValidationResult.CreateError(s, MalformedContractError.AssignmentInContractBlock);
-                    return ValidationResult.NoError;
+                    return ValidationResult.CreateNoError(s);
                 });
 
             yield return ValidationRule.CheckContractStatement(
@@ -178,7 +322,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
                     if ((s.StatementType == CodeContractStatementType.Assert ||
                         s.StatementType == CodeContractStatementType.Assume))
                         return ValidationResult.CreateError(s.Statement, MalformedContractError.AssertOrAssumeInContractBlock);
-                    return ValidationResult.NoError;
+                    return ValidationResult.CreateNoError(s.Statement);
                 });
 
             yield return ValidationRule.CheckContractBlock(
@@ -188,7 +332,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
                     if (currentStatement.ContractStatement.IsPostcondition && HasPreconditionAfterCurrentStatement(contractBlock, currentStatement))
                         return ValidationResult.CreateError(currentStatement.CSharpStatement,
                             MalformedContractError.RequiresAfterEnsures);
-                    return ValidationResult.NoError;
+                    return ValidationResult.CreateNoError(currentStatement.CSharpStatement);
                 });
 
             yield return ValidationRule.CheckContractBlock(
@@ -198,7 +342,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
                     if (currentStatement.ContractStatement.IsPrecondition && HasPostconditionsBeforeCurentStatement(contractBlock, currentStatement))
                         return ValidationResult.CreateError(currentStatement.CSharpStatement,
                             MalformedContractError.RequiresAfterEnsures);
-                    return ValidationResult.NoError;
+                    return ValidationResult.CreateNoError(currentStatement.CSharpStatement);
                 });
 
             yield return ValidationRule.CheckContractBlock(
@@ -210,7 +354,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
                         HasEndContractBlockBeforeCurrentStatement(contractBlock, currentStatement))
                         return ValidationResult.CreateError(currentStatement.CSharpStatement,
                             MalformedContractError.ReqruiesOrEnsuresAfterEndContractBlock);
-                    return ValidationResult.NoError;
+                    return ValidationResult.CreateNoError(currentStatement.CSharpStatement);
                 });
         }
 
@@ -263,7 +407,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
             return _validationRules
                 .Select(rule => rule.Run(contractBlock, currentStatement))
                 .FirstOrDefault(vr => vr.ErrorType != ErrorType.NoError)
-                    ?? ValidationResult.CreatNoError(currentStatement.CSharpStatement);
+                    ?? ValidationResult.CreateNoError(currentStatement.CSharpStatement);
         }
 
         private static bool IsAssignmentStatement(ICSharpStatement statement)

@@ -24,22 +24,20 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
     [ConfigurableSeverityHighlighting(Id, CSharpLanguage.Name)]
     public sealed class MalformedMethodContractWarningHighlighting : IHighlighting, IMalformedMethodErrorHighlighting
     {
+        private readonly CodeContractWarningValidationResult _warning;
+        private readonly ValidatedContractBlock _contractBlock;
         public const string Id = "MalformedMethodContractWarningHighlighting";
         private string _toolTip;
 
-        public MalformedMethodContractWarningHighlighting(MalformedContractWarning warning, string contractMethod,
-            ICSharpFunctionDeclaration functionDeclaration, IList<ProcessedStatement> contractBlock, ICSharpStatement failedStatement)
+        internal MalformedMethodContractWarningHighlighting(CodeContractWarningValidationResult warning, ValidatedContractBlock contractBlock)
         {
-            Contract.Requires(!string.IsNullOrEmpty(contractMethod));
-            Contract.Requires(functionDeclaration != null);
+            Contract.Requires(warning != null);
             Contract.Requires(contractBlock != null);
-            Contract.Requires(failedStatement != null);
 
-            _toolTip = warning.GetErrorText(contractMethod);
-            Warning = warning;
-            FunctionDeclaration = functionDeclaration;
-            ContractBlock = contractBlock;
-            FailedStatement = failedStatement;
+            _warning = warning;
+            _contractBlock = contractBlock;
+
+            _toolTip = warning.GetErrorText();
         }
 
         public bool IsValid()
@@ -54,9 +52,16 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
 
         public string ErrorStripeToolTip { get { return ToolTip; } }
         public int NavigationOffsetPatch { get { return 0; } }
-        public MalformedContractWarning Warning { get; private set; }
-        public ICSharpFunctionDeclaration FunctionDeclaration { get; private set; }
-        public IList<ProcessedStatement> ContractBlock { get; private set; }
-        public ICSharpStatement FailedStatement { get; private set; }
+
+        ValidationResult IMalformedMethodErrorHighlighting.CurrentStatement
+        {
+            get { return _warning; }
+        }
+
+        ValidatedContractBlock IMalformedMethodErrorHighlighting.ValidatedContractBlock
+        {
+            get { return _contractBlock; }
+        }
+
     }
 }

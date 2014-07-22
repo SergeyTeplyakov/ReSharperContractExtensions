@@ -17,11 +17,11 @@ using ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Malfor
 
 namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.MalformContractAnalyzers
 {
-    public interface IMalformedMethodErrorHighlighting
+    internal interface IMalformedMethodErrorHighlighting
     {
-        IList<ProcessedStatement> ContractBlock { get; }
-        ICSharpStatement FailedStatement { get; }
-        ICSharpFunctionDeclaration FunctionDeclaration { get; }
+        ValidationResult CurrentStatement { get; }
+        ValidatedContractBlock ValidatedContractBlock { get; }
+        //IList<ValidationResult> ContractBlockValidationResults { get; }
     }
 
     /// <summary>
@@ -30,22 +30,19 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
     [ConfigurableSeverityHighlighting(Id, CSharpLanguage.Name)]
     public sealed class MalformedMethodContractErrorHighlighting : IHighlighting, IMalformedMethodErrorHighlighting
     {
+        private readonly CodeContractErrorValidationResult _error;
+        private readonly ValidatedContractBlock _contractBlock;
         public const string Id = "MalformedMethodContractErrorHighlighting";
         private string _toolTip;
 
-        internal MalformedMethodContractErrorHighlighting(MalformedContractError error, string contractMethodName,
-            ICSharpFunctionDeclaration functionDeclaration, IList<ProcessedStatement> contractBlock, ICSharpStatement failedStatement)
+        internal MalformedMethodContractErrorHighlighting(CodeContractErrorValidationResult error, ValidatedContractBlock contractBlock)
         {
-            Contract.Requires(!string.IsNullOrEmpty(contractMethodName));
-            Contract.Requires(functionDeclaration != null);
+            Contract.Requires(error != null);
             Contract.Requires(contractBlock != null);
-            Contract.Requires(failedStatement != null);
 
-            _toolTip = error.GetErrorText(contractMethodName);
-            Error = error;
-            FunctionDeclaration = functionDeclaration;
-            ContractBlock = contractBlock;
-            FailedStatement = failedStatement;
+            _error = error;
+            _contractBlock = contractBlock;
+            _toolTip = error.GetErrorText();
         }
 
         public bool IsValid()
@@ -60,9 +57,15 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
 
         public string ErrorStripeToolTip { get { return ToolTip; } }
         public int NavigationOffsetPatch { get { return 0; } }
-        public MalformedContractError Error { get; private set; }
-        public ICSharpFunctionDeclaration FunctionDeclaration { get; private set; }
-        public IList<ProcessedStatement> ContractBlock { get; private set; }
-        public ICSharpStatement FailedStatement { get; private set; }
+
+        ValidationResult IMalformedMethodErrorHighlighting.CurrentStatement
+        {
+            get { return _error; }
+        }
+
+        ValidatedContractBlock IMalformedMethodErrorHighlighting.ValidatedContractBlock
+        {
+            get { return _contractBlock; }
+        }
     }
 }

@@ -154,10 +154,12 @@
     <Compile Include="ContextActions\Requires\ArgumentRequiresExecutor.cs" />
     <Compile Include="ContractsEx\ContractExtensions.cs" />
     <Compile Include="ContractsEx\Statements\CodeContractStatementUtils.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\CaretUtils.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\ContractBlockValidator.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\MalformedContractErrors.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\MalformedMethodContractWarningHighlighting.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\MalformedMethodContractQuickFix.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\StatementUtils.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\PreconditionIncosistentVisibility\AccessVisibilityChecker.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\ContractPublicPropertyNameCheckers\ContractPublicPropertyNameChecker.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\ContractPublicPropertyNameCheckers\ContractPublicPropertyNameHighlighing.cs" />
@@ -205,6 +207,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ContractsEx\Assertions\Preconditions\" />
+    <Folder Include="ContractsEx\ContractValidation\" />
     <Folder Include="ProblemAnalyzers\PreconditionAnalyzers\PurityAnalyzers\" />
   </ItemGroup>
   <ItemGroup>

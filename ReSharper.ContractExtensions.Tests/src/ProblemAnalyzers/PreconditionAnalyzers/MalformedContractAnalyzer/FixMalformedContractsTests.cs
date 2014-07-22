@@ -21,5 +21,12 @@ namespace ReSharper.ContractExtensions.Tests.ProblemAnalyzers.PreconditionAnalyz
             DoTestFiles(fileName);
         }
 
+        [TestCase("FixRequiresAfterEnsures.cs")]
+        [TestCase("FixRequiresBetweenEnsures.cs")]
+        public void Test_Fix_Requires_Ensures_Order(string fileName)
+        {
+            DoTestFiles(fileName);
+        }
+
     }
 }

@@ -1,0 +1,11 @@
+using System.Diagnostics.Contracts;
+
+class A
+{
+  public void Foo(string s)
+  {
+    Contract.Requires(s != null);
+    {caret}Contract.Ensures(false);
+    Contract.EnsuresOnThrow<Exception>(false);
+  }
+}

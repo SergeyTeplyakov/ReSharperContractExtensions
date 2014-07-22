@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using JetBrains.Annotations;
+using JetBrains.ReSharper.Daemon;
 using JetBrains.ReSharper.Daemon.Stages;
 using JetBrains.ReSharper.Daemon.Stages.Dispatcher;
 using JetBrains.ReSharper.Psi;
@@ -27,22 +28,20 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
         {
             var contractBlockStatements = element.GetContractBlockStatements();
 
-            string methodName = element.DeclaredName;
+            if (contractBlockStatements.Count == 0)
+                return;
 
-            foreach (var vr in ContractBlockValidator.ValidateContractBlockStatements(contractBlockStatements)
-                        .Where(v => v.ErrorType != ErrorType.NoError))
+            var validateContractBlock = ContractBlockValidator.ValidateContractBlock(contractBlockStatements);
+
+            foreach (var vr in validateContractBlock.ValidationResults)
             {
-                if (vr.ErrorType == ErrorType.CodeContractError)
+                var highlighting = vr.Match(_ => (IHighlighting)null,
+                    error => new MalformedMethodContractErrorHighlighting(error, validateContractBlock),
+                    warning => new MalformedMethodContractWarningHighlighting(warning, validateContractBlock));
+
+                if (highlighting != null)
                 {
-                    consumer.AddHighlighting(
-                        new MalformedMethodContractErrorHighlighting(vr.MalformedContractError, methodName, element, contractBlockStatements, vr.Statement),
-                        vr.Statement.GetDocumentRange(), element.GetContainingFile());
-                }
-                else if (vr.ErrorType == ErrorType.CodeContractWarning)
-                {
-                    consumer.AddHighlighting(
-                        new MalformedMethodContractWarningHighlighting(vr.MalformedContractWarning, methodName, element, contractBlockStatements, vr.Statement), 
-                        vr.Statement.GetDocumentRange(), element.GetContainingFile());
+                    consumer.AddHighlighting(highlighting, vr.Statement.GetDocumentRange(), element.GetContainingFile());
                 }
             }
         }
