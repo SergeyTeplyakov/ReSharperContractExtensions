@@ -28,5 +28,18 @@ namespace ReSharper.ContractExtensions.Tests.ProblemAnalyzers.PreconditionAnalyz
             DoTestFiles(fileName);
         }
 
+        [TestCase("FixRequiresAndEnsuresAfterEndContractBlock1.cs")]
+        [TestCase("FixRequiresAndEnsuresAfterEndContractBlock2.cs")]
+        public void Test_Fix_Precondition_Postcondition_After_EndContractBlock(string fileName)
+        {
+            DoTestFiles(fileName);
+        }
+
+        [TestCase("FixRemoveRedundantEndContractBlock.cs")]
+        public void Test_Fix_For_Duplicated_EndContractBlock(string fileName)
+        {
+            DoTestFiles(fileName);
+        }
+
     }
 }

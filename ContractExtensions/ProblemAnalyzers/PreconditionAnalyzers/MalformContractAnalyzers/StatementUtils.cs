@@ -47,5 +47,28 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
 
             return result;
         }
+
+        public static ICSharpStatement AddStatementsBefore(this ICSharpStatement anchor, IEnumerable<ICSharpStatement> statements, 
+            ICSharpStatement selectedStatement)
+        {
+            Contract.Requires(anchor != null);
+            Contract.Requires(statements != null);
+            Contract.Requires(selectedStatement != null);
+
+            var localAnchor = anchor;
+            var parent = BlockNavigator.GetByStatement(localAnchor);
+            Contract.Assert(parent != null, "Can't find parent for the last contract statement.");
+            ICSharpStatement result = null;
+
+            foreach (var s in statements)
+            {
+                localAnchor = parent.AddStatementBefore(s, localAnchor);
+
+                if (s == selectedStatement)
+                    result = localAnchor;
+            }
+
+            return result;
+        }
     }
 }

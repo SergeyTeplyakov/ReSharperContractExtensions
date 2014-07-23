@@ -59,5 +59,17 @@ namespace ReSharper.ContractExtensions.Tests.ProblemAnalyzers.PreconditionAnalyz
         {
             DoTestSolution(testName);
         }
+
+        [TestCase("SeveralWarnings.cs")]
+        public void Test_Several_Warnings(string testName)
+        {
+            DoTestSolution(testName);
+        }
+
+        [TestCase("WarningForDuplicatedEndContractBlock.cs")]
+        public void Test_For_Duplicate_EndContractBlock_Call(string testName)
+        {
+            DoTestSolution(testName);
+        }
     }
 }

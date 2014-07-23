@@ -1,0 +1,12 @@
+using System.Diagnostics.Contracts;
+
+class A
+{
+  public void Foo(string s)
+  {
+    Contract.EndContractBlock();
+    |Contract.EndContractBlock();|(0)
+  }
+}
+---------------------------------------------------------
+(0): ReSharper Underlined Error Highlighting: Malformed contract. Duplicated call of EndContractBlock in method 'Foo'

@@ -10,6 +10,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
         AssignmentInContractBlock,
         RequiresAfterEnsures,
         ReqruiesOrEnsuresAfterEndContractBlock,
+        DuplicatedEndContractBlock,
     }
 
     public enum MalformedContractWarning
@@ -46,6 +47,11 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
                 case MalformedContractError.ReqruiesOrEnsuresAfterEndContractBlock:
                     // error CC1012: Contract call found after prior EndContractBlock.
                     return string.Format("Malformed contract. Contract call found after prior EndContractBlock in method '{0}'",
+                        contractMethodName);
+
+                case MalformedContractError.DuplicatedEndContractBlock:
+                    //error CC1012: Contract call found after prior EndContractBlock.
+                    return string.Format("Malformed contract. Duplicated call of EndContractBlock in method '{0}'",
                         contractMethodName);
 
                 default:

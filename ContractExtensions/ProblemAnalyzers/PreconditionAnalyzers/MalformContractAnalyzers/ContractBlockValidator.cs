@@ -237,10 +237,52 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
         }
     }
 
+    internal class ValidatedStatement
+    {
+        private readonly ProcessedStatement _processedStatement;
+        private readonly IList<ValidationResult> _validationResults;
+
+        public ProcessedStatement ProcessedStatement
+        {
+            get
+            {
+                Contract.Ensures(Contract.Result<ProcessedStatement>() != null);
+                return _processedStatement;
+            }
+        }
+
+        public IList<ValidationResult> ValidationResults
+        {
+            get
+            {
+                Contract.Ensures(Contract.Result<IList<ValidationResult>>() != null);
+                Contract.Ensures(Contract.Result<IList<ValidationResult>>().Count != 0);
+                return _validationResults;
+            }
+        }
+
+        public ValidatedStatement(ProcessedStatement processedStatement, IList<ValidationResult> validationResults)
+        {
+            Contract.Requires(processedStatement != null);
+            Contract.Requires(validationResults != null);
+
+            _processedStatement = processedStatement;
+            _validationResults = validationResults.Count == 0 ? new [] {ValidationResult.CreateNoError(processedStatement.CSharpStatement)} : validationResults;
+        }
+    }
+
     internal class ValidatedContractBlock
     {
         private readonly IList<ProcessedStatement> _contractBlock;
         private readonly IList<ValidationResult> _validationResults;
+
+        public ValidatedContractBlock(IList<ValidatedStatement> validatedContractBlock)
+        {
+            Contract.Requires(validatedContractBlock != null);
+
+            _contractBlock = validatedContractBlock.Select(x => x.ProcessedStatement).ToList();
+            _validationResults = validatedContractBlock.SelectMany(x => x.ValidationResults).ToList();
+        }
 
         public ValidatedContractBlock(IList<ProcessedStatement> contractBlock, IList<ValidationResult> validationResults)
         {
@@ -271,8 +313,12 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
 
         public static ValidatedContractBlock ValidateContractBlock(IList<ProcessedStatement> contractBlock)
         {
-            return new ValidatedContractBlock(contractBlock, 
-                ValidateContractBlockStatements(contractBlock).ToList());
+            var validatedContractBlock =
+                from st in contractBlock
+                let vs = ValidateStatement(contractBlock, st)
+                select new ValidatedStatement(st, vs.ToList());
+            
+            return new ValidatedContractBlock(validatedContractBlock.ToList());
         }
 
         public static IEnumerable<ValidationResult> ValidateContractBlockStatements(
@@ -280,7 +326,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
         {
             var query =
                 from currentStatement in contractBlock
-                let validationResult = ValidateStatement(contractBlock, currentStatement)
+                let validationResult = ValidateStatementWithOneResult(contractBlock, currentStatement)
                 select validationResult;
 
             return query.ToList();
@@ -356,6 +402,17 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
                             MalformedContractError.ReqruiesOrEnsuresAfterEndContractBlock);
                     return ValidationResult.CreateNoError(currentStatement.CSharpStatement);
                 });
+
+            yield return ValidationRule.CheckContractBlock(
+                (contractBlock, currentStatement) =>
+                {
+                    // EndContractBlock should be only one!
+                    if (currentStatement.ContractStatement.StatementType == CodeContractStatementType.EndContractBlock && 
+                        HasEndContractBlockBeforeCurrentStatement(contractBlock, currentStatement))
+                        return ValidationResult.CreateError(currentStatement.CSharpStatement,
+                            MalformedContractError.DuplicatedEndContractBlock);
+                    return ValidationResult.CreateNoError(currentStatement.CSharpStatement);
+                });
         }
 
         private static bool HasPreconditionAfterCurrentStatement(IList<ProcessedStatement> contractBlock, ProcessedStatement currentStatement)
@@ -399,7 +456,20 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
             throw new InvalidOperationException("Current statement not found in the contract block");
         }
 
-        private static ValidationResult ValidateStatement(IList<ProcessedStatement> contractBlock, ProcessedStatement currentStatement)
+        private static IEnumerable<ValidationResult> ValidateStatement(IList<ProcessedStatement> contractBlock,
+            ProcessedStatement currentStatement)
+        {
+            Contract.Requires(contractBlock != null);
+            Contract.Requires(currentStatement != null);
+            Contract.Ensures(Contract.Result<IEnumerable<ValidationResult>>() != null);
+
+            return _validationRules
+                .Select(rule => rule.Run(contractBlock, currentStatement))
+                .Where(vr => vr.ErrorType != ErrorType.NoError)
+                .ToList();
+        }
+
+        private static ValidationResult ValidateStatementWithOneResult(IList<ProcessedStatement> contractBlock, ProcessedStatement currentStatement)
         {
             Contract.Requires(currentStatement != null);
             Contract.Ensures(Contract.Result<ValidationResult>() != null);
