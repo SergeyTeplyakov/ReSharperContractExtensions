@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using JetBrains.Application.Settings.Storage.Persistence;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
+using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.TextControl;
 using JetBrains.Util;
 using ReSharper.ContractExtensions.ContractsEx.Statements;
@@ -38,7 +40,10 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
             if (RemoveRedundantStatementFix.IsFixableCore(currentStatement))
                 return new RemoveRedundantStatementFix(currentStatement, validatedContractBlock);
 
-                return null;
+            if (MoveContractOutOfTheTryBlock.IsFixableCore(currentStatement))
+                return new MoveContractOutOfTheTryBlock(currentStatement, validatedContractBlock);
+
+            return null;
         }
 
         public Action<ITextControl> ExecuteFix()
@@ -245,6 +250,108 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
         public override string FixName
         {
             get { return "Remove redundant EndContractBlock"; }
+        }
+
+        protected override bool IsFixable(ValidationResult validationResult)
+        {
+            return IsFixableCore(validationResult);
+        }
+    }
+
+    internal sealed class MoveContractOutOfTheTryBlock : MalformedContractFix
+    {
+        public MoveContractOutOfTheTryBlock(ValidationResult currentStatement, ValidatedContractBlock validatedContractBlock)
+            : base(currentStatement, validatedContractBlock)
+        { }
+
+        public static bool IsFixableCore(ValidationResult validationResult)
+        {
+            return validationResult.Match(
+                _ => false,
+                error => error.Error == MalformedContractError.MethodContractInTryBlock,
+                _ => false);
+        }
+
+        private static bool StatementInsideTryBlock(ICSharpStatement statement)
+        {
+            Contract.Requires(statement != null);
+            return statement.GetContainingNode<ITryStatement>() != null;
+        }
+
+        private ICSharpStatement GetLastValidContractStatement()
+        {
+            // Looking for the first contract statement that not in the try block
+            foreach (var validatedStatement in _validatedContractBlock.ValidatedBlock.Reverse())
+            {
+                if (validatedStatement.ProcessedStatement.ContractStatement != null &&
+                    !StatementInsideTryBlock(validatedStatement.ProcessedStatement.CSharpStatement))
+                {
+                    return validatedStatement.ProcessedStatement.CSharpStatement;
+                }
+            }
+
+            return null;
+        }
+
+        private IBlock GetTargetBlock()
+        {
+            // Looking for the block that is not a part of Try statement
+            ICSharpStatement statement = _currentStatement.Statement;
+            while (true)
+            {
+                IBlock result = BlockNavigator.GetByStatement(statement);
+                if (result == null)
+                    return null;
+
+                var tryStatement = result.GetContainingNode<ITryStatement>();
+                if (tryStatement == null)
+                    return result;
+
+                statement = tryStatement;
+            }
+        }
+
+        protected override Action<ITextControl> DoExecuteFix(IList<ValidationResult> statementsToFix)
+        {
+            // Looking for the block where all the statements should be.
+            // This method should be called before current statement would be detached from the parent!
+            var lastValidContractStatement = GetLastValidContractStatement();
+            IBlock targetBlock = null;
+
+            if (lastValidContractStatement == null)
+            { 
+                targetBlock = GetTargetBlock();
+                Contract.Assert(targetBlock != null, "Target block should exist!");
+            }
+
+            var statements = statementsToFix.Select(x => x.Statement).ToList();
+
+            // Removing all illegal statements
+            foreach (var s in statements)
+            {
+                s.DetachFromParent();
+            }
+
+            ICSharpStatement updatedCurrentStatement = null;
+
+            if (lastValidContractStatement != null)
+            {
+                // And adding them to the last contract in valid block
+                updatedCurrentStatement =
+                    lastValidContractStatement.AddStatementsAfter(statements, _currentStatement.Statement);
+            }
+            else
+            {
+                // or to the special block!
+                updatedCurrentStatement = targetBlock.AddStatementsTo(statements, _currentStatement.Statement);
+            }
+
+            return textControl => textControl.Caret.MoveTo(updatedCurrentStatement ?? _currentStatement.Statement);
+        }
+
+        public override string FixName
+        {
+            get { return "Move contract call(s) out of the try block"; }
         }
 
         protected override bool IsFixable(ValidationResult validationResult)

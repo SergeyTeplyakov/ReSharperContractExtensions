@@ -1,7 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
+using JetBrains.ReSharper.Psi.Tree;
 
 namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.MalformContractAnalyzers
 {
@@ -16,6 +18,27 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
 
             parentBlock.RemoveStatement(statement);
         }
+
+        public static ICSharpStatement AddStatementsTo(this IBlock block, IEnumerable<ICSharpStatement> statements, ICSharpStatement selectedStatement)
+        {
+            Contract.Requires(block != null);
+            Contract.Requires(statements != null);
+            Contract.Requires(selectedStatement != null);
+
+            ICSharpStatement result = null;
+            ICSharpStatement localAnchor = null;
+            foreach (var s in statements)
+            {
+                localAnchor = block.AddStatementAfter(s, localAnchor);
+
+                if (s == selectedStatement)
+                    result = localAnchor;
+            }
+
+            return result;
+
+        }
+
 
         /// <summary>
         /// Method will add specified <paramref name="statements"/> to the <paramref name="anchor"/>.

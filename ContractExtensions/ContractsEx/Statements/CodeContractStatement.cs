@@ -56,6 +56,16 @@ namespace ReSharper.ContractExtensions.ContractsEx.Statements
             }
         }
 
+        public bool IsEndContractBlock
+        {
+            get { return StatementType == CodeContractStatementType.EndContractBlock; }
+        }
+
+        public bool IsMethodContractStatement
+        {
+            get { return IsPrecondition || IsPostcondition || IsEndContractBlock; }
+        }
+
         public bool IsPrecondition
         {
             get { return StatementType == CodeContractStatementType.Requires; }

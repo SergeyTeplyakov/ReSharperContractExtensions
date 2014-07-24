@@ -42,9 +42,8 @@ namespace ReSharper.ContractExtensions.ContractsEx.Statements
 
             int lastContractIndex =
                 statements.LastIndexOf(s => s.ContractStatement != null &&
-                            (s.ContractStatement.StatementType == CodeContractStatementType.Requires ||
-                             s.ContractStatement.StatementType == CodeContractStatementType.Ensures ||
-                             s.ContractStatement.StatementType == CodeContractStatementType.EnsuresOnThrow ||
+                            (s.ContractStatement.IsPrecondition ||
+                             s.ContractStatement.IsPostcondition ||
                              s.ContractStatement.StatementType == CodeContractStatementType.EndContractBlock));
 
             // Because we're taking +1 item we can skip check for -1!
@@ -63,6 +62,10 @@ namespace ReSharper.ContractExtensions.ContractsEx.Statements
 
                 if (innerBlock != null)
                     return GetStatements(innerBlock);
+
+                var tryBlock = s as ITryStatement;
+                if (tryBlock != null)
+                    return GetStatements(tryBlock.Try);
 
                 return new [] {s}.AsEnumerable();
             });
