@@ -64,8 +64,6 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
                     Contract.Assert(false, "Unknown malformed contract error: " + error);
                     throw new InvalidOperationException("Unknown malformed contract error: " + error);
             }
-
-            //warning CC1069: Detected expression statement evaluated for potential side-effect in contracts of method 'RequiresInconsistentVisibility.WarningForMalformedContract.WarningOnMethodCallWithResul'.
         }
     }
 
@@ -83,8 +81,6 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
                     Contract.Assert(false, "Unknown malformed contract warning: " + warning);
                     throw new InvalidOperationException("Unknown malformed contract warning: " + warning);
             }
-
-            //warning CC1069: Detected expression statement evaluated for potential side-effect in contracts of method 'RequiresInconsistentVisibility.WarningForMalformedContract.WarningOnMethodCallWithResul'.
         }
     }
 
