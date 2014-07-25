@@ -28,17 +28,17 @@ namespace ReSharper.ContractExtensions.ContractsEx.Statements
     public sealed class CodeContractStatement
     {
         private readonly ICSharpStatement _statement;
-        private readonly IExpression _invokedExpression;
+        private readonly IInvocationExpression _invocationExpression;
         private readonly CodeContractStatementType _statementType;
 
         private CodeContractStatement(ICSharpStatement statement, 
-            IExpression invokedExpression,
+            IInvocationExpression invocationExpression,
             CodeContractStatementType statementType)
         {
             Contract.Requires(statement != null);
 
             _statement = statement;
-            _invokedExpression = invokedExpression;
+            _invocationExpression = invocationExpression;
             _statementType = statementType;
         }
 
@@ -77,9 +77,9 @@ namespace ReSharper.ContractExtensions.ContractsEx.Statements
         }
 
         [CanBeNull]
-        public IExpression InvokedExpression
+        public IInvocationExpression InvocationExpression
         {
-            get { return _invokedExpression; }
+            get { return _invocationExpression; }
         }
 
         public static CodeContractStatement TryCreate(ICSharpStatement statement)
@@ -94,7 +94,7 @@ namespace ReSharper.ContractExtensions.ContractsEx.Statements
             if (contractAssertion == null)
                 return null;
 
-            return new CodeContractStatement(statement, invocationExpression.InvokedExpression, contractAssertion.Value);
+            return new CodeContractStatement(statement, invocationExpression, contractAssertion.Value);
         }
 
         private static CodeContractStatementType? GetContractAssertionType(IInvocationExpression invocationExpression)

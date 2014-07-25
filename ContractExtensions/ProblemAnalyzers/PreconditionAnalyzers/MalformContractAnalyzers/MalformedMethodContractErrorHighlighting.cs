@@ -21,7 +21,6 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
     {
         ValidationResult CurrentStatement { get; }
         ValidatedContractBlock ValidatedContractBlock { get; }
-        //IList<ValidationResult> ContractBlockValidationResults { get; }
     }
 
     /// <summary>
@@ -32,8 +31,8 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
     {
         private readonly CodeContractErrorValidationResult _error;
         private readonly ValidatedContractBlock _contractBlock;
-        public const string Id = "MalformedMethodContractErrorHighlighting";
-        private string _toolTip;
+        public const string Id = "Malformed method contract error highlighting";
+        private readonly string _toolTip;
 
         internal MalformedMethodContractErrorHighlighting(CodeContractErrorValidationResult error, ValidatedContractBlock contractBlock)
         {

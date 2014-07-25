@@ -12,6 +12,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
         ReqruiesOrEnsuresAfterEndContractBlock,
         DuplicatedEndContractBlock,
         MethodContractInTryBlock,
+        ContractStatementInTheMiddleOfTheMethod,
     }
 
     public enum MalformedContractWarning
@@ -58,6 +59,10 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
                 case MalformedContractError.MethodContractInTryBlock:
                     // error CC1024: Contract section within try block.
                     return string.Format("Malformed contract. Contract section within try block in method '{0}'",
+                        contractMethodName);
+                case MalformedContractError.ContractStatementInTheMiddleOfTheMethod:
+                    // error CC1017: Malformed contract section in method 'MalformedContractErrors.ContractInTheMiddleOfTheMethod(System.String)'
+                    return string.Format("Contract statements in the middle of the method '{0}'",
                         contractMethodName);
 
                 default:

@@ -8,8 +8,6 @@ using ReSharper.ContractExtensions.Utilities;
 
 namespace ReSharper.ContractExtensions.ContractsEx.Assertions
 {
-    
-
     internal static class PredicateCheckFactory
     {
         // TODO: is it possible to generialize this?

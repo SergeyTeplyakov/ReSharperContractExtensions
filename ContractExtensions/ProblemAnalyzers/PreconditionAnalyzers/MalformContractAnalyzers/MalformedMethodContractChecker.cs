@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using System.Linq;
-using JetBrains.Annotations;
-using JetBrains.ReSharper.Daemon;
+﻿using JetBrains.ReSharper.Daemon;
 using JetBrains.ReSharper.Daemon.Stages;
 using JetBrains.ReSharper.Daemon.Stages.Dispatcher;
-using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Tree;
 using ReSharper.ContractExtensions.ContractsEx.Statements;
-using ReSharper.ContractExtensions.Utilities;
 
 namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.MalformContractAnalyzers
 {
@@ -21,7 +14,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
     /// - Ensures statement is after precondition check
     /// </summary>
     [ElementProblemAnalyzer(new[] { typeof(ICSharpFunctionDeclaration) },
-    HighlightingTypes = new[] { typeof(MalformedMethodContractErrorHighlighting), typeof(MalformedMethodContractWarningHighlighting) })]
+    HighlightingTypes = new[] { typeof(MalformedContractStatementErrorHighlighting), typeof(MalformedMethodContractWarningHighlighting) })]
     public sealed class MalformedMethodContractChecker : ElementProblemAnalyzer<ICSharpFunctionDeclaration>
     {
         protected override void Run(ICSharpFunctionDeclaration element, ElementProblemAnalyzerData data, IHighlightingConsumer consumer)

@@ -1,0 +1,17 @@
+using System.Linq;
+using System.Diagnostics.Contracts;
+
+class A
+{
+  public void InsideSwitch(string s)
+  {
+    switch(s)
+    {
+      case "foo":
+        |Contract.Requries(s != null);|(0)
+        break;
+    }
+  }
+}
+---------------------------------------------------------
+(0): ReSharper Underlined Error Highlighting: Contract statements in the middle of the method 'Foo'

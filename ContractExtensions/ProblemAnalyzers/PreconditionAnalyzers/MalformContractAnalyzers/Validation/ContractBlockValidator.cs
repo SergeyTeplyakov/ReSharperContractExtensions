@@ -111,9 +111,9 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
             yield return ValidationRule.CheckContractStatement(
                 currentStatement =>
                 {
+                    // Contract statement should not be in the try or using blocks
                     if ( currentStatement.IsMethodContractStatement && StatementInsideTryBlock(currentStatement.Statement))
-                        return ValidationResult.CreateError(currentStatement.Statement,
-                            MalformedContractError.MethodContractInTryBlock);
+                        return ValidationResult.CreateError(currentStatement.Statement, MalformedContractError.MethodContractInTryBlock);
                     return ValidationResult.CreateNoError(currentStatement.Statement);
                 });
         }
@@ -122,7 +122,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
         {
             Contract.Requires(statement != null);
 
-            return statement.GetContainingNode<ITryStatement>() != null;
+            return statement.IsInside<ITryStatement>() || statement.IsInside<ICatchClause>();
         }
 
         private static bool HasPreconditionAfterCurrentStatement(IList<ProcessedStatement> contractBlock, ProcessedStatement currentStatement)
@@ -174,7 +174,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
             Contract.Ensures(Contract.Result<IEnumerable<ValidationResult>>() != null);
 
             return _validationRules
-                .Select(rule => rule.Validate(contractBlock, currentStatement))
+                .Select(rule => rule.Validate(currentStatement, contractBlock))
                 .Where(vr => vr.ErrorType != ErrorType.NoError)
                 .ToList();
         }

@@ -1,0 +1,28 @@
+using System.Diagnostics.Contracts;
+
+class A
+{
+  public void InTry(string s)
+  {
+    try
+    {
+      {
+        |Contract.Requires(s != null);|(0)
+      }
+    }
+    catch(System.Exception e)
+    {
+      {
+        Contract.Requires(false);
+      }
+    }
+    finally 
+    {
+      {
+        Contract.Requires(false);
+      }
+    }
+  }
+}
+---------------------------------------------------------
+(0): ReSharper Underlined Error Highlighting: Malformed contract. Contract section within try block in method 'InTry'

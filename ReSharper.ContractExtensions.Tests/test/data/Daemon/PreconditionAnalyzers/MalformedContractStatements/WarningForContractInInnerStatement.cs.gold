@@ -1,0 +1,94 @@
+using System.Linq;
+using System.Diagnostics.Contracts;
+
+class A
+{
+  public void InsideIf(string s)
+  {
+    if (s != null)
+      |Contract.Requires(s != null);|(0)
+  }
+
+  public void EndContractBlockInsideIf(string s)
+  {
+    if (s != null)
+      |Contract.EndContractBlock();|(1)
+  }
+
+  public void InsideElse(string s)
+  {
+    if (s != null)
+      Console.WriteLine();
+    else
+      |Contract.Requires(s != null);|(2)
+  }
+  
+  public void InsideLoops()
+  {
+    for(int n = 0; n < 10; n++)
+      |Contract.Requires(false);|(3)
+
+    foreach(var n in Enumerable.Range(1, 10))
+      |Contract.Ensures(false);|(4)
+
+    int n = 42;
+    while(n > 0)
+    {
+      |Contract.EnsuresOnThrow<System.Exception>(false);|(5)
+      n--;
+    }
+  }
+
+  public void InsideSwitch(string s)
+  {
+    switch(s)
+    {
+      case "foo":
+        |Contract.Requires(s != null);|(6)
+        break;
+    }
+  }
+
+  public void InTry(string s)
+  {
+    try
+    {
+    }
+    catch(System.Exception e)
+    {
+      |Contract.EndContractBlock();|(7)
+    }
+    finally 
+    {
+      |Contract.Requires(false);|(8)
+    }
+  }
+
+  public void InUsing(string s)
+  {
+    using (new System.IO.MemoryStream())
+    {
+      |Contract.Requires(s != null);|(9)
+    }
+  }
+
+  public void InChecked(string s)
+  {
+    checked
+    {
+        // Fine!
+        Contract.Requires(s != null);
+    }
+  }
+}
+---------------------------------------------------------
+(0): ReSharper Underlined Error Highlighting: Contract statements in the middle of the method 'InsideIf'
+(1): ReSharper Underlined Error Highlighting: Contract statements in the middle of the method 'EndContractBlockInsideIf'
+(2): ReSharper Underlined Error Highlighting: Contract statements in the middle of the method 'InsideElse'
+(3): ReSharper Underlined Error Highlighting: Contract statements in the middle of the method 'InsideLoops'
+(4): ReSharper Underlined Error Highlighting: Contract statements in the middle of the method 'InsideLoops'
+(5): ReSharper Underlined Error Highlighting: Contract statements in the middle of the method 'InsideLoops'
+(6): ReSharper Underlined Error Highlighting: Contract statements in the middle of the method 'InsideSwitch'
+(7): ReSharper Underlined Error Highlighting: Contract statements in the middle of the method 'InTry'
+(8): ReSharper Underlined Error Highlighting: Contract statements in the middle of the method 'InTry'
+(9): ReSharper Underlined Error Highlighting: Contract statements in the middle of the method 'InUsing'

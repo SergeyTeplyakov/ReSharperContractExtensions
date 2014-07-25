@@ -72,6 +72,7 @@ namespace ReSharper.ContractExtensions.Tests.ProblemAnalyzers.PreconditionAnalyz
             DoTestSolution(testName);
         }
 
+        [TestCase("WarningForTryCatchFinally.cs")]
         [TestCase("WarningForTryWithEnsures.cs")]
         [TestCase("WarningForTryWithRequires.cs")]
         [TestCase("WarningForTryCatchWithContract.cs")]
