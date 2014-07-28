@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using JetBrains.Annotations;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using ReSharper.ContractExtensions.Utilities;
 
@@ -26,6 +27,33 @@ namespace ReSharper.ContractExtensions.ContractsEx.Statements
 
     public static class CodeContractStatementUtils
     {
+        [CanBeNull]
+        public static IBlock GetTargetBlock(ICSharpStatement currentStatement)
+        {
+            // Looking for the block that is not a part of Try statement
+            ICSharpStatement statement = currentStatement;
+            while (true)
+            {
+                IBlock result = BlockNavigator.GetByStatement(statement);
+                if (result == null)
+                    return null;
+
+                var tryStatement = result.GetContainingNode<ITryStatement>();
+                if (tryStatement == null)
+                    return result;
+
+                statement = tryStatement;
+            }
+        }
+
+        ///// <summary>
+        ///// Contract statement 
+        ///// </summary>
+        ///// <param name="statement"></param>
+        ///// <returns></returns>
+        //public static bool IsInContractSection(this ICSharpStatement statement)
+        //{ }
+
         /// <summary>
         /// Returns a list of statements for specified function.
         /// </summary>
@@ -63,9 +91,9 @@ namespace ReSharper.ContractExtensions.ContractsEx.Statements
                 if (innerBlock != null)
                     return GetStatements(innerBlock);
 
-                var tryBlock = s as ITryStatement;
-                if (tryBlock != null)
-                    return GetStatements(tryBlock.Try);
+                //var tryBlock = s as ITryStatement;
+                //if (tryBlock != null)
+                //    return GetStatements(tryBlock.Try);
 
                 return new [] {s}.AsEnumerable();
             });

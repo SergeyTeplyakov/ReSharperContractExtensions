@@ -13,7 +13,6 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
     public sealed class MalformedMethodContractQuickFix : QuickFixBase
     {
         private readonly MalformedContractFix _malformedContractFix;
-        private readonly bool _isFixable;
 
         private MalformedMethodContractQuickFix(IMalformedMethodErrorHighlighting highlighting)
         {

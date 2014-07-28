@@ -1,0 +1,17 @@
+using System.Diagnostics.Contracts;
+
+class A
+{
+  public void Foo(string s)
+  {
+    {caret}Contract.Ensures(false);
+    {
+      try
+      {
+        Contract.Requires(false);
+        Contract.EndContractBlock();
+      }
+      finally {}
+    }
+  }
+}

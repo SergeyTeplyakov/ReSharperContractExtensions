@@ -33,8 +33,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
 
         protected override Action<ITextControl> ExecutePsiTransaction(ISolution solution, IProgressIndicator progress)
         {
-            _fix.Apply(_validationResult, _contractStatement);
-            return null;
+            return _fix.Apply(_validationResult, _contractStatement);
         }
 
         public override string Text

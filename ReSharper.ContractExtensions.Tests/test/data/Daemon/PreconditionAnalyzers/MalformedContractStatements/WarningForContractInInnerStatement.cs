@@ -80,4 +80,14 @@ class A
         Contract.Requires(s != null);
     }
   }
+
+  public void WarningInTryBlock(string s)
+  {
+    try
+    {
+      // This tool will show another warning for this case!
+      Contract.Requires(s != null);
+    }
+    finally {}
+  }
 }

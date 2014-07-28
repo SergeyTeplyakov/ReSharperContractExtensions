@@ -13,6 +13,7 @@ namespace ReSharper.ContractExtensions.Tests.ProblemAnalyzers.PreconditionAnalyz
             get { return @"Daemon\PreconditionAnalyzers\MalformedContractStatements"; }
         }
 
+        [TestCase("WarningDebug.cs")]
         public void Debug(string testName)
         {
             DoTestSolution(testName);

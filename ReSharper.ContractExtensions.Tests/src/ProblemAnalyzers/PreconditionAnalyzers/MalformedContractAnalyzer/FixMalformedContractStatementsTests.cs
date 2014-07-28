@@ -25,5 +25,22 @@ namespace ReSharper.ContractExtensions.Tests.ProblemAnalyzers.PreconditionAnalyz
         {
             DoTestFiles(fileName);
         }
+
+        [TestCase("FixMovePostconditionToTheContractBlock.cs")]
+        [TestCase("FixMovePostconditionToTheContractBlock2.cs")]
+        [TestCase("FixMovePostconditionToTheContractBlock3.cs")]
+        public void Test_Fix_Postcondition(string fileName)
+        {
+            DoTestFiles(fileName);
+        }
+
+        [TestCase("FixMoveContractsOutOfTheTryBlock.cs")]
+        [TestCase("FixMoveContractsOutOfTheTryBlock2.cs")]
+        [TestCase("FixMoveContractsOutOfTheTryBlock3.cs")]
+        public void Test_Fix_For_Contract_In_Try_Block(string fileName)
+        {
+            DoTestFiles(fileName);
+        }
+
     }
 }

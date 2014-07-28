@@ -5,11 +5,12 @@ class A
   public void Foo(string s)
   {
     {
-      Contract.Requires(false);
+      Contract.Requires(s != null);
       {caret}Contract.Ensures(false);
-      Contract.EndContractBlock();
       try
       {
+        Contract.Requires(false);
+        Contract.EndContractBlock();
       }
       finally {}
     }

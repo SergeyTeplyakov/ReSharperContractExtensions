@@ -1,9 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics.Contracts;
+﻿using System.Diagnostics.Contracts;
 using JetBrains.ReSharper.Daemon;
 using JetBrains.ReSharper.Psi.CSharp;
-using JetBrains.ReSharper.Psi.CSharp.Tree;
-using ReSharper.ContractExtensions.ContractsEx.Statements;
 using ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.MalformContractAnalyzers;
 
 [assembly: RegisterConfigurableSeverity(MalformedMethodContractErrorHighlighting.Id,

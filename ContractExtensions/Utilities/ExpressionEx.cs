@@ -11,7 +11,7 @@ namespace ReSharper.ContractExtensions.Utilities
 {
     public static class ExpressionEx
     {
-
+        
         [CanBeNull]
         public static IClrTypeName GetCallSiteType(this IInvocationExpression invocationExpression)
         {

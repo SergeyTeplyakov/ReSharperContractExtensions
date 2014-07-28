@@ -80,6 +80,16 @@ class A
         Contract.Requires(s != null);
     }
   }
+
+  public void WarningInTryBlock(string s)
+  {
+    try
+    {
+      // This tool will show another warning for this case!
+      |Contract.Requires(s != null);|(10)
+    }
+    finally {}
+  }
 }
 ---------------------------------------------------------
 (0): ReSharper Underlined Error Highlighting: Contract statements in the middle of the method 'InsideIf'
@@ -92,3 +102,4 @@ class A
 (7): ReSharper Underlined Error Highlighting: Contract statements in the middle of the method 'InTry'
 (8): ReSharper Underlined Error Highlighting: Contract statements in the middle of the method 'InTry'
 (9): ReSharper Underlined Error Highlighting: Contract statements in the middle of the method 'InUsing'
+(10): ReSharper Underlined Error Highlighting: Malformed contract. Contract section within try block in method 'WarningInTryBlock'

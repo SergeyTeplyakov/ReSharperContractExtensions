@@ -107,22 +107,6 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
                             MalformedContractError.DuplicatedEndContractBlock);
                     return ValidationResult.CreateNoError(currentStatement.CSharpStatement);
                 });
-
-            yield return ValidationRule.CheckContractStatement(
-                currentStatement =>
-                {
-                    // Contract statement should not be in the try or using blocks
-                    if ( currentStatement.IsMethodContractStatement && StatementInsideTryBlock(currentStatement.Statement))
-                        return ValidationResult.CreateError(currentStatement.Statement, MalformedContractError.MethodContractInTryBlock);
-                    return ValidationResult.CreateNoError(currentStatement.Statement);
-                });
-        }
-
-        private static bool StatementInsideTryBlock(ICSharpStatement statement)
-        {
-            Contract.Requires(statement != null);
-
-            return statement.IsInside<ITryStatement>() || statement.IsInside<ICatchClause>();
         }
 
         private static bool HasPreconditionAfterCurrentStatement(IList<ProcessedStatement> contractBlock, ProcessedStatement currentStatement)

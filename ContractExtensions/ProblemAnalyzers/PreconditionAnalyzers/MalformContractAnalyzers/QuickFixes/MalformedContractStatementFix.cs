@@ -2,17 +2,20 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using JetBrains.Annotations;
 using JetBrains.ReSharper.Psi.CSharp;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Tree;
+using JetBrains.TextControl;
 using ReSharper.ContractExtensions.ContractsEx.Statements;
+using ReSharper.ContractExtensions.Utilities;
 
 namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.MalformContractAnalyzers
 {
     internal interface IMalformedContractStatementFix
     {
         bool IsApplicable(ValidationResult validationResult, CodeContractStatement contractStatement);
-        void Apply(ValidationResult validationResult, CodeContractStatement contractStatement);
+        Action<ITextControl> Apply(ValidationResult validationResult, CodeContractStatement contractStatement);
         string GetText();
     }
 
@@ -23,7 +26,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
         private static IEnumerable<IMalformedContractStatementFix> CreateFixes()
         {
             yield return new RemoveRedundantContractStatementFix();
-            yield return new MoveStatementAtTheEndOfContractBlockFix();
+            yield return new MoveStatementToTheContractBlock();
             yield return new ConvertPreconditionToAssertFix();
         }
 
@@ -38,11 +41,9 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
 
 
         public abstract bool IsApplicable(ValidationResult validationResult, CodeContractStatement contractStatement);
-        public abstract void Apply(ValidationResult validationResult, CodeContractStatement contractStatement);
+        public abstract Action<ITextControl> Apply(ValidationResult validationResult, CodeContractStatement contractStatement);
         public abstract string GetText();
     }
-
-
 
     internal sealed class RemoveRedundantContractStatementFix : MalformedContractStatementFix
     {
@@ -54,9 +55,11 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
                 _ => false);
         }
 
-        public override void Apply(ValidationResult validationResult, CodeContractStatement contractStatement)
+        public override Action<ITextControl> Apply(
+            ValidationResult validationResult, CodeContractStatement contractStatement)
         {
             contractStatement.Statement.RemoveOrReplaceByEmptyStatement();
+            return null;
         }
 
         public override string GetText()
@@ -65,24 +68,90 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
         }
     }
 
-    internal sealed class MoveStatementAtTheEndOfContractBlockFix : MalformedContractStatementFix
+    internal sealed class MoveStatementToTheContractBlock : MalformedContractStatementFix
     {
         public override bool IsApplicable(ValidationResult validationResult, CodeContractStatement contractStatement)
         {
             return validationResult.Match(_ => false,
-                error => error.Error == MalformedContractError.ContractStatementInTheMiddleOfTheMethod &&
-                         contractStatement.IsPostcondition,
+                error => 
+                    (error.Error == MalformedContractError.ContractStatementInTheMiddleOfTheMethod &&
+                         contractStatement.IsPostcondition) ||
+                    (error.Error == MalformedContractError.MethodContractInTryBlock),
                 _ => false);
         }
 
-        public override void Apply(ValidationResult validationResult, CodeContractStatement contractStatement)
+        public override Action<ITextControl> Apply(
+            ValidationResult validationResult, CodeContractStatement contractStatement)
         {
-            throw new NotImplementedException();
+            // This fix contains following steps:
+            // 1. Removing original postcondition
+            // 2. Looking for contract block of the current method
+            // 3. If this block exists, fix should move postcondition to the appropriate place 
+            //    (after last postcondition or precondition)
+            // 4. Otherwise fix should move the precondition at the beginning of the method.
+
+            // We should get contract block and potential target block before
+            // removing current statement
+            var contractBlock = GetContractBlock(contractStatement);
+
+            var containingFunction = GetContainingFunction(contractStatement.Statement);
+
+            contractStatement.Statement.RemoveOrReplaceByEmptyStatement();
+
+            ICSharpStatement anchor = GetAnchor(contractBlock, contractStatement);
+
+            ICSharpStatement updatedStatement;
+
+            if (anchor != null)
+            {
+                updatedStatement = anchor.AddStatementsAfter(new[] {contractStatement.Statement}, contractStatement.Statement);
+            }
+            else
+            {
+                updatedStatement = containingFunction.Body.AddStatementAfter(contractStatement.Statement, null);
+            }
+
+            return textControl => textControl.Caret.MoveTo(updatedStatement);
         }
 
         public override string GetText()
         {
-            return "Move postcondition to the method contract block";
+            return "Move statement to the method contract block";
+        }
+
+        private static ICSharpFunctionDeclaration GetContainingFunction(ICSharpStatement statement)
+        {
+            Contract.Requires(statement != null);
+            Contract.Ensures(Contract.Result<ICSharpFunctionDeclaration>() != null);
+
+            return (ICSharpFunctionDeclaration) statement.GetContainingTypeMemberDeclaration();
+        }
+
+        private IList<ProcessedStatement> GetContractBlock(CodeContractStatement contractStatement)
+        {
+            var method = contractStatement.Statement.GetContainingNode<ICSharpFunctionDeclaration>();
+            Contract.Assert(method != null);
+
+            return method.GetContractBlockStatements();
+        }
+
+        [CanBeNull]
+        private static ICSharpStatement GetAnchor(IList<ProcessedStatement> statements, 
+            CodeContractStatement contractStatement)
+        {
+            // Looking for the last precondition if we're moving precondition
+            // or looking for the last postcondition or precondition for Ensures and EndContractBlock
+            return statements
+                .Where(s => s.ContractStatement != null)
+                .Reverse()
+                .FirstOrDefault(
+                    s =>
+                    {
+                        if (contractStatement.IsPrecondition)
+                            return s.ContractStatement.IsPostcondition;
+                        return s.ContractStatement.IsPostcondition || s.ContractStatement.IsPrecondition;
+                    })
+                .Return(x => x.CSharpStatement);
         }
 
     }
@@ -97,10 +166,12 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
                 _ => false);
         }
 
-        public override void Apply(ValidationResult validationResult, CodeContractStatement contractStatement)
+        public override Action<ITextControl> Apply(ValidationResult validationResult, CodeContractStatement contractStatement)
         {
             var assertStatement = CreateAssertStatement(contractStatement);
             contractStatement.Statement.ReplaceBy(assertStatement);
+
+            return null;
         }
 
         public override string GetText()

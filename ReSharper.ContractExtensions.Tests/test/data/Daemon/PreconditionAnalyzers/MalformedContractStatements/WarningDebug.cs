@@ -3,13 +3,14 @@ using System.Diagnostics.Contracts;
 
 class A
 {
-  public void InsideSwitch(string s)
+  public void WarningInTryBlock(string s)
   {
-    switch(s)
+    try
     {
-      case "foo":
-        Contract.Requires(s != null);
-        break;
+      // This tool will show another warning for this case!
+      Contract.Requires(s != null);
     }
+    finally {}
   }
+
 }

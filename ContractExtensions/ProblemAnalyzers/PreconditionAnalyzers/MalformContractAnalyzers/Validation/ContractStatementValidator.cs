@@ -32,6 +32,15 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
                     return ValidationResult.CreateNoError(s.Statement);
                 });
 
+            yield return SingleStatementValidationRule.Create(
+                s =>
+                {
+                    // Assert/Assume are forbidden in contract block
+                    if (s.IsMethodContractStatement && IsInTryBlock(s.Statement))
+                        return ValidationResult.CreateError(s.Statement, MalformedContractError.MethodContractInTryBlock);
+                    return ValidationResult.CreateNoError(s.Statement);
+                });
+
         }
 
         private static bool InsideInnerStatement(ICSharpStatement statement)
@@ -48,6 +57,13 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
                    statement.IsInside<IUsingStatement>();
         }
 
+        private static bool IsInTryBlock(ICSharpStatement statement)
+        {
+            Contract.Requires(statement != null);
+
+            return statement.IsInside<ITryStatement>();
+        }
+
         private static bool IsInFinally(ICSharpStatement statement)
         {
             var block = BlockNavigator.GetByStatement(statement);
@@ -55,7 +71,11 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
             while (block != null)
             {
                 if (block.Parent is ITryStatement)
-                    return true;
+                {
+                    // Looks ugly, but I don't know how to check that the statement in the finally block only!
+                    var tryStatement = (ITryStatement) block.Parent;
+                    return tryStatement.FinallyBlock == block;
+                }
 
                 block = block.Parent as IBlock;
             }

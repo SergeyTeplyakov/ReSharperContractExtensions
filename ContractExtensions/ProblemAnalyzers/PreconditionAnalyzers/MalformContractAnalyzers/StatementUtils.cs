@@ -9,16 +9,6 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
 {
     internal static class StatementUtils
     {
-        public static void DetachFromParent(this ICSharpStatement statement)
-        {
-            Contract.Requires(statement != null);
-
-            var parentBlock = BlockNavigator.GetByStatement(statement);
-            Contract.Assert(parentBlock != null, "Can't find parent for the statement!");
-
-            parentBlock.RemoveStatement(statement);
-        }
-
         public static ICSharpStatement AddStatementsTo(this IBlock block, IEnumerable<ICSharpStatement> statements, ICSharpStatement selectedStatement)
         {
             Contract.Requires(block != null);
