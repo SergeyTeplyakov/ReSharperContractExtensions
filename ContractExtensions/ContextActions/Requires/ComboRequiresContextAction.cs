@@ -32,6 +32,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             Contract.Assert(_availability.IsAvailable);
 
             var contractFunction = GetContractFunction();
+
             if (contractFunction == null)
             {
                 AddContractClass();
@@ -74,8 +75,10 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             addContractExecutor.Execute();
         }
 
-        private void AddRequiresTo(ICSharpFunctionDeclaration contractFunction)
+        private void AddRequiresTo([NotNull]ICSharpFunctionDeclaration contractFunction)
         {
+            Contract.Requires(contractFunction != null);
+
             var addRequiresExecutor = new ArgumentRequiresExecutor(_provider, _requiresShouldBeGeneric,
                 contractFunction, _availability.ParameterName, _availability.ParameterType);
             addRequiresExecutor.ExecuteTransaction();

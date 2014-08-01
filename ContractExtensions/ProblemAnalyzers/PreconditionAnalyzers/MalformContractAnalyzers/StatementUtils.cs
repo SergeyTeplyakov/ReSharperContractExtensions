@@ -1,9 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using JetBrains.Annotations;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Tree;
+using ReSharper.ContractExtensions.Utilities;
 
 namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.MalformContractAnalyzers
 {
@@ -28,7 +30,6 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
             return result;
 
         }
-
 
         /// <summary>
         /// Method will add specified <paramref name="statements"/> to the <paramref name="anchor"/>.
@@ -83,5 +84,19 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
 
             return result;
         }
+
+        [CanBeNull]
+        public static IMethod GetInvokedMethod(this ICSharpStatement statement)
+        {
+            Contract.Requires(statement != null);
+
+            return statement
+                .With(x => x as IExpressionStatement)
+                .With(x => x.Expression as IInvocationExpression)
+                .With(x => x.InvocationExpressionReference)
+                .With(x => x.Resolve())
+                .With(x => x.DeclaredElement as IMethod);
+        }
+
     }
 }

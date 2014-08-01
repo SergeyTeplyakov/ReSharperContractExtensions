@@ -154,6 +154,12 @@
     <Compile Include="ContextActions\Requires\ArgumentRequiresExecutor.cs" />
     <Compile Include="ContractsEx\ContractExtensions.cs" />
     <Compile Include="ContractsEx\Statements\CodeContractStatementUtils.cs" />
+    <Compile Include="ContractsEx\Statements\ContractValidatorStatement.cs" />
+    <Compile Include="ContractsEx\Statements\ContractAbbreviationStatement.cs" />
+    <Compile Include="ContractsEx\Statements\ContractBlock.cs" />
+    <Compile Include="ContractsEx\Statements\ContractStatement.cs" />
+    <Compile Include="ContractsEx\Statements\ContractStatementFactory.cs" />
+    <Compile Include="ContractsEx\Statements\ProcessedStatement.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\CaretUtils.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\MalformedContractStatementChecker.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\MalformedContractStatementErrorHighlighting.cs" />

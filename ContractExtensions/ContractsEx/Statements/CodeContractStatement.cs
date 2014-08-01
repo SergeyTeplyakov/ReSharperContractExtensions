@@ -2,7 +2,6 @@
 using System.Diagnostics.Contracts;
 using JetBrains.Annotations;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
-using JetBrains.ReSharper.Psi.Tree;
 using ReSharper.ContractExtensions.ContractsEx.Assertions;
 using ReSharper.ContractExtensions.Utilities;
 
@@ -25,19 +24,22 @@ namespace ReSharper.ContractExtensions.ContractsEx.Statements
     /// <summary>
     /// Represents lightweight version of code contract statement.
     /// </summary>
-    public sealed class CodeContractStatement
+    public sealed class CodeContractStatement : ContractStatement
     {
-        private readonly ICSharpStatement _statement;
+        /// <summary>
+        /// Represents "invocation" part of the code contract statement.
+        /// For example, for Contract.Requies(s != null) invocationExpression would be "s != null"
+        /// </summary>
         private readonly IInvocationExpression _invocationExpression;
         private readonly CodeContractStatementType _statementType;
 
         private CodeContractStatement(ICSharpStatement statement, 
             IInvocationExpression invocationExpression,
             CodeContractStatementType statementType)
+            : base(statement)
         {
-            Contract.Requires(statement != null);
+            Contract.Requires(invocationExpression != null);
 
-            _statement = statement;
             _invocationExpression = invocationExpression;
             _statementType = statementType;
         }
@@ -76,13 +78,16 @@ namespace ReSharper.ContractExtensions.ContractsEx.Statements
             get { return _statement; }
         }
 
-        [CanBeNull]
         public IInvocationExpression InvocationExpression
         {
-            get { return _invocationExpression; }
+            get
+            {
+                Contract.Ensures(Contract.Result<IInvocationExpression>() != null);
+                return _invocationExpression;
+            }
         }
 
-        public static CodeContractStatement TryCreate(ICSharpStatement statement)
+        internal static CodeContractStatement TryCreate(ICSharpStatement statement)
         {
             Contract.Requires(statement != null);
 

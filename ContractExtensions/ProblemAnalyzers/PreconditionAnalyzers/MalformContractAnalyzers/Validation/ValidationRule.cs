@@ -11,6 +11,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
     /// </summary>
     internal sealed class ValidationRule
     {
+        // This is some kind of discriminated union with only one possible rule
         private readonly Func<IList<ProcessedStatement>, ProcessedStatement, ValidationResult> _contractBlockValidationRule;
         private readonly Func<CodeContractStatement, ValidationResult> _contractValidationRule;
         private readonly Func<ICSharpStatement, ValidationResult> _statementValidationRule;
@@ -45,6 +46,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
 
         public ValidationResult Validate(ProcessedStatement currentStatement, IList<ProcessedStatement> contractBlock)
         {
+            // Current rule checks non-processed statement
             if (_statementValidationRule != null)
             {
                 if (currentStatement.ContractStatement != null)
@@ -52,31 +54,46 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
                 return _statementValidationRule(currentStatement.CSharpStatement);
             }
 
-            if (currentStatement.ContractStatement == null)
+            // Other rules are applicable only for contract statements.
+            // For now, there are now other rules for any other specific contract statemetns
+            // except CodeContractStatements
+
+            if (currentStatement.CodeContractStatement == null)
                 return ValidationResult.CreateNoError(currentStatement.CSharpStatement);
 
             if (_contractValidationRule != null)
             {
-
-                return _contractValidationRule(currentStatement.ContractStatement);
+                return _contractValidationRule(currentStatement.CodeContractStatement);
             }
 
             Contract.Assert(_contractBlockValidationRule != null);
             return _contractBlockValidationRule(contractBlock, currentStatement);
         }
 
+        /// <summary>
+        /// Factory method for validating non-processed contract statement.
+        /// </summary>
         public static ValidationRule CheckStatement(Func<ICSharpStatement, ValidationResult> validationFunc)
         {
+            Contract.Requires(validationFunc != null);
             return new ValidationRule(validationFunc);
         }
 
+        /// <summary>
+        /// Factory method for validating processed <see cref="CodeContractStatement"/> from the <see cref="ContractBlock"/>.
+        /// </summary>
         public static ValidationRule CheckContractStatement(Func<CodeContractStatement, ValidationResult> validationFunc)
         {
+            Contract.Requires(validationFunc != null);
             return new ValidationRule(validationFunc);
         }
 
+        /// <summary>
+        /// Factory method for validating full processed contract block.
+        /// </summary>
         public static ValidationRule CheckContractBlock(Func<IList<ProcessedStatement>, ProcessedStatement, ValidationResult> validationFunc)
         {
+            Contract.Requires(validationFunc != null);
             return new ValidationRule(validationFunc);
         }
     }

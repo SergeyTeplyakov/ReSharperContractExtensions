@@ -18,7 +18,10 @@ namespace ReSharper.ContractExtensions.Tests.ProblemAnalyzers.PreconditionAnalyz
         }
 
         [TestCase("NoWarning.cs")]
-        [TestCase("NoWarningForVoidMethodWithArgumentValidation.cs")]
+        public void Test_No_Warning(string testName)
+        {
+            DoTestSolution(testName);
+        }
 
         [TestCase("WarningForInstanceVoidMethod.cs")]
         [TestCase("WarningForInstanceVoidMethodBeforeEnsuresOnThrow.cs")]

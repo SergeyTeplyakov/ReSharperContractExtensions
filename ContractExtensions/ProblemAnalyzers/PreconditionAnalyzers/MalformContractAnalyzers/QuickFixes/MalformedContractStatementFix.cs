@@ -142,14 +142,14 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
             // Looking for the last precondition if we're moving precondition
             // or looking for the last postcondition or precondition for Ensures and EndContractBlock
             return statements
-                .Where(s => s.ContractStatement != null)
+                .Where(s => s.CodeContractStatement != null)
                 .Reverse()
                 .FirstOrDefault(
                     s =>
                     {
                         if (contractStatement.IsPrecondition)
-                            return s.ContractStatement.IsPostcondition;
-                        return s.ContractStatement.IsPostcondition || s.ContractStatement.IsPrecondition;
+                            return s.CodeContractStatement.IsPostcondition;
+                        return s.CodeContractStatement.IsPostcondition || s.CodeContractStatement.IsPrecondition;
                     })
                 .Return(x => x.CSharpStatement);
         }
@@ -182,7 +182,6 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
         private ICSharpStatement CreateAssertStatement(CodeContractStatement contractStatement)
         {
             var invocationExpression = contractStatement.InvocationExpression;
-            Contract.Assert(invocationExpression != null);
             Contract.Assert(invocationExpression.Arguments.Count != 0);
 
             var factory = CSharpElementFactory.GetInstance(contractStatement.Statement);

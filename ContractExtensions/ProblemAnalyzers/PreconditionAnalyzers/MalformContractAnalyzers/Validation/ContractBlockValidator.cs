@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using JetBrains.Annotations;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using ReSharper.ContractExtensions.ContractsEx.Statements;
@@ -32,8 +31,8 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
             yield return ValidationRule.CheckStatement(
                 s =>
                 {
-                    // Void-return method are forbidden in contract block
-                    if (!IsMarkedWithContractValidationAttributeMethod(s) && IsVoidReturnMethod(s))
+                    // void-return methods are prohibited by CC compiler
+                    if (IsVoidReturnMethod(s))
                         return ValidationResult.CreateError(s, MalformedContractError.VoidReturnMethodCall);
                     return ValidationResult.CreateNoError(s);
                 });
@@ -42,7 +41,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
                 s =>
                 {
                     // Non-void return methods lead to warning from the compiler
-                    if (!IsMarkedWithContractValidationAttributeMethod(s) && IsNonVoidReturnMethod(s))
+                    if (IsNonVoidReturnMethod(s))
                         return ValidationResult.CreateWarning(s, MalformedContractWarning.NonVoidReturnMethodCall);
                     return ValidationResult.CreateNoError(s);
                 });
@@ -70,7 +69,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
                 (contractBlock, currentStatement) =>
                 {
                     // Ensures/Ensures on throw should not be before requires
-                    if (currentStatement.ContractStatement.IsPostcondition && HasPreconditionAfterCurrentStatement(contractBlock, currentStatement))
+                    if (currentStatement.CodeContractStatement.IsPostcondition && HasPreconditionAfterCurrentStatement(contractBlock, currentStatement))
                         return ValidationResult.CreateError(currentStatement.CSharpStatement,
                             MalformedContractError.RequiresAfterEnsures);
                     return ValidationResult.CreateNoError(currentStatement.CSharpStatement);
@@ -80,7 +79,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
                 (contractBlock, currentStatement) =>
                 {
                     // Ensures/Ensures on throw should not be before requires
-                    if (currentStatement.ContractStatement.IsPrecondition && HasPostconditionsBeforeCurentStatement(contractBlock, currentStatement))
+                    if (currentStatement.CodeContractStatement.IsPrecondition && HasPostconditionsBeforeCurentStatement(contractBlock, currentStatement))
                         return ValidationResult.CreateError(currentStatement.CSharpStatement,
                             MalformedContractError.RequiresAfterEnsures);
                     return ValidationResult.CreateNoError(currentStatement.CSharpStatement);
@@ -90,8 +89,8 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
                 (contractBlock, currentStatement) =>
                 {
                     // Ensures/Ensures on throw should not be before requires
-                    if ((currentStatement.ContractStatement.IsPrecondition || 
-                         currentStatement.ContractStatement.IsPostcondition) &&
+                    if ((currentStatement.CodeContractStatement.IsPrecondition || 
+                         currentStatement.CodeContractStatement.IsPostcondition) &&
                         HasEndContractBlockBeforeCurrentStatement(contractBlock, currentStatement))
                         return ValidationResult.CreateError(currentStatement.CSharpStatement,
                             MalformedContractError.ReqruiesOrEnsuresAfterEndContractBlock);
@@ -102,7 +101,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
                 (contractBlock, currentStatement) =>
                 {
                     // EndContractBlock should be only one!
-                    if (currentStatement.ContractStatement.IsEndContractBlock &&  HasEndContractBlockBeforeCurrentStatement(contractBlock, currentStatement))
+                    if (currentStatement.CodeContractStatement.IsEndContractBlock && HasEndContractBlockBeforeCurrentStatement(contractBlock, currentStatement))
                         return ValidationResult.CreateError(currentStatement.CSharpStatement,
                             MalformedContractError.DuplicatedEndContractBlock);
                     return ValidationResult.CreateNoError(currentStatement.CSharpStatement);
@@ -116,7 +115,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
 
             return
                 contractBlock.Skip(index + 1)
-                    .Any(cs => cs.ContractStatement != null && cs.ContractStatement.IsPrecondition);
+                    .Any(cs => cs.CodeContractStatement != null && cs.CodeContractStatement.IsPrecondition);
         }
 
         private static bool HasPostconditionsBeforeCurentStatement(IList<ProcessedStatement> contractBlock, ProcessedStatement currentStatement)
@@ -126,7 +125,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
                 if (c.Equals(currentStatement))
                     return false;
 
-                if (c.ContractStatement != null && c.ContractStatement.IsPostcondition)
+                if (c.CodeContractStatement != null && c.CodeContractStatement.IsPostcondition)
                     return true;
             }
 
@@ -141,8 +140,8 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
                 if (c.Equals(currentStatement))
                     return false;
 
-                if (c.ContractStatement != null && 
-                    c.ContractStatement.StatementType == CodeContractStatementType.EndContractBlock)
+                if (c.CodeContractStatement != null && 
+                    c.CodeContractStatement.StatementType == CodeContractStatementType.EndContractBlock)
                     return true;
             }
 
@@ -171,38 +170,18 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
         }
 
 
-        private static bool IsMarkedWithContractValidationAttributeMethod(ICSharpStatement statement)
-        {
-            var validatorAttribute = new ClrTypeName("System.Diagnostics.Contracts.ContractArgumentValidatorAttribute");
-            return GetInvokedMethod(statement)
-                .ReturnStruct(x => x.HasAttributeInstance(validatorAttribute, false)) == true;
-        }
-
         private static bool IsVoidReturnMethod(ICSharpStatement statement)
         {
             return
-                GetInvokedMethod(statement)
+                statement.GetInvokedMethod()
                     .ReturnStruct(x => x.ReturnType.IsVoid()) == true;
         }
 
         private static bool IsNonVoidReturnMethod(ICSharpStatement statement)
         {
             return
-                GetInvokedMethod(statement)
+                statement.GetInvokedMethod()
                     .ReturnStruct(x => x.ReturnType.IsVoid()) == false;
-        }
-
-        [CanBeNull]
-        private static IMethod GetInvokedMethod(ICSharpStatement statement)
-        {
-            Contract.Requires(statement != null);
-
-            return statement
-                .With(x => x as IExpressionStatement)
-                .With(x => x.Expression as IInvocationExpression)
-                .With(x => x.InvocationExpressionReference)
-                .With(x => x.Resolve())
-                .With(x => x.DeclaredElement as IMethod);
         }
     }
 }

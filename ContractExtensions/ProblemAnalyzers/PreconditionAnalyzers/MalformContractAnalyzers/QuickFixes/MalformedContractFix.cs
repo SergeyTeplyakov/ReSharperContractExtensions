@@ -122,10 +122,10 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
 
         protected override Action<ITextControl> DoExecuteFix(IList<ValidationResult> statementsToFix)
         {
-            var contractStatements = _validatedContractBlock.ContractBlock.Where(ps => ps.ContractStatement != null).ToList();
+            var contractStatements = _validatedContractBlock.ContractBlock.Where(ps => ps.CodeContractStatement != null).ToList();
 
             var postconditions =
-                contractStatements.Where(x => x.ContractStatement.IsPostcondition)
+                contractStatements.Where(x => x.CodeContractStatement.IsPostcondition)
                     .Select(x => x.CSharpStatement)
                     .ToList();
 
@@ -136,7 +136,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
             }
 
             // And adding them back after last precondition
-            var lastPrecondition = contractStatements.Last(s => s.ContractStatement.IsPrecondition).CSharpStatement;
+            var lastPrecondition = contractStatements.Last(s => s.CodeContractStatement.IsPrecondition).CSharpStatement;
 
             var updatedCurrentStatement = lastPrecondition.AddStatementsAfter(
                 postconditions, _currentStatement.Statement);
@@ -181,19 +181,19 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
             // Contract block could have different statements, not only code contract statements, but
             // now we're interested only in code contract statements!
             var codeContractStatements =
-                _validatedContractBlock.ContractBlock.Where(p => p.ContractStatement != null).ToList();
+                _validatedContractBlock.ContractBlock.Where(p => p.CodeContractStatement != null).ToList();
 
             // Looking for the first EndContractBlock (theoretically there could be more then one!)
             var firstEndContractBlockIndex =
                 codeContractStatements.FirstIndexOf(
-                    ps => ps.ContractStatement.StatementType == CodeContractStatementType.EndContractBlock);
+                    ps => ps.CodeContractStatement.StatementType == CodeContractStatementType.EndContractBlock);
 
             Contract.Assert(firstEndContractBlockIndex != -1, "Contract block should have EndContractBlock statement!");
 
             var preconditionsOrPostconditions =
                 codeContractStatements
                 .Skip(firstEndContractBlockIndex)
-                .Where(ps => ps.ContractStatement.IsPrecondition || ps.ContractStatement.IsPostcondition)
+                .Where(ps => ps.CodeContractStatement.IsPrecondition || ps.CodeContractStatement.IsPostcondition)
                 .Select(s => s.CSharpStatement)
                 .ToList();
 
