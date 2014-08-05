@@ -35,5 +35,19 @@ namespace ReSharper.ContractExtensions.Utilities
 
             return -1;
         }
+        
+        public static int IndexOf<T>(this IList<T> list, Func<T, bool> predicate)
+        {
+            Contract.Requires(list != null);
+            Contract.Requires(predicate != null);
+
+            for (int n = 0; n < list.Count; n++)
+            {
+                if (predicate(list[n]))
+                    return n;
+            }
+
+            return -1;
+        }
     }
 }

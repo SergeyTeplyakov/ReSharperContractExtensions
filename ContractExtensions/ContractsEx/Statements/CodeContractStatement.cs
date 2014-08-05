@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
-using JetBrains.Annotations;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
+using JetBrains.ReSharper.Psi.Tree;
 using ReSharper.ContractExtensions.ContractsEx.Assertions;
 using ReSharper.ContractExtensions.Utilities;
 
@@ -32,6 +32,7 @@ namespace ReSharper.ContractExtensions.ContractsEx.Statements
         /// </summary>
         private readonly IInvocationExpression _invocationExpression;
         private readonly CodeContractStatementType _statementType;
+        private JetBrains.Util.Lazy.Lazy<CodeContractExpression> _codeContractExpression;
 
         private CodeContractStatement(ICSharpStatement statement, 
             IInvocationExpression invocationExpression,
@@ -42,6 +43,11 @@ namespace ReSharper.ContractExtensions.ContractsEx.Statements
 
             _invocationExpression = invocationExpression;
             _statementType = statementType;
+
+            // Due to weird bug in CC compiler, I can't use the same variable in Contract.Requires
+            // and in lambda expression.
+            _codeContractExpression = JetBrains.Util.Lazy.Lazy.Of(
+                () => ContractsEx.CodeContractExpression.FromInvocationExpression(_invocationExpression));
         }
 
         public CodeContractStatementType StatementType
@@ -55,6 +61,14 @@ namespace ReSharper.ContractExtensions.ContractsEx.Statements
             {
                 return StatementType == CodeContractStatementType.Ensures ||
                        StatementType == CodeContractStatementType.EnsuresOnThrow;
+            }
+        }
+
+        public JetBrains.Util.Lazy.Lazy<CodeContractExpression> CodeContractExpression
+        {
+            get
+            {
+                return _codeContractExpression;
             }
         }
 
@@ -76,6 +90,14 @@ namespace ReSharper.ContractExtensions.ContractsEx.Statements
         public ICSharpStatement Statement
         {
             get { return _statement; }
+        }
+
+
+
+        public ICSharpFunctionDeclaration GetDeclaredMethod()
+        {
+            Contract.Ensures(Contract.Result<ICSharpFunctionDeclaration>() != null);
+            return _statement.GetContainingNode<ICSharpFunctionDeclaration>();
         }
 
         public IInvocationExpression InvocationExpression

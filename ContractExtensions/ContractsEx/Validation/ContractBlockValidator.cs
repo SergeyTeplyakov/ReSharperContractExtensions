@@ -9,12 +9,14 @@ using ReSharper.ContractExtensions.Utilities;
 
 namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.MalformContractAnalyzers
 {
+    ///*private static bool MethodResultIsIncompatibleWith(*/)
+
     /// <summary>
     /// Class that validates <see cref="ProcessedStatement"/> into the <see cref="ValidatedContractBlock"/>.
     /// </summary>
     internal static class ContractBlockValidator
     {
-        private static readonly List<ValidationRule> _validationRules = GetValidationRules().ToList();
+        private static readonly List<ValidationRule> _validationRules = GetAllValidationRules().ToList();
 
         public static ValidatedContractBlock ValidateContractBlock(IList<ProcessedStatement> contractBlock)
         {
@@ -24,6 +26,12 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
                 select new ValidatedStatement(st, vs.ToList());
             
             return new ValidatedContractBlock(validatedContractBlock.ToList());
+        }
+
+        private static IEnumerable<ValidationRule> GetAllValidationRules()
+        {
+            return GetValidationRules()
+                .Union(PostconditionValidator.GetValidationRules());
         }
 
         private static IEnumerable<ValidationRule> GetValidationRules()
@@ -55,7 +63,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
                     return ValidationResult.CreateNoError(s);
                 });
 
-            yield return ValidationRule.CheckContractStatement(
+            yield return ValidationRule.CheckCodeContractStatement(
                 s =>
                 {
                     // Assert/Assume are forbidden in contract block
@@ -66,51 +74,51 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
                 });
 
             yield return ValidationRule.CheckContractBlock(
-                (contractBlock, currentStatement) =>
+                (currentStatement, contractBlock) =>
                 {
                     // Ensures/Ensures on throw should not be before requires
-                    if (currentStatement.CodeContractStatement.IsPostcondition && HasPreconditionAfterCurrentStatement(contractBlock, currentStatement))
-                        return ValidationResult.CreateError(currentStatement.CSharpStatement,
+                    if (currentStatement.IsPostcondition && HasPreconditionAfterCurrentStatement(contractBlock, currentStatement))
+                        return ValidationResult.CreateError(currentStatement.Statement,
                             MalformedContractError.RequiresAfterEnsures);
-                    return ValidationResult.CreateNoError(currentStatement.CSharpStatement);
+                    return ValidationResult.CreateNoError(currentStatement.Statement);
                 });
 
             yield return ValidationRule.CheckContractBlock(
-                (contractBlock, currentStatement) =>
+                (currentStatement, contractBlock) =>
                 {
                     // Ensures/Ensures on throw should not be before requires
-                    if (currentStatement.CodeContractStatement.IsPrecondition && HasPostconditionsBeforeCurentStatement(contractBlock, currentStatement))
-                        return ValidationResult.CreateError(currentStatement.CSharpStatement,
+                    if (currentStatement.IsPrecondition && HasPostconditionsBeforeCurentStatement(contractBlock, currentStatement))
+                        return ValidationResult.CreateError(currentStatement.Statement,
                             MalformedContractError.RequiresAfterEnsures);
-                    return ValidationResult.CreateNoError(currentStatement.CSharpStatement);
+                    return ValidationResult.CreateNoError(currentStatement.Statement);
                 });
 
             yield return ValidationRule.CheckContractBlock(
-                (contractBlock, currentStatement) =>
+                (currentStatement, contractBlock) =>
                 {
                     // Ensures/Ensures on throw should not be before requires
-                    if ((currentStatement.CodeContractStatement.IsPrecondition || 
-                         currentStatement.CodeContractStatement.IsPostcondition) &&
+                    if ((currentStatement.IsPrecondition || 
+                         currentStatement.IsPostcondition) &&
                         HasEndContractBlockBeforeCurrentStatement(contractBlock, currentStatement))
-                        return ValidationResult.CreateError(currentStatement.CSharpStatement,
+                        return ValidationResult.CreateError(currentStatement.Statement,
                             MalformedContractError.ReqruiesOrEnsuresAfterEndContractBlock);
-                    return ValidationResult.CreateNoError(currentStatement.CSharpStatement);
+                    return ValidationResult.CreateNoError(currentStatement.Statement);
                 });
 
             yield return ValidationRule.CheckContractBlock(
-                (contractBlock, currentStatement) =>
+                (currentStatement, contractBlock) =>
                 {
                     // EndContractBlock should be only one!
-                    if (currentStatement.CodeContractStatement.IsEndContractBlock && HasEndContractBlockBeforeCurrentStatement(contractBlock, currentStatement))
-                        return ValidationResult.CreateError(currentStatement.CSharpStatement,
+                    if (currentStatement.IsEndContractBlock && HasEndContractBlockBeforeCurrentStatement(contractBlock, currentStatement))
+                        return ValidationResult.CreateError(currentStatement.Statement,
                             MalformedContractError.DuplicatedEndContractBlock);
-                    return ValidationResult.CreateNoError(currentStatement.CSharpStatement);
+                    return ValidationResult.CreateNoError(currentStatement.Statement);
                 });
         }
 
-        private static bool HasPreconditionAfterCurrentStatement(IList<ProcessedStatement> contractBlock, ProcessedStatement currentStatement)
+        private static bool HasPreconditionAfterCurrentStatement(IList<ProcessedStatement> contractBlock, CodeContractStatement currentStatement)
         {
-            var index = contractBlock.IndexOf(currentStatement);
+            var index = contractBlock.IndexOf(ps => ps.ContractStatement == currentStatement);
             Contract.Assert(index != -1, "Current statement should be inside contract block");
 
             return
@@ -118,11 +126,11 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
                     .Any(cs => cs.CodeContractStatement != null && cs.CodeContractStatement.IsPrecondition);
         }
 
-        private static bool HasPostconditionsBeforeCurentStatement(IList<ProcessedStatement> contractBlock, ProcessedStatement currentStatement)
+        private static bool HasPostconditionsBeforeCurentStatement(IList<ProcessedStatement> contractBlock, ContractStatement currentStatement)
         {
             foreach (var c in contractBlock)
             {
-                if (c.Equals(currentStatement))
+                if (c.ContractStatement != null && c.ContractStatement.Equals(currentStatement))
                     return false;
 
                 if (c.CodeContractStatement != null && c.CodeContractStatement.IsPostcondition)
@@ -133,11 +141,11 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
             throw new InvalidOperationException("Current statement not found in the contract block");
         }
 
-        private static bool HasEndContractBlockBeforeCurrentStatement(IList<ProcessedStatement> contractBlock, ProcessedStatement currentStatement)
+        private static bool HasEndContractBlockBeforeCurrentStatement(IList<ProcessedStatement> contractBlock, ContractStatement currentStatement)
         {
             foreach (var c in contractBlock)
             {
-                if (c.Equals(currentStatement))
+                if (c.ContractStatement != null && c.ContractStatement.Equals(currentStatement))
                     return false;
 
                 if (c.CodeContractStatement != null && 

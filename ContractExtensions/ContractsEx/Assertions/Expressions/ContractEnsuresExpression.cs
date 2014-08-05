@@ -14,61 +14,55 @@ namespace ReSharper.ContractExtensions.ContractsEx
     /// </summary>
     public sealed class ContractEnsuresExpression : CodeContractExpression
     {
+        // TODO: change to sequence of result types!!
+        private readonly ContractResultPredicateArgument _contractResultArgument;
+
         internal ContractEnsuresExpression(IExpression originalPredicateExpression,
             List<PredicateCheck> predicates, Message message) 
             : base(originalPredicateExpression, predicates, message)
         {
-            ResultType =
+            _contractResultArgument =
                 predicates.Select(p => p.Argument)
                     .OfType<ContractResultPredicateArgument>()
-                    .FirstOrDefault()
-                    .Return(x => x.ResultTypeName);
+                    .FirstOrDefault();
         }
 
         public override AssertionType AssertionType { get { return AssertionType.Ensures; } }
 
-        //[CanBeNull]
-        //public static ContractEnsuresExpression FromInvocationExpression(IInvocationExpression invocationExpression)
-        //{
-        //    Contract.Requires(invocationExpression != null);
-
-        //    AssertionType? assertionType = GetContractAssertionType(invocationExpression);
-        //    if (assertionType == null || assertionType != AssertionType.Ensures)
-        //        return null;
-
-        //    Contract.Assert(invocationExpression.Arguments.Count != 0,
-        //        "Requires expression should have at least one argument!");
-
-        //    IExpression originalExpression = invocationExpression.Arguments[0].Expression;
-        //    var predicates = PredicateCheckFactory.Create(originalExpression).ToList();
-
-        //    if (predicates.Count == 0)
-        //        return null;
-
-        //    return new ContractEnsuresExpression(predicates, ExtractMessage(invocationExpression));
-        //}
+        public IList<IDeclaredType> ContractResultTypes
+        {
+            get 
+            { 
+                return 
+                    Predicates
+                    .Select(p => p.Argument)
+                    .OfType<ContractResultPredicateArgument>()
+                    .Select(pa => pa.ResultType)
+                    .ToList(); 
+            }
+        }
 
         [CanBeNull]
-        public IClrTypeName ResultType { get; private set; }
+        public IDeclaredType DeclaredResultType
+        {
+            get { return _contractResultArgument.Return(x => x.ResultType); }
+        }
 
-        //[CanBeNull]
-        //private static IDeclaredType ExtractContractResultType(IInvocationExpression contractResultExpression)
-        //{
-        //    if (contractResultExpression == null)
-        //        return null;
+        public void SetContractResultType(IType contractResultType)
+        {
+            Contract.Requires(contractResultType != null);
+            Contract.Requires(DeclaredResultType != null, "Nothing to change!");
 
-        //    var callSiteType = contractResultExpression.GetCallSiteType();
-        //    var method = contractResultExpression.GetCalledMethod();
+            foreach (var contractResult in Predicates.Select(p => p.Argument).OfType<ContractResultPredicateArgument>())
+            {
+                contractResult.SetResultType(contractResultType);
+            }
+        }
 
-        //    if (callSiteType.With(x => x.FullName) != typeof(Contract).FullName ||
-        //        method != "Result")
-        //        return null;
-
-        //    return contractResultExpression
-        //        .With(x => x.InvokedExpression)
-        //        .With(x => x as IReferenceExpression)
-        //        .With(x => x.TypeArguments.FirstOrDefault())
-        //        .Return(x => x as IDeclaredType);
-        //}
+        [CanBeNull]
+        public IClrTypeName ResultType
+        {
+            get { return DeclaredResultType.Return(x => x.GetClrName()); }
+        }
     }
 }

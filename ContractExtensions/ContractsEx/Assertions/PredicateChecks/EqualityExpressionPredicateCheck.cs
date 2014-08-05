@@ -41,6 +41,7 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
 
             var left = ExtractArgument(expression.LeftOperand);
 
+            // TODO: right hand side could be any arbitrary expression, not only literals
             var right = expression.RightOperand as ICSharpLiteralExpression;
 
             if (left == null || right == null)

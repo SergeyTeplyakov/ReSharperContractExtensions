@@ -1,0 +1,33 @@
+using System.Diagnostics.Contracts;
+
+class Guard
+{
+  [ContractArgumentValidator]
+  public void Validate() {}
+}
+
+class A
+{
+  public void NoWarningForRequires(string s)
+  {
+    Contract.Requires(s != null);
+  }
+
+  public void NoWarningForArgumentValidator(string s)
+  {
+    Guard.Validate();
+    Contract.Requires(s != null);
+  }
+
+  [ContractAbbreviator]
+  protected void ContractCheck(string s)
+  {
+    Contract.Requires(s != null);
+  }
+
+  public void NoWarningForContractAbbreviator(string s)
+  {
+    ContractCheck(s);
+    Contract.Requires(false);
+  }
+}

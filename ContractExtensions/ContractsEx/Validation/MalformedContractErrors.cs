@@ -13,6 +13,10 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
         DuplicatedEndContractBlock,
         MethodContractInTryBlock,
         ContractStatementInTheMiddleOfTheMethod,
+
+        // Postcondition errors
+        ResultTypeInEnsuresIsIncompatibleWithMethodReturnType,
+        EnsuresInVoidReturnMethod,
     }
 
     public enum MalformedContractWarning
@@ -64,7 +68,6 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
                     // error CC1017: Malformed contract section in method 'MalformedContractErrors.ContractInTheMiddleOfTheMethod(System.String)'
                     return string.Format("Contract statements in the middle of the method '{0}'",
                         contractMethodName);
-
                 default:
                     Contract.Assert(false, "Unknown malformed contract error: " + error);
                     throw new InvalidOperationException("Unknown malformed contract error: " + error);

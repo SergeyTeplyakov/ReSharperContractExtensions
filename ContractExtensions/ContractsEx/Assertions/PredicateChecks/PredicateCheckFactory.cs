@@ -67,6 +67,7 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
             Contract.Requires(expression != null);
 
             var matcher = new ExpressionMatcher(expression);
+
             return matcher.Match(
                 equality => (PredicateCheck) EqualityExpressionPredicateCheck.TryCreate(equality),
                 unaryOperator => MethodCallPredicateCheck.TryCreate(unaryOperator),

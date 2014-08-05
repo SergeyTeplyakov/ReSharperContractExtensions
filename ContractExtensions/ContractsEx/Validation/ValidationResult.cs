@@ -1,10 +1,15 @@
 using System;
 using System.Diagnostics.Contracts;
+using JetBrains.Annotations;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
+using ReSharper.ContractExtensions.ContractsEx.Statements;
 
 namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.MalformContractAnalyzers
 {
-    internal enum ErrorType
+    /// <summary>
+    /// List of validation error types (simplifies "pattern-matching".
+    /// </summary>
+    public enum ErrorType
     {
         CodeContractError,
         CodeContractWarning,
@@ -21,20 +26,15 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
     /// But for now I don't want more complicated implementations!
     /// </remarks>
     [ContractClass(typeof (ValidationResultContract))]
-    internal abstract class ValidationResult
+    public abstract class ValidationResult
     {
         private readonly ICSharpStatement _statement;
+        private ProcessedStatement _processedStatement;
+
         protected ValidationResult(ICSharpStatement statement)
         {
             Contract.Requires(statement != null);
-
             _statement = statement;
-        }
-
-        [ContractInvariantMethod]
-        private void ObjectInvariant()
-        {
-            Contract.Invariant(Statement != null);
         }
 
         public T Match<T>(
@@ -71,7 +71,32 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
 
         protected abstract string DoGetErrorText(string methodName);
 
-        public ICSharpStatement Statement { get { return _statement; } }
+        public ICSharpStatement Statement
+        {
+            get
+            {
+                Contract.Ensures(Contract.Result<ICSharpStatement>() != null);
+                return _statement;
+            }
+        }
+
+        public ProcessedStatement ProcessedStatement
+        {
+            get
+            {
+                Contract.Ensures(Contract.Result<ProcessedStatement>() != null);
+                return _processedStatement;
+            }
+        }
+
+        internal void SetProcessedStatement(ProcessedStatement processedStatement)
+        {
+            Contract.Requires(processedStatement != null);
+            Contract.Requires(processedStatement.CSharpStatement == Statement,
+                "Processed statement should have the same CSharpStatement that you passed to the constructor!");
+
+            _processedStatement = processedStatement;
+        }
 
         private string GetEnclosingMethodName()
         {
@@ -83,9 +108,9 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
             return new NoErrorValidationResult(statement);
         }
 
-        public static ValidationResult CreateError(ICSharpStatement statement, MalformedContractError error)
+        public static ValidationResult CreateError(ICSharpStatement statement, MalformedContractError error, string message = null)
         {
-            return new CodeContractErrorValidationResult(statement, error);
+            return new CodeContractErrorValidationResult(statement, error, message);
         }
 
         public static ValidationResult CreateWarning(ICSharpStatement statement, MalformedContractWarning warning)
@@ -94,7 +119,10 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
         }
     }
 
-    internal sealed class NoErrorValidationResult : ValidationResult
+    /// <summary>
+    /// Represents successful validation.
+    /// </summary>
+    public sealed class NoErrorValidationResult : ValidationResult
     {
         public NoErrorValidationResult(ICSharpStatement statement) : base(statement)
         { }
@@ -107,10 +135,17 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
         }
     }
 
-    internal sealed class CodeContractErrorValidationResult : ValidationResult
+    /// <summary>
+    /// Error based on Code Contract compiler rules.
+    /// </summary>
+    public sealed class CodeContractErrorValidationResult : ValidationResult
     {
-        public CodeContractErrorValidationResult(ICSharpStatement statement, MalformedContractError error) : base(statement)
+        private readonly string _message;
+
+        public CodeContractErrorValidationResult(ICSharpStatement statement, MalformedContractError error, string message) 
+            : base(statement)
         {
+            _message = message;
             Error = error;
         }
 
@@ -120,11 +155,14 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
 
         protected override string DoGetErrorText(string methodName)
         {
-            return Error.GetErrorText(methodName);
+            return _message ?? Error.GetErrorText(methodName);
         }
     }
 
-    internal sealed class CodeContractWarningValidationResult : ValidationResult
+    /// <summary>
+    /// Warning based on Code Contract compiler rules.
+    /// </summary>
+    public sealed class CodeContractWarningValidationResult : ValidationResult
     {
         public CodeContractWarningValidationResult(ICSharpStatement statement, MalformedContractWarning warning)
             : base(statement)

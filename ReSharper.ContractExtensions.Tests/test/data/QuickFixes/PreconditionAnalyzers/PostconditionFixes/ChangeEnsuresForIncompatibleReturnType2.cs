@@ -1,0 +1,12 @@
+using System;
+using System.Diagnostics.Contracts;
+
+class A
+{
+  public StringBuilder PostconditionWithDerivedType()
+  {
+     // error CC1002: In method CodeContractInvestigations.Postconditions.PostconditionWithDerivedType: Detected a call to Result with 'System.String', should be 'System.Object'.
+     {caret}Contract.Ensures(Contract.Result<string>() != null);
+     throw new NotImplementedException();
+  }
+}

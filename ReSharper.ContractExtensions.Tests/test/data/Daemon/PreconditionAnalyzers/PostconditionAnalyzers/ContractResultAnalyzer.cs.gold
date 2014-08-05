@@ -1,0 +1,79 @@
+using System.Diagnostics.Contracts;
+
+class A
+{
+  public void PostconditionInVoidMethod()
+  {
+     // error CC1002: In method CodeContractInvestigations.Postconditions.PostconditionInVoidMethod: Detected a call to Result with 'System.String', should be 'System.Void'.
+     |Contract.Ensures(Contract.Result<string>() != null);|(0)
+  }
+
+  public object PostconditionWithDerivedType()
+  {
+     // error CC1002: In method CodeContractInvestigations.Postconditions.PostconditionWithDerivedType: Detected a call to Result with 'System.String', should be 'System.Object'.
+     |Contract.Ensures(Contract.Result<string>() != null);|(1)
+     throw new NotImplementedException();
+  }
+
+  public object PostconditionWithTwoDerivedTypes()
+  {
+     // error CC1002: In method CodeContractInvestigations.Postconditions.PostconditionWithDerivedType: Detected a call to Result with 'System.String', should be 'System.Object'.
+     |Contract.Ensures(Contract.Result<string>() != null && Contract.Result<string>().Length != 0);|(2)
+     throw new NotImplementedException();
+  }
+
+  public object PostconditionWithOneWrongType()
+  {
+     // error CC1002: In method CodeContractInvestigations.Postconditions.PostconditionWithDerivedType: Detected a call to Result with 'System.String', should be 'System.Object'.
+     |Contract.Ensures(Contract.Result<object>() != null && Contract.Result<string>().Length != 0);|(3)
+     throw new NotImplementedException();
+  }
+
+  public object PostconditionWithTwoDifferentTypes()
+  {
+     // error CC1002: In method CodeContractInvestigations.Postconditions.PostconditionWithDerivedType: Detected a call to Result with 'System.String', should be 'System.Object'.
+     |Contract.Ensures(Contract.Result<string>() != null && Contract.Result<System.DateTime>() != null);|(4)
+     throw new NotImplementedException();
+  }
+
+
+  public int PostconditionWithUnrelatedType1()
+  {
+     // error CC1002: In method CodeContractInvestigations.Postconditions.PostconditionWithDerivedType: Detected a call to Result with 'System.String', should be 'System.Object'.
+     |Contract.Ensures(Contract.Result<string>() != null);|(5)
+     throw new NotImplementedException();
+  }
+
+  public System.StringBuilder PostconditionWithUnrelatedType2()
+  {
+     // error CC1002: In method CodeContractInvestigations.Postconditions.PostconditionWithDerivedType: Detected a call to Result with 'System.String', should be 'System.Object'.
+     |Contract.Ensures(Contract.Result<string>() != null);|(6)
+     throw new NotImplementedException();
+  }
+
+  public object PostconditionWithProperty
+  {
+     get
+     {
+       // error CC1002: In method CodeContractInvestigations.Postconditions.PostconditionWithDerivedType: Detected a call to Result with 'System.String', should be 'System.Object'.
+       |Contract.Ensures(Contract.Result<string>() != null);|(7)
+       throw new NotImplementedException();
+     }
+  }
+
+  public string PostconditionWithBaseType()
+  {
+    // OK
+    Contract.Ensures(Contract.Result<object>() != null);
+    throw new NotImplementedException();
+  }
+}
+---------------------------------------------------------
+(0): ReSharper Underlined Error Highlighting: Detected a call to Contract.Result<String>() in method 'PostconditionInVoidMethod' with return type 'void'
+(1): ReSharper Underlined Error Highlighting: Detected a call to Contract.Result<String>() in method 'PostconditionWithDerivedType' with return type 'object'
+(2): ReSharper Underlined Error Highlighting: Detected a call to Contract.Result<String>() in method 'PostconditionWithTwoDerivedTypes' with return type 'object'
+(3): ReSharper Underlined Error Highlighting: Detected a call to Contract.Result<Object>() in method 'PostconditionWithOneWrongType' with return type 'object'
+(4): ReSharper Underlined Error Highlighting: Detected a call to Contract.Result<String>() in method 'PostconditionWithTwoDifferentTypes' with return type 'object'
+(5): ReSharper Underlined Error Highlighting: Detected a call to Contract.Result<String>() in method 'PostconditionWithUnrelatedType1' with return type 'int'
+(6): ReSharper Underlined Error Highlighting: Detected a call to Contract.Result<String>() in method 'PostconditionWithUnrelatedType2' with return type 'StringBuilder'
+(7): ReSharper Underlined Error Highlighting: Detected a call to Contract.Result<String>() in property 'PostconditionWithProperty' with return type 'object'

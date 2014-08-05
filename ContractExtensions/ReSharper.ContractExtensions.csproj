@@ -58,6 +58,7 @@
     <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
     <CodeContractsReferenceAssembly>%28none%29</CodeContractsReferenceAssembly>
     <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -66,12 +67,15 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -160,22 +164,23 @@
     <Compile Include="ContractsEx\Statements\ContractStatement.cs" />
     <Compile Include="ContractsEx\Statements\ContractStatementFactory.cs" />
     <Compile Include="ContractsEx\Statements\ProcessedStatement.cs" />
+    <Compile Include="ContractsEx\Validation\PostconditionValidator.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\CaretUtils.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\MalformedContractStatementChecker.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\MalformedContractStatementErrorHighlighting.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\QuickFixes\MalformedContractStatementFix.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\QuickFixes\MalformedContractStatementQuickFix.cs" />
-    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\Validation\ContractBlockValidator.cs" />
-    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\Validation\ContractStatementValidator.cs" />
-    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\Validation\MalformedContractErrors.cs" />
+    <Compile Include="ContractsEx\Validation\ContractBlockValidator.cs" />
+    <Compile Include="ContractsEx\Validation\ContractStatementValidator.cs" />
+    <Compile Include="ContractsEx\Validation\MalformedContractErrors.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\MalformedMethodContractWarningHighlighting.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\QuickFixes\MalformedContractFix.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\QuickFixes\MalformedMethodContractQuickFix.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\StatementUtils.cs" />
-    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\Validation\SingleStatementValidationRule.cs" />
-    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\Validation\ValidatedContractBlock.cs" />
-    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\Validation\ValidationResult.cs" />
-    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\Validation\ValidationRule.cs" />
+    <Compile Include="ContractsEx\Validation\SingleStatementValidationRule.cs" />
+    <Compile Include="ContractsEx\Validation\ValidatedContractBlock.cs" />
+    <Compile Include="ContractsEx\Validation\ValidationResult.cs" />
+    <Compile Include="ContractsEx\Validation\ValidationRule.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\PreconditionIncosistentVisibility\AccessVisibilityChecker.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\ContractPublicPropertyNameCheckers\ContractPublicPropertyNameChecker.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\ContractPublicPropertyNameCheckers\ContractPublicPropertyNameHighlighing.cs" />

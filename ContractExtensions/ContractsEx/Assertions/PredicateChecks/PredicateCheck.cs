@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics.Contracts;
 using System.Linq;
-using System.Windows.Markup;
 using JetBrains.Annotations;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
@@ -74,36 +73,44 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
             if (expression == null)
                 return null;
 
-            var ensuresReulstType = ExtractContractEnsuresResultType(expression as IInvocationExpression);
+            var contractResultArgument = TryCreateContractResultArgument(expression);
+            if (contractResultArgument != null)
+                return contractResultArgument;
 
-            if (ensuresReulstType != null)
-                return new ContractResultPredicateArgument(ensuresReulstType);
+            return TryCreateReferenceArgument(expression);
+        }
 
-            var referenceExpression =
-                expression as IReferenceExpression;
+        private static ContractResultPredicateArgument TryCreateContractResultArgument(
+            ICSharpExpression expression)
+        {
+            // Specified expression could have Contract.Result as an inner expression, 
+            // like Contract.Result<string>().Length
+            // Let's try to find it out there.
+            var contractResultReference =
+                expression.ProcessRecursively<IInvocationExpression>()
+                    .Select(ExtractContractResultReference)
+                    .FirstOrDefault();
 
-            if (referenceExpression == null)
+            if (contractResultReference == null)
                 return null;
 
-            // The problem is, that for "person.Name != null" and
-            // for "person != null" I should get "person"
-            //IReferenceExpression qualifierReference = null;
-            //    //referenceExpression.QualifierExpression
-            //    //.With(x => x as IReferenceExpression);
+            return contractResultReference
+                .With(x => x.TypeArguments.FirstOrDefault())
+                .With(x => x as IDeclaredType)
+                .Return(x => new ContractResultPredicateArgument(x, contractResultReference));
+        }
 
-            //string predicateArgument = (qualifierReference ?? referenceExpression).NameIdentifier.Name;
-
-            //if (predicateArgument == null)
-            //    return null;
-
-            return new ReferenceArgument(referenceExpression);
+        private static ReferenceArgument TryCreateReferenceArgument(ICSharpExpression expression)
+        {
+            return expression
+                .With(x => x as IReferenceExpression)
+                .Return(x => new ReferenceArgument(x));
         }
 
         [CanBeNull]
-        private static IClrTypeName ExtractContractEnsuresResultType(IInvocationExpression contractResultExpression)
+        private static IReferenceExpression ExtractContractResultReference(IInvocationExpression contractResultExpression)
         {
-            if (contractResultExpression == null)
-                return null;
+            Contract.Requires(contractResultExpression != null);
 
             var callSiteType = contractResultExpression.GetCallSiteType();
             var method = contractResultExpression.GetCalledMethod();
@@ -114,10 +121,7 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
 
             return contractResultExpression
                 .With(x => x.InvokedExpression)
-                .With(x => x as IReferenceExpression)
-                .With(x => x.TypeArguments.FirstOrDefault())
-                .With(x => x as IDeclaredType)
-                .Return(x => x.GetClrName());
+                .Return(x => x as IReferenceExpression);
         }
     }
 }

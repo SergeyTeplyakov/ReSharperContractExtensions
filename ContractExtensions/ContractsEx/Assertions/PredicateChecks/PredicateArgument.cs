@@ -12,6 +12,9 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
     public abstract class PredicateArgument 
     {}
 
+    /// <summary>
+    /// Represents an absence of the argument (this is some kind of Null Object Pattern).
+    /// </summary>
     public sealed class EmptyPredicateArgument : PredicateArgument
     { }
 
@@ -26,9 +29,9 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
 
         public ReferenceArgument(IReferenceExpression referenceExpression)
         {
-            _referenceExpression = referenceExpression;
             Contract.Requires(referenceExpression != null);
             Contract.Requires(referenceExpression.NameIdentifier != null);
+            _referenceExpression = referenceExpression;
 
             _argumentName = referenceExpression.NameIdentifier.Name;
 
@@ -61,19 +64,39 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
         }
     }
 
+    /// <summary>
+    /// Represents Contract.Result&lt;T&gt; predicate argument.
+    /// </summary>
     public sealed class ContractResultPredicateArgument : PredicateArgument
     {
-        private readonly IClrTypeName _resultTypeName;
+        private readonly IDeclaredType _resultTypeName;
+        private readonly IReferenceExpression _contractResultReference;
 
-        public ContractResultPredicateArgument(IClrTypeName resultTypeName)
+        public ContractResultPredicateArgument(IDeclaredType resultTypeName, 
+            IReferenceExpression contractResultReference)
         {
             Contract.Requires(resultTypeName != null);
+            Contract.Requires(contractResultReference != null);
+
             _resultTypeName = resultTypeName;
+            _contractResultReference = contractResultReference;
+        }
+
+        public IDeclaredType ResultType
+        {
+            get { return _resultTypeName; }
+        }
+
+        public void SetResultType(IType contractResultType)
+        {
+            Contract.Requires(contractResultType != null);
+
+            _contractResultReference.SetTypeArguments(new[] {contractResultType});
         }
 
         public IClrTypeName ResultTypeName
         {
-            get { return _resultTypeName; }
+            get { return _resultTypeName.GetClrName(); }
         }
     }
 

@@ -2,9 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Windows.Forms;
+using JetBrains.ReSharper.Psi;
+using JetBrains.ReSharper.Psi.CSharp;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.TextControl;
 using JetBrains.Util;
+using ReSharper.ContractExtensions.ContractsEx;
 using ReSharper.ContractExtensions.ContractsEx.Statements;
 using ReSharper.ContractExtensions.Utilities;
 
@@ -38,8 +42,8 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
             if (RemoveRedundantStatementFix.IsFixableCore(currentStatement))
                 return new RemoveRedundantStatementFix(currentStatement, validatedContractBlock);
 
-            //if (MoveContractOutOfTheTryBlock.IsFixableCore(currentStatement))
-            //    return new MoveContractOutOfTheTryBlock(currentStatement, validatedContractBlock);
+            if (FixContractResultTypeInContractEnsure.IsFixableCore(currentStatement))
+                return new FixContractResultTypeInContractEnsure(currentStatement, validatedContractBlock);
 
             return null;
         }
@@ -235,7 +239,8 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
         {
             return validationResult.Match(
                 _ => false,
-                error => error.Error == MalformedContractError.DuplicatedEndContractBlock,
+                error => error.Error == MalformedContractError.DuplicatedEndContractBlock ||
+                         error.Error == MalformedContractError.EnsuresInVoidReturnMethod,
                 _ => false);
         }
 
@@ -247,12 +252,85 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
 
         public override string FixName
         {
-            get { return "Remove redundant EndContractBlock"; }
+            get
+            {
+                return
+                    _currentStatement.Match(
+                        _ => string.Empty,
+                        error => GetFixName(error.Error),
+                        warning => string.Empty);
+            }
         }
 
         protected override bool IsFixable(ValidationResult validationResult)
         {
             return IsFixableCore(validationResult);
+        }
+
+        private static string GetFixName(MalformedContractError error)
+        {
+            if (error == MalformedContractError.DuplicatedEndContractBlock)
+                return "Remove redundant EndContractBlock";
+
+            if (error == MalformedContractError.ContractStatementInTheMiddleOfTheMethod)
+                return "Remove redundant Contract.Ensures";
+
+            return "Remove redundant contact statement";
+        }
+    }
+
+    internal sealed class FixContractResultTypeInContractEnsure : MalformedContractFix
+    {
+        private readonly ICSharpFunctionDeclaration _declaredMethod;
+        private readonly IType _targetType;
+        private readonly string _fixName;
+        public FixContractResultTypeInContractEnsure(ValidationResult currentStatement,
+            ValidatedContractBlock validatedContractBlock)
+            : base(currentStatement, validatedContractBlock)
+        {
+            Contract.Assert(currentStatement.ProcessedStatement.CodeContractStatement != null);
+            
+            var declaredMethod = currentStatement.ProcessedStatement.CodeContractStatement.GetDeclaredMethod();
+            _targetType = declaredMethod
+                .With(x => x.DeclaredElement)
+                .Return(x => x.ReturnType);
+
+            _fixName = string.Format("Change to 'Contract.Result<{0}>()",
+                _targetType.GetPresentableName(CSharpLanguage.Instance));
+        }
+
+        public static bool IsFixableCore(ValidationResult validationResult)
+        {
+            return validationResult.Match(
+                _ => false,
+                error => error.Error == MalformedContractError.ResultTypeInEnsuresIsIncompatibleWithMethodReturnType,
+                _ => false);
+        }
+
+        protected override Action<ITextControl> DoExecuteFix(IList<ValidationResult> toFix)
+        {
+            Contract.Assert(_currentStatement.ProcessedStatement.CodeContractStatement != null);
+
+            var ensures =
+                _currentStatement.ProcessedStatement.CodeContractStatement.CodeContractExpression.Value as ContractEnsuresExpression;
+            
+            Contract.Assert(ensures != null);
+            ensures.SetContractResultType(_targetType);
+            
+            return null;
+        }
+
+        public override string FixName
+        {
+            get { return _fixName; }
+        }
+
+        protected override bool IsFixable(ValidationResult validationResult)
+        {
+            return validationResult
+                .Match(_ => false,
+                    error => error.Error == MalformedContractError.ResultTypeInEnsuresIsIncompatibleWithMethodReturnType,
+                    warning => false);
         }
     }
 
