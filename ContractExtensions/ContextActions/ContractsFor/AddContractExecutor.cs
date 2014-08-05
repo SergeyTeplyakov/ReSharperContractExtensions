@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using JetBrains.Application.Progress;
-using JetBrains.ProjectModel;
 using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
 using JetBrains.ReSharper.Feature.Services.CSharp.Generate;
 using JetBrains.ReSharper.Feature.Services.Generate;
@@ -63,6 +60,7 @@ namespace ReSharper.ContractExtensions.ContextActions.ContractsFor
             }
 
             ImplementInterfaceOrBaseClass(contractClass);
+            AddNonDefaultConstructorIfNeeded(contractClass);
         }
 
         private IClassDeclaration TryGetExistedContractClass()
@@ -75,6 +73,7 @@ namespace ReSharper.ContractExtensions.ContextActions.ContractsFor
             string contractClassName = GenerateUniqueContractClassName();
 
             IClassDeclaration newContractClass = GenerateContractClassDeclaration(contractClassName);
+
             return newContractClass;
         }
 
@@ -190,6 +189,36 @@ namespace ReSharper.ContractExtensions.ContextActions.ContractsFor
             {
                 ImplementContractForInterface(contractClass, _addContractForAvailability.InterfaceDeclaration);
             }
+        }
+
+        private void AddNonDefaultConstructorIfNeeded(IClassDeclaration contractClass)
+        {
+            if (!_addContractForAvailability.IsAbstractClass)
+                return;
+
+            var abstractBaseClass = _addContractForAvailability.ClassDeclaration;
+
+            using (var workflow = GeneratorWorkflowFactory.CreateWorkflowWithoutTextControl(
+                GeneratorStandardKinds.Constructor,
+                contractClass,
+                abstractBaseClass))
+            {
+                Contract.Assert(workflow != null);
+
+                var ctor = 
+                    workflow.Context.ProvidedElements
+                    .OfType<GeneratorDeclaredElement<IConstructor>>()
+                    .FirstOrDefault(c => !c.DeclaredElement.IsDefault);
+
+                if (ctor != null)
+                { 
+                    workflow.Context.InputElements.Clear();
+                    workflow.Context.InputElements.Add(ctor);
+                    workflow.BuildInputOptions();
+                    workflow.GenerateAndFinish("Generate missing constructor", NullProgressIndicator.Instance);
+                }
+            }
+
         }
 
         /// <summary>

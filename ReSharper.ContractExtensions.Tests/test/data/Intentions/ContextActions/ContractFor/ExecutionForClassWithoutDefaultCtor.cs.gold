@@ -1,0 +1,39 @@
+﻿using System.Diagnostics.Contracts;
+
+[ContractClass(typeof (SomeClassContract))]
+abstract class SomeClass{caret}
+{
+  protected SomeClass(string s) {}
+  public abstract void MethodWithPrecondition(string s);
+  public abstract string MethodWithPostcondition();
+  public abstract string PropertyWithPostcondition { get; }
+  protected abstract void ProtectedMethodWithPrecondition(string s);
+}
+
+[ContractClassFor(typeof (SomeClass))]
+abstract class SomeClassContract : SomeClass
+{
+  protected SomeClassContract(string s) : base(s)
+  {
+  }
+
+  public override void MethodWithPrecondition(string s)
+  {
+    throw new System.NotImplementedException();
+  }
+
+  public override string MethodWithPostcondition()
+  {
+    throw new System.NotImplementedException();
+  }
+
+  public override string PropertyWithPostcondition
+  {
+    get { throw new System.NotImplementedException(); }
+  }
+
+  protected override void ProtectedMethodWithPrecondition(string s)
+  {
+    throw new System.NotImplementedException();
+  }
+}
