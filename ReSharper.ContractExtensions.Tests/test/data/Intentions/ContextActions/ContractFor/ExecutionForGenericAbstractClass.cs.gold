@@ -1,0 +1,28 @@
+using System.Diagnostics.Contracts;
+
+[ContractClass(typeof (SomeClassContract<,>))]
+internal abstract class SomeClass{caret}<T, U> where T : class, new() where U : struct
+{
+  public abstract void MethodWithPrecondition(T t);
+  protected abstract U MethodWithPostcondition();
+  protected abstract T PropertyWithPostcondition { get; }
+}
+
+[ContractClassFor(typeof (SomeClass<,>))]
+abstract class SomeClassContract<T, U> : SomeClass<T, U> where T : class, new() where U : struct
+{
+  public override void MethodWithPrecondition(T t)
+  {
+    throw new System.NotImplementedException();
+  }
+
+  protected override U MethodWithPostcondition()
+  {
+    throw new System.NotImplementedException();
+  }
+
+  protected override T PropertyWithPostcondition
+  {
+    get { throw new System.NotImplementedException(); }
+  }
+}

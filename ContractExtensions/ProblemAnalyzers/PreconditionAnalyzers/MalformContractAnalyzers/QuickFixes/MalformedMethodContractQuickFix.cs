@@ -14,20 +14,20 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
     {
         private readonly MalformedContractFix _malformedContractFix;
 
-        private MalformedMethodContractQuickFix(IMalformedMethodErrorHighlighting highlighting)
+        private MalformedMethodContractQuickFix(ICodeContractFixableIssue highlighting)
         {
             Contract.Requires(highlighting != null);
 
             _malformedContractFix = MalformedContractFix.TryCreate(highlighting.CurrentStatement, highlighting.ValidatedContractBlock);
         }
 
-        public MalformedMethodContractQuickFix(MalformedMethodContractErrorHighlighting errorHighlighting)
-            : this(errorHighlighting as IMalformedMethodErrorHighlighting)
+        public MalformedMethodContractQuickFix(CodeContractErrorHighlighting errorHighlighting)
+            : this(errorHighlighting as ICodeContractFixableIssue)
         {
         }
 
-        public MalformedMethodContractQuickFix(MalformedMethodContractWarningHighlighting warningHighlighting)
-            : this(warningHighlighting as IMalformedMethodErrorHighlighting)
+        public MalformedMethodContractQuickFix(CodeContractWarningHighlighting warningHighlighting)
+            : this(warningHighlighting as ICodeContractFixableIssue)
         {}
 
         protected override Action<ITextControl> ExecutePsiTransaction(ISolution solution, IProgressIndicator progress)

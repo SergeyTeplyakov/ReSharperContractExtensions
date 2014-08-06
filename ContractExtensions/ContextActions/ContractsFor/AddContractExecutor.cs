@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using JetBrains.Application.Progress;
@@ -8,7 +9,9 @@ using JetBrains.ReSharper.Feature.Services.Generate;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
+using JetBrains.ReSharper.Psi.Resolve;
 using JetBrains.ReSharper.Psi.Tree;
+using JetBrains.ReSharper.Psi.Util;
 using JetBrains.Util;
 using ReSharper.ContractExtensions.ContractUtils;
 using ReSharper.ContractExtensions.Utilities;
@@ -53,10 +56,11 @@ namespace ReSharper.ContractExtensions.ContextActions.ContractsFor
             {
                 var newContractClass = CreateContractClass();
 
-                AddContractClassAttributeIfNeeded(newContractClass.DeclaredName);
                 AddContractClassForAttributeTo(newContractClass);
 
                 contractClass = AddToPhysicalDeclaration(newContractClass);
+
+                AddContractClassAttributeIfNeeded(contractClass);
             }
 
             ImplementInterfaceOrBaseClass(contractClass);
@@ -79,8 +83,7 @@ namespace ReSharper.ContractExtensions.ContextActions.ContractsFor
 
         private void AddContractClassForAttributeTo(IClassDeclaration contractClass)
         {
-            var attribute = CreateContractClassForAttribute(
-                _addContractForAvailability.TypeDeclaration.DeclaredName);
+            var attribute = CreateContractClassForAttribute(_addContractForAvailability.TypeDeclaration);
             contractClass.AddAttributeAfter(attribute, null);
         }
 
@@ -246,10 +249,54 @@ namespace ReSharper.ContractExtensions.ContextActions.ContractsFor
             Contract.Requires(contractClassName != null);
             Contract.Ensures(Contract.Result<IClassDeclaration>() != null);
 
-            var classDeclaration = (IClassDeclaration)_factory.CreateTypeMemberDeclaration(
-                string.Format("abstract class {0} : $0 {{}}", contractClassName), 
-                _addContractForAvailability.DeclaredType);
+            if (_addContractForAvailability.DeclaredType.IsOpenType)
+                return GenerateGenericContractClassDeclaration(contractClassName);
 
+            return GenerateNonGenericContractClassDeclaration(contractClassName);
+        }
+
+        private IClassDeclaration GenerateNonGenericContractClassDeclaration(string contractClassName)
+        {
+            return (IClassDeclaration)_factory.CreateTypeMemberDeclaration(
+                "abstract class $0 : $1 {}", 
+                contractClassName, _addContractForAvailability.DeclaredType);
+        }
+
+        private IClassDeclaration GenerateGenericContractClassDeclaration(string contractClassName)
+        {
+            // This solution was found at CreateDerivedTypeAction.cs from decompiled R# SDK
+            var baseTypeElement = _addContractForAvailability.DeclaredType.GetTypeElement();
+            Contract.Assert(baseTypeElement != null);
+
+            string typeDeclaration = 
+                baseTypeElement.TypeParameters
+                .AggregateString(",", (builder, parameter) => builder.Append(parameter.ShortName));
+            typeDeclaration = "<" + typeDeclaration + ">";
+
+            var classDeclaration = (IClassDeclaration)_factory.CreateTypeMemberDeclaration(
+                "abstract class $0 " + typeDeclaration + " : $1" + typeDeclaration + " {}",
+                new object[] {contractClassName, baseTypeElement});
+
+            var map = new Dictionary<ITypeParameter, IType>();
+            for (int i = 0; i < baseTypeElement.TypeParameters.Count; i++)
+            {
+                ITypeParameterOfTypeDeclaration declaration3 = classDeclaration.TypeParameters[i];
+                ITypeParameter key = baseTypeElement.TypeParameters[i];
+                map.Add(key, TypeFactory.CreateType(declaration3.DeclaredElement));
+            }
+            ISubstitution substitution = EmptySubstitution.INSTANCE.Extend(map);
+            
+            for (int j = 0; j < baseTypeElement.TypeParameters.Count; j++)
+            {
+                ITypeParameter typeParameter = baseTypeElement.TypeParameters[j];
+                ITypeParameterOfTypeDeclaration declaration4 = classDeclaration.TypeParameters[j];
+                ITypeParameterConstraintsClause clause = _factory.CreateTypeParameterConstraintsClause(typeParameter, substitution, declaration4.DeclaredName);
+                if (clause != null)
+                {
+                    classDeclaration.AddTypeParameterConstraintsClauseBefore(clause, null);
+                }
+            }
+            
             return classDeclaration;
         }
 
@@ -262,33 +309,33 @@ namespace ReSharper.ContractExtensions.ContextActions.ContractsFor
 
         // TODO: controlflow said that IAttribute is not the best way to do this!
         [Pure]
-        private IAttribute CreateContractClassAttribute(string contractClassName)
+        private IAttribute CreateContractClassAttribute(IClassDeclaration contractClass)
         {
-            ITypeElement type = TypeFactory.CreateTypeByCLRName(
+            ITypeElement attributeType = TypeFactory.CreateTypeByCLRName(
                 typeof(ContractClassAttribute).FullName,
                 _provider.PsiModule, _currentFile.GetResolveContext()).GetTypeElement();
 
-            var expression = _factory.CreateExpressionAsIs(
-                string.Format("typeof({0})", contractClassName));
+            var declaredType = contractClass.DeclaredElement;
+            var typeofExpression = _factory.CreateExpression("typeof($0)", declaredType);
 
-            var attribute = _factory.CreateAttribute(type);
+            var attribute = _factory.CreateAttribute(attributeType);
 
             attribute.AddArgumentAfter(
-                _factory.CreateArgument(ParameterKind.VALUE, expression),
+                _factory.CreateArgument(ParameterKind.VALUE, typeofExpression),
                 null);
 
             return attribute;
         }
 
         [Pure]
-        private IAttribute CreateContractClassForAttribute(string contractClassForName)
+        private IAttribute CreateContractClassForAttribute(IClassLikeDeclaration contractClassFor)
         {
+            var declaredType = _addContractForAvailability.DeclaredType.GetTypeElement();
             ITypeElement type = TypeFactory.CreateTypeByCLRName(
                 typeof(ContractClassForAttribute).FullName,
                 _provider.PsiModule, _currentFile.GetResolveContext()).GetTypeElement();
 
-            var expression = _factory.CreateExpressionAsIs(
-                string.Format("typeof({0})", contractClassForName));
+            var expression = _factory.CreateExpression("typeof($0)", declaredType);
 
             var attribute = _factory.CreateAttribute(type);
 
@@ -299,11 +346,11 @@ namespace ReSharper.ContractExtensions.ContextActions.ContractsFor
             return attribute;
         }
 
-        private void AddContractClassAttributeIfNeeded(string contractClassName)
+        private void AddContractClassAttributeIfNeeded(IClassDeclaration contractClass)
         {
             if (!_addContractForAvailability.TypeDeclaration.HasAttribute(typeof (ContractClassAttribute)))
             {
-                var attribute = CreateContractClassAttribute(contractClassName);
+                var attribute = CreateContractClassAttribute(contractClass);
                 _addContractForAvailability.TypeDeclaration.AddAttributeAfter(attribute, null);
             }
         }

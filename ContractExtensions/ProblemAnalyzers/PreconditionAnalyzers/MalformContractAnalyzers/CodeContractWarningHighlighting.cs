@@ -7,10 +7,10 @@ using JetBrains.ReSharper.Psi.CSharp.Tree;
 using ReSharper.ContractExtensions.ContractsEx.Statements;
 using ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.MalformContractAnalyzers;
 
-[assembly: RegisterConfigurableSeverity(MalformedMethodContractWarningHighlighting.Id,
+[assembly: RegisterConfigurableSeverity(CodeContractWarningHighlighting.Id,
   null,
   HighlightingGroupIds.CompilerWarnings,
-  MalformedMethodContractWarningHighlighting.Id,
+  CodeContractWarningHighlighting.Id,
   "Warn for malformed method contract",
   Severity.WARNING,
   false)]
@@ -22,14 +22,14 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
     /// Shows warnings, produced by Code Contract compiler.
     /// </summary>
     [ConfigurableSeverityHighlighting(Id, CSharpLanguage.Name)]
-    public sealed class MalformedMethodContractWarningHighlighting : IHighlighting, IMalformedMethodErrorHighlighting
+    public sealed class CodeContractWarningHighlighting : IHighlighting, ICodeContractFixableIssue
     {
         private readonly CodeContractWarningValidationResult _warning;
         private readonly ValidatedContractBlock _contractBlock;
         public const string Id = "MalformedMethodContractWarningHighlighting";
         private string _toolTip;
 
-        internal MalformedMethodContractWarningHighlighting(CodeContractWarningValidationResult warning, ValidatedContractBlock contractBlock)
+        internal CodeContractWarningHighlighting(CodeContractWarningValidationResult warning, ValidatedContractBlock contractBlock)
         {
             Contract.Requires(warning != null);
             Contract.Requires(contractBlock != null);
@@ -53,12 +53,12 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
         public string ErrorStripeToolTip { get { return ToolTip; } }
         public int NavigationOffsetPatch { get { return 0; } }
 
-        ValidationResult IMalformedMethodErrorHighlighting.CurrentStatement
+        ValidationResult ICodeContractFixableIssue.CurrentStatement
         {
             get { return _warning; }
         }
 
-        ValidatedContractBlock IMalformedMethodErrorHighlighting.ValidatedContractBlock
+        ValidatedContractBlock ICodeContractFixableIssue.ValidatedContractBlock
         {
             get { return _contractBlock; }
         }

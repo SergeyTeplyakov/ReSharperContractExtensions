@@ -3,10 +3,10 @@ using JetBrains.ReSharper.Daemon;
 using JetBrains.ReSharper.Psi.CSharp;
 using ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.MalformContractAnalyzers;
 
-[assembly: RegisterConfigurableSeverity(MalformedMethodContractErrorHighlighting.Id,
+[assembly: RegisterConfigurableSeverity(CodeContractErrorHighlighting.Id,
   null,
   HighlightingGroupIds.CompilerWarnings,
-  MalformedMethodContractErrorHighlighting.Id,
+  CodeContractErrorHighlighting.Id,
   "Warn for malformed method contract",
   Severity.ERROR,
   false)]
@@ -14,24 +14,18 @@ using ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Malfor
 
 namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.MalformContractAnalyzers
 {
-    internal interface IMalformedMethodErrorHighlighting
-    {
-        ValidationResult CurrentStatement { get; }
-        ValidatedContractBlock ValidatedContractBlock { get; }
-    }
-
     /// <summary>
     /// Shows errors, produced by Code Contract compiler.
     /// </summary>
     [ConfigurableSeverityHighlighting(Id, CSharpLanguage.Name)]
-    public sealed class MalformedMethodContractErrorHighlighting : IHighlighting, IMalformedMethodErrorHighlighting
+    public sealed class CodeContractErrorHighlighting : IHighlighting, ICodeContractFixableIssue
     {
         private readonly CodeContractErrorValidationResult _error;
         private readonly ValidatedContractBlock _contractBlock;
         public const string Id = "Malformed method contract error highlighting";
         private readonly string _toolTip;
 
-        internal MalformedMethodContractErrorHighlighting(CodeContractErrorValidationResult error, ValidatedContractBlock contractBlock)
+        internal CodeContractErrorHighlighting(CodeContractErrorValidationResult error, ValidatedContractBlock contractBlock)
         {
             Contract.Requires(error != null);
             Contract.Requires(contractBlock != null);
@@ -54,12 +48,12 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
         public string ErrorStripeToolTip { get { return ToolTip; } }
         public int NavigationOffsetPatch { get { return 0; } }
 
-        ValidationResult IMalformedMethodErrorHighlighting.CurrentStatement
+        ValidationResult ICodeContractFixableIssue.CurrentStatement
         {
             get { return _error; }
         }
 
-        ValidatedContractBlock IMalformedMethodErrorHighlighting.ValidatedContractBlock
+        ValidatedContractBlock ICodeContractFixableIssue.ValidatedContractBlock
         {
             get { return _contractBlock; }
         }

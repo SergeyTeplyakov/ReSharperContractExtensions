@@ -1,0 +1,122 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<logicalClassDesignerModel xmlns:dm0="http://schemas.microsoft.com/VisualStudio/2008/DslTools/Core" xmlns:dm1="http://schemas.microsoft.com/dsltools/Kernel" xmlns:dm2="http://schemas.microsoft.com/dsltools/Component" xmlns:dm3="http://schemas.microsoft.com/dsltools/UseCase" xmlns:dm4="http://schemas.microsoft.com/dsltools/Activity" xmlns:dm5="http://schemas.microsoft.com/dsltools/Interaction" xmlns:dm6="http://schemas.microsoft.com/dsltools/UmlModelLibrary" xmlns:dm7="http://schemas.microsoft.com/dsltools/UmlDiagrams" xmlns:dm8="http://schemas.microsoft.com/dsltools/ModelStore" dslVersion="1.0.0.0" Id="cd34a3a2-0e39-47be-a66f-94d7ad956153" name="Highlightings" linkedPackageId="4d455d8c-ac2a-44b5-9fbe-736ddb9b397a" xmlns="http://schemas.microsoft.com/dsltools/LogicalClassDesigner">
+  <ownedCommentsInternal>
+    <comment Id="5c06e1ce-3c0b-4a8f-b1f2-fd98543e1996">
+      <elementDefinition Id="7bfc671a-c25b-4a88-a5aa-dcd175fa9ec4" />
+      <body>Часть R# SDK</body>
+      <annotatedElements>
+        <interfaceMoniker Id="0e5b102c-7487-4fbf-85f9-dc598a97e42f" LastKnownName="IHighlighting" />
+      </annotatedElements>
+    </comment>
+  </ownedCommentsInternal>
+  <profileInstances>
+    <packageHasProfileInstances Id="9d5c3aca-b1d6-4396-b972-a0ed2b77df71">
+      <profileInstance Id="24df414b-ad4a-48a4-9e24-b563f258bb51" name="StandardProfileL2">
+        <elementDefinition Id="e34d544e-0fea-4ed6-ac5e-1b74119ac791" />
+      </profileInstance>
+      <elementDefinition Id="0caec977-1f8c-4ba3-a7db-8cc9ad9cc73b" />
+    </packageHasProfileInstances>
+    <packageHasProfileInstances Id="f6f9d748-a700-4076-a626-a6fc984ad3aa">
+      <profileInstance Id="6ddcdeb6-2a32-4d62-bfe5-eedafa8f2299" name="StandardProfileL3">
+        <elementDefinition Id="532ea607-fb19-44b8-8502-3351b05452be" />
+      </profileInstance>
+      <elementDefinition Id="29349502-908c-4fda-9054-c48619c59ed0" />
+    </packageHasProfileInstances>
+  </profileInstances>
+  <packagedElements>
+    <logicalClassDesignerModelHasTypes>
+      <Interface Id="0e5b102c-7487-4fbf-85f9-dc598a97e42f" name="IHighlighting" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="33cedd9f-e649-40aa-8027-980224099963" />
+        <ownedAttributes>
+          <property Id="3e11ef45-41cf-409c-a517-353b1f04d5ca" name="ToolTip" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="00d21a8e-639d-4120-ad17-4b53a6be93e4" />
+          </property>
+        </ownedAttributes>
+        <ownedOperations>
+          <operation Id="ceebfc08-5ce7-455b-8904-4ced7add2d57" name="IsValid" isLeaf="false" isStatic="false" isAbstract="true" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="ac112210-0386-47fb-8b73-cfa3ec6a88c8" />
+          </operation>
+        </ownedOperations>
+      </Interface>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <Interface Id="7bcb8ac8-3b24-406c-8929-7c2c4f6ae7a6" name="ICodeContractFixableIssue" isAbstract="false" isLeaf="false">
+        <elementDefinition Id="8dcee316-7caa-4032-85ab-8d4fe50add88" />
+        <ownedAttributes>
+          <property Id="89653d12-972a-4d7f-8c59-6650b836c270" name="CurrentStatement" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="eb639552-1882-40ee-a271-39b02542417c" />
+          </property>
+          <property Id="06a476a9-b175-42b6-a489-409c563ff940" name="ContractBlock" isLeaf="false" isStatic="false" isReadOnly="false" isUnique="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+            <elementDefinition Id="dd89855b-864b-4b26-b820-bc2958739479" />
+          </property>
+        </ownedAttributes>
+      </Interface>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="de2b9023-e92a-456f-97ac-31bc3d29c8b1" name="MalformedMethodContractQuickFix" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="9a1c5034-3582-4911-8dc8-4ae726d2d792" />
+        <targetEnds>
+          <association Id="6b189025-be2f-47f5-821e-4eb6a722ef9a" isDerived="false" sourceEndRoleName="" targetEndRoleName="" isLeaf="false" isAbstract="false">
+            <interfaceMoniker Id="7bcb8ac8-3b24-406c-8929-7c2c4f6ae7a6" LastKnownName="ICodeContractFixableIssue" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd Id="7cfa764d-b99b-4a3c-8387-33e962a32231" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="Shared" isComposite="false" isNavigableOwned="false">
+                  <elementDefinition Id="5437300a-5349-45d9-9410-3a3656caec58" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd Id="a6c8b817-0b14-4b8d-911a-5b0b8f680e23" isLeaf="false" isStatic="false" isReadOnly="false" isDerived="false" isDerivedUnion="false" aggregation="None" isComposite="false">
+                  <elementDefinition Id="09f4559a-3d0d-4c7e-9b77-402c10091625" />
+                </memberEnd>
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+            <elementDefinition Id="7ebef596-bd46-4ee3-947b-0835fbb2568e" />
+          </association>
+        </targetEnds>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="76f3ea4d-434f-441d-956f-8d4c410edce8" name="CodeContractWarningHighlighting" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="a6ecfa8e-6f32-4810-86ac-2b04573acfa8" />
+        <suppliersInternal>
+          <interfaceRealization Id="33061c16-2340-413c-89f8-59f189f0f7fe">
+            <interfaceMoniker Id="7bcb8ac8-3b24-406c-8929-7c2c4f6ae7a6" LastKnownName="ICodeContractFixableIssue" />
+            <elementDefinition Id="3880228a-41d0-401d-8d2c-148be6c9668c" />
+          </interfaceRealization>
+          <interfaceRealization Id="222d0984-55ff-4fa8-af6b-1ff307c69499">
+            <interfaceMoniker Id="0e5b102c-7487-4fbf-85f9-dc598a97e42f" LastKnownName="IHighlighting" />
+            <elementDefinition Id="2f4c34cd-262e-4d36-bad7-5caf3c32ea92" />
+          </interfaceRealization>
+        </suppliersInternal>
+        <ownedOperationsInternal>
+          <operation Id="4245c23d-ccc2-4fd8-b813-9ef5a1398817" name="IsValid" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="70221edd-ffbc-4b54-ab37-15d533fe2b22" />
+          </operation>
+        </ownedOperationsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+    <logicalClassDesignerModelHasTypes>
+      <class Id="69cf8a90-aa12-4011-8bb7-76f6bf969200" name="CodeContractErrorHighlighting" isAbstract="false" isLeaf="false" isActiveClass="false">
+        <elementDefinition Id="5bc95b66-0274-45b8-a7bd-929e3d38d513" />
+        <suppliersInternal>
+          <interfaceRealization Id="522f5b95-9a3b-4ee0-af0d-68a388146c78">
+            <interfaceMoniker Id="7bcb8ac8-3b24-406c-8929-7c2c4f6ae7a6" LastKnownName="ICodeContractFixableIssue" />
+            <elementDefinition Id="a1ed4334-a564-4258-9ec9-56772de31049" />
+          </interfaceRealization>
+          <interfaceRealization Id="68057c8f-8386-48ef-be64-ea1846bc820e">
+            <interfaceMoniker Id="0e5b102c-7487-4fbf-85f9-dc598a97e42f" LastKnownName="IHighlighting" />
+            <elementDefinition Id="0d08ffe8-3476-4df0-af72-2e3d4b0a4007" />
+          </interfaceRealization>
+        </suppliersInternal>
+        <ownedOperationsInternal>
+          <operation Id="48d80de7-b990-4efd-be3c-004aeb680c08" name="IsValid" isLeaf="false" isStatic="false" isAbstract="false" concurrency="Sequential" isQuery="false">
+            <elementDefinition Id="b4e0dbb9-1a3e-4357-8b24-7046a5579f5b" />
+          </operation>
+        </ownedOperationsInternal>
+      </class>
+    </logicalClassDesignerModelHasTypes>
+  </packagedElements>
+  <package Id="4d455d8c-ac2a-44b5-9fbe-736ddb9b397a" name="ContractExtensionsModeling">
+    <elementDefinition Id="b22eae98-c849-4651-a4af-aee085fdd22b" />
+  </package>
+</logicalClassDesignerModel>

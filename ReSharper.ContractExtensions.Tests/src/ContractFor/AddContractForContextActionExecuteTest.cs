@@ -23,6 +23,10 @@ namespace ReSharper.ContractExtensions.Tests.ContractFor
         [TestCase("ExecutionForPartiallyDefinedInterface")]
 
         [TestCase("ExecutionForClassWithoutDefaultCtor")]
+
+        [TestCase("ExecutionForGenericInterface")]
+        [TestCase("ExecutionForGenericInterface2")]
+        [TestCase("ExecutionForGenericAbstractClass")]
         public void TestExecution(string testSrc)
         {
             DoOneTest(testSrc);

@@ -38,6 +38,16 @@ InvocationMessage</body>
           LastKnownLocation="ContractExtensionsModeling.uml" />
       </annotatedElements>
     </comment>
+    <comment
+      Id="7bfc671a-c25b-4a88-a5aa-dcd175fa9ec4">
+      <body>Часть R# SDK</body>
+      <annotatedElements>
+        <interfaceMoniker
+          Id="33cedd9f-e649-40aa-8027-980224099963"
+          LastKnownName="IHighlighting"
+          LastKnownLocation="ContractExtensionsModeling.uml" />
+      </annotatedElements>
+    </comment>
   </ownedCommentsInternal>
   <profileInstances>
     <packageHasProfileInstances
@@ -813,6 +823,195 @@ InvocationMessage</body>
       <class
         Id="b9946e95-37c7-4f32-8eb9-055a1ca645e8"
         name="Message"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false" />
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <Interface
+        Id="33cedd9f-e649-40aa-8027-980224099963"
+        name="IHighlighting"
+        isAbstract="false"
+        isLeaf="false">
+        <ownedAttributes>
+          <property
+            Id="00d21a8e-639d-4120-ad17-4b53a6be93e4"
+            name="ToolTip"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributes>
+        <ownedOperations>
+          <operation
+            Id="ac112210-0386-47fb-8b73-cfa3ec6a88c8"
+            name="IsValid"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="true"
+            concurrency="Sequential"
+            isQuery="false" />
+        </ownedOperations>
+      </Interface>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <Interface
+        Id="8dcee316-7caa-4032-85ab-8d4fe50add88"
+        name="ICodeContractFixableIssue"
+        isAbstract="false"
+        isLeaf="false">
+        <ownedAttributes>
+          <property
+            Id="eb639552-1882-40ee-a271-39b02542417c"
+            name="CurrentStatement"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+          <property
+            Id="dd89855b-864b-4b26-b820-bc2958739479"
+            name="ContractBlock"
+            isLeaf="false"
+            isStatic="false"
+            isReadOnly="false"
+            isUnique="false"
+            isDerived="false"
+            isDerivedUnion="false"
+            aggregation="None"
+            isComposite="false" />
+        </ownedAttributes>
+      </Interface>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="9a1c5034-3582-4911-8dc8-4ae726d2d792"
+        name="MalformedMethodContractQuickFix"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <targetEnds>
+          <association
+            Id="7ebef596-bd46-4ee3-947b-0835fbb2568e"
+            isDerived="false"
+            sourceEndRoleName=""
+            targetEndRoleName=""
+            isLeaf="false"
+            isAbstract="false">
+            <interfaceMoniker
+              Id="8dcee316-7caa-4032-85ab-8d4fe50add88"
+              LastKnownName="ICodeContractFixableIssue"
+              LastKnownLocation="ContractExtensionsModeling.uml" />
+            <relationshipOwnedElementsInternal>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="5437300a-5349-45d9-9410-3a3656caec58"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="Shared"
+                  isComposite="false"
+                  isNavigableOwned="false" />
+              </associationHasOwnedEnds>
+              <associationHasOwnedEnds>
+                <memberEnd
+                  Id="09f4559a-3d0d-4c7e-9b77-402c10091625"
+                  isLeaf="false"
+                  isStatic="false"
+                  isReadOnly="false"
+                  isDerived="false"
+                  isDerivedUnion="false"
+                  aggregation="None"
+                  isComposite="false" />
+              </associationHasOwnedEnds>
+            </relationshipOwnedElementsInternal>
+          </association>
+        </targetEnds>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="a6ecfa8e-6f32-4810-86ac-2b04573acfa8"
+        name="CodeContractWarningHighlighting"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <suppliersInternal>
+          <interfaceRealization
+            Id="3880228a-41d0-401d-8d2c-148be6c9668c">
+            <interfaceMoniker
+              Id="8dcee316-7caa-4032-85ab-8d4fe50add88"
+              LastKnownName="ICodeContractFixableIssue"
+              LastKnownLocation="ContractExtensionsModeling.uml" />
+          </interfaceRealization>
+          <interfaceRealization
+            Id="2f4c34cd-262e-4d36-bad7-5caf3c32ea92">
+            <interfaceMoniker
+              Id="33cedd9f-e649-40aa-8027-980224099963"
+              LastKnownName="IHighlighting"
+              LastKnownLocation="ContractExtensionsModeling.uml" />
+          </interfaceRealization>
+        </suppliersInternal>
+        <ownedOperationsInternal>
+          <operation
+            Id="70221edd-ffbc-4b54-ab37-15d533fe2b22"
+            name="IsValid"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+        </ownedOperationsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="5bc95b66-0274-45b8-a7bd-929e3d38d513"
+        name="CodeContractErrorHighlighting"
+        isAbstract="false"
+        isLeaf="false"
+        isActiveClass="false">
+        <suppliersInternal>
+          <interfaceRealization
+            Id="a1ed4334-a564-4258-9ec9-56772de31049">
+            <interfaceMoniker
+              Id="8dcee316-7caa-4032-85ab-8d4fe50add88"
+              LastKnownName="ICodeContractFixableIssue"
+              LastKnownLocation="ContractExtensionsModeling.uml" />
+          </interfaceRealization>
+          <interfaceRealization
+            Id="0d08ffe8-3476-4df0-af72-2e3d4b0a4007">
+            <interfaceMoniker
+              Id="33cedd9f-e649-40aa-8027-980224099963"
+              LastKnownName="IHighlighting"
+              LastKnownLocation="ContractExtensionsModeling.uml" />
+          </interfaceRealization>
+        </suppliersInternal>
+        <ownedOperationsInternal>
+          <operation
+            Id="b4e0dbb9-1a3e-4357-8b24-7046a5579f5b"
+            name="IsValid"
+            isLeaf="false"
+            isStatic="false"
+            isAbstract="false"
+            concurrency="Sequential"
+            isQuery="false" />
+        </ownedOperationsInternal>
+      </class>
+    </packageHasNamedElement>
+    <packageHasNamedElement>
+      <class
+        Id="6cd49d06-b61b-40ba-b350-2e085a0a73cc"
+        name="Class4"
         isAbstract="false"
         isLeaf="false"
         isActiveClass="false" />

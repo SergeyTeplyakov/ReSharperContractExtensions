@@ -13,7 +13,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
     /// - Ensures statement is after precondition check
     /// </summary>
     [ElementProblemAnalyzer(new[] { typeof(ICSharpStatement) },
-    HighlightingTypes = new[] { typeof(MalformedMethodContractErrorHighlighting), typeof(MalformedMethodContractWarningHighlighting) })]
+    HighlightingTypes = new[] { typeof(CodeContractErrorHighlighting), typeof(CodeContractWarningHighlighting) })]
     public sealed class MalformedContractStatementChecker : ElementProblemAnalyzer<ICSharpStatement>
     {
         protected override void Run(ICSharpStatement element, ElementProblemAnalyzerData data, IHighlightingConsumer consumer)
