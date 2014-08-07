@@ -32,4 +32,6 @@ namespace ReSharper.ContractExtensions.Tests.ContractFor
             DoOneTest(testSrc);
         }
     }
+
+    
 }

@@ -20,27 +20,32 @@ namespace ReSharper.ContractExtensions.Settings
 
             UseGenericContractRequires = new Property<bool>(lifetime, "UseGenericContractRequires");
             CheckStringsForNullOrEmpty = new Property<bool>(lifetime, "CheckStringsForNullOrEmpty");
+            UseExcludeFromCodeCoverageAttribute = new Property<bool>(lifetime, "UseExcludeFromCodeCoverageAttribute");
 
-            settings.SetBinding(lifetime, UseGenericRequires, UseGenericContractRequires);
-            settings.SetBinding(lifetime, CheckForNullOrEmpty, CheckStringsForNullOrEmpty);
+            settings.SetBinding(lifetime, UseGenericRequiresEx, UseGenericContractRequires);
+            settings.SetBinding(lifetime, CheckForNullOrEmptyEx, CheckStringsForNullOrEmpty);
+            settings.SetBinding(lifetime, UseExcludeFromCodeCoverageAttributeEx, UseExcludeFromCodeCoverageAttribute);
 
             Reset = new DelegateCommand(ResetExecute);
         }
 
         [NotNull] public IProperty<bool> UseGenericContractRequires { get; private set; }
         [NotNull] public IProperty<bool> CheckStringsForNullOrEmpty { get; private set; }
+        [NotNull] public IProperty<bool> UseExcludeFromCodeCoverageAttribute { get; private set; }
 
         [NotNull]
         public ICommand Reset { get; private set; }
 
         public static readonly Expression<Func<ContractExtensionsSettings, bool>>
-            UseGenericRequires = x => x.UseGenericContractRequires,
-            CheckForNullOrEmpty = x => x.CheckStringsForNullOrEmpty;
+            UseGenericRequiresEx = x => x.UseGenericContractRequires,
+            CheckForNullOrEmptyEx = x => x.CheckStringsForNullOrEmpty,
+            UseExcludeFromCodeCoverageAttributeEx = x => x.UseExcludeFromCodeCoverageAttribute;
 
         private void ResetExecute()
         {
             UseGenericContractRequires.SetValue(false);
             CheckStringsForNullOrEmpty.SetValue(false);
+            UseExcludeFromCodeCoverageAttribute.SetValue(false);
         }
     }
 }

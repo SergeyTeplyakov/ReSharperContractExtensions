@@ -31,6 +31,8 @@
                     Content="Use Contract.Requires&lt;ArgumentNullException&gt; by default" />
         <CheckBox IsChecked="{Binding CheckStringsForNullOrEmpty.Value, Mode=TwoWay}"
                 Content="Check strings for null or empty"/>
+        <CheckBox IsChecked="{Binding UseExcludeFromCodeCoverageAttribute.Value, Mode=TwoWay}"
+                Content="Add ExcludeFromCodeCoverageAttribute for the generated contract classes"/>
     </StackPanel>
 
 

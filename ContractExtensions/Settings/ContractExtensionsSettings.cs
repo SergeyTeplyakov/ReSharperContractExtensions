@@ -12,7 +12,8 @@ namespace ReSharper.ContractExtensions.Settings
 
         [SettingsEntry(false, "Check string arguments for null or empty")]
         public bool CheckStringsForNullOrEmpty { get; set; }
-    }
 
-    
+        [SettingsEntry(false, "Add ExcludeFromCodeCoverageAttribute for the generated contract classes")]
+        public bool UseExcludeFromCodeCoverageAttribute { get; set; }
+    }
 }

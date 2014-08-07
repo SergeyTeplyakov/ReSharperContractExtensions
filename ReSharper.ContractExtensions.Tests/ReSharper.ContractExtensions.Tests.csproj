@@ -49,6 +49,7 @@
     <Compile Include="src\ContractEx\ContractPreconditionExpressionTests.cs" />
     <Compile Include="src\ContractFor\AddContractForContextActionAvailabilityTest.cs" />
     <Compile Include="src\ContractFor\AddContractForContextActionExecuteTest.cs" />
+    <Compile Include="src\ContractFor\AddContractForWIthExcludeCodeCoverageTest.cs" />
     <Compile Include="src\Ensures\ComboEnsuresContextActionAvailabilityTest.cs" />
     <Compile Include="src\Ensures\ComboEnsuresContextActionExecuteTest.cs" />
     <Compile Include="src\EnumChecks\EnumCheckEnsuresContextActionAvailabilityTest.cs" />

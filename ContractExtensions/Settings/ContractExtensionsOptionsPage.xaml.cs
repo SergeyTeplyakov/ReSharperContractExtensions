@@ -40,16 +40,5 @@ namespace JetBrains.ReSharper.PostfixTemplates.Settings
       //  viewModel.IsChecked = !viewModel.IsChecked;
       //}
     }
-
-    //private void SpaceBarCheck(object sender, KeyEventArgs e)
-    //{
-    //  if (e.Key != Key.Space) return;
-
-    //  var viewModel = ((FrameworkElement)sender).DataContext as PostfixTemplateViewModel;
-    //  if (viewModel != null)
-    //  {
-    //    viewModel.IsChecked = !viewModel.IsChecked;
-    //  }
-    //}
   }
 }

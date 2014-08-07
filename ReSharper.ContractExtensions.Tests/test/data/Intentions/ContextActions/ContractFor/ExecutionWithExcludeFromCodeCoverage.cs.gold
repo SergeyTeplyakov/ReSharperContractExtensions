@@ -1,0 +1,35 @@
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.Contracts;
+
+[ContractClass(typeof (SomeClassContract))]
+abstract class SomeClass{caret}
+{
+  public abstract void MethodWithPrecondition(string s);
+  public abstract string MethodWithPostcondition();
+  public abstract string PropertyWithPostcondition { get; }
+  protected abstract void ProtectedMethodWithPrecondition(string s);
+}
+
+[ExcludeFromCodeCoverage,ContractClassFor(typeof (SomeClass))]
+abstract class SomeClassContract : SomeClass
+{
+  public override void MethodWithPrecondition(string s)
+  {
+    throw new System.NotImplementedException();
+  }
+
+  public override string MethodWithPostcondition()
+  {
+    throw new System.NotImplementedException();
+  }
+
+  public override string PropertyWithPostcondition
+  {
+    get { throw new System.NotImplementedException(); }
+  }
+
+  protected override void ProtectedMethodWithPrecondition(string s)
+  {
+    throw new System.NotImplementedException();
+  }
+}

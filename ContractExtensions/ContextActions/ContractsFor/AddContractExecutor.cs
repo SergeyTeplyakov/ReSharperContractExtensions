@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using JetBrains.Application.Progress;
+using JetBrains.Application.Settings;
 using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
 using JetBrains.ReSharper.Feature.Services.CSharp.Generate;
 using JetBrains.ReSharper.Feature.Services.Generate;
@@ -14,6 +16,7 @@ using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.ReSharper.Psi.Util;
 using JetBrains.Util;
 using ReSharper.ContractExtensions.ContractUtils;
+using ReSharper.ContractExtensions.Settings;
 using ReSharper.ContractExtensions.Utilities;
 
 namespace ReSharper.ContractExtensions.ContextActions.ContractsFor
@@ -59,6 +62,7 @@ namespace ReSharper.ContractExtensions.ContextActions.ContractsFor
                 AddContractClassForAttributeTo(newContractClass);
 
                 contractClass = AddToPhysicalDeclaration(newContractClass);
+                AddExcludeFromCodeCoverageAttributeIfNeeded(contractClass);
 
                 AddContractClassAttributeIfNeeded(contractClass);
             }
@@ -85,6 +89,33 @@ namespace ReSharper.ContractExtensions.ContextActions.ContractsFor
         {
             var attribute = CreateContractClassForAttribute(_addContractForAvailability.TypeDeclaration);
             contractClass.AddAttributeAfter(attribute, null);
+        }
+
+        [Pure]
+        private IAttribute CreateExcludeFromCodeCoverageAttribute()
+        {
+            ITypeElement type = TypeFactory.CreateTypeByCLRName(
+                typeof(ExcludeFromCodeCoverageAttribute).FullName,
+                _provider.PsiModule, _currentFile.GetResolveContext()).GetTypeElement();
+
+            return _factory.CreateAttribute(type);
+        }
+
+        private bool ShouldUseExcludeFromCodeCoverageAttribute()
+        {
+            var settings = _provider.SourceFile.GetSettingsStore()
+                .GetKey<ContractExtensionsSettings>(SettingsOptimization.OptimizeDefault);
+
+            return settings.UseExcludeFromCodeCoverageAttribute;
+        }
+
+        private void AddExcludeFromCodeCoverageAttributeIfNeeded(IClassDeclaration contractClass)
+        {
+            if (ShouldUseExcludeFromCodeCoverageAttribute())
+            { 
+                var attribute = CreateExcludeFromCodeCoverageAttribute();
+                contractClass.AddAttributeAfter(attribute, null);
+            }
         }
 
         private void ImplementContractForAbstractClass(IClassDeclaration contractClass,
