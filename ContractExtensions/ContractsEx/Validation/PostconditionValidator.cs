@@ -1,10 +1,12 @@
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp;
 using JetBrains.ReSharper.Psi.CSharp.Impl;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Resx.Impl;
+using JetBrains.ReSharper.Psi.Util;
 using ReSharper.ContractExtensions.ContractsEx;
 using ReSharper.ContractExtensions.ContractsEx.Statements;
 using ReSharper.ContractExtensions.Utilities;
@@ -80,7 +82,16 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
             var rule = new CSharpTypeConversionRule(methodResult.Module);
             return
                 contractResultTypes
-                .All(contractResult => methodResult.IsImplicitlyConvertibleTo(contractResult, rule));
+                .All(contractResult =>
+                {
+                    // Result compatibility should consider tasks as an 
+                    var resultType = methodResult.IsGenericTask() ? methodResult.GetTaskUnderlyingType() : methodResult;
+                    Contract.Assert(resultType != null);
+
+                    return resultType.IsImplicitlyConvertibleTo(contractResult, rule);
+                });
         }
+
+        
     }
 }

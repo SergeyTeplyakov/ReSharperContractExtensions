@@ -20,6 +20,5 @@ namespace ReSharper.ContractExtensions.Tests.ProblemAnalyzers.PostconditionAnaly
         {
             DoTestFiles(fileName);
         }
-
     }
 }

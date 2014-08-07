@@ -1,4 +1,5 @@
 using System.Diagnostics.Contracts;
+using System.Threading.Tasks;
 
 class A
 {
@@ -65,6 +66,20 @@ class A
   {
     // OK
     Contract.Ensures(Contract.Result<object>() != null);
+    throw new NotImplementedException();
+  }
+
+  public Task<string> EnsuresOnTask()
+  {
+    // OK
+    Contract.Ensures(Contract.Result<string>() != null);
+    throw new NotImplementedException();
+  }
+
+  public async Task<string> EnsuresOnAsyncTask()
+  {
+    // OK
+    Contract.Ensures(Contract.Result<string>() != null);
     throw new NotImplementedException();
   }
 }
