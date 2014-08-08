@@ -46,9 +46,11 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
         private static bool InsideInnerStatement(ICSharpStatement statement)
         {
             return statement.IsInside<IIfStatement>() ||
-
-                   statement.IsInside<ILoopStatement>() ||
+                   statement.IsInside<IForStatement>() ||
+                   statement.IsInside<IWhileStatement>() ||
+                   statement.IsInside<IForeachStatement>() ||
                    statement.IsInside<ISwitchStatement>() ||
+
                    IsInCaseBlock(statement) ||
 
                    statement.IsInside<ICatchClause>() ||

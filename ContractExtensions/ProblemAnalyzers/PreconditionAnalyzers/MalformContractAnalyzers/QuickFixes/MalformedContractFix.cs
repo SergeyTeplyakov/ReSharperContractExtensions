@@ -281,7 +281,6 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
 
     internal sealed class FixContractResultTypeInContractEnsure : MalformedContractFix
     {
-        private readonly ICSharpFunctionDeclaration _declaredMethod;
         private readonly IType _targetType;
         private readonly string _fixName;
         public FixContractResultTypeInContractEnsure(ValidationResult currentStatement,

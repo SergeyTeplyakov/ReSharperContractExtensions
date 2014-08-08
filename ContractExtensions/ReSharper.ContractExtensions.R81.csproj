@@ -58,6 +58,7 @@
     <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
     <CodeContractsReferenceAssembly>%28none%29</CodeContractsReferenceAssembly>
     <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -66,12 +67,15 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -114,43 +118,107 @@
     <Compile Include="ContextActions\Requires\PropertySetterRequiresAvailability.cs" />
     <Compile Include="ContextActions\Requires\RequiresContextActionBase.cs" />
     <Compile Include="ContractsEx\Assertions\AssertionType.cs" />
-    <Compile Include="ContractsEx\Assertions\ContractAssertion.cs" />
-    <Compile Include="ContractsEx\Assertions\Expressions\ContractAssertionExpressionBase.cs" />
-    <Compile Include="ContractsEx\Assertions\Expressions\ContractEnsureExpression.cs" />
+    <Compile Include="ContractsEx\Assertions\Statements\ContractAssertStatement.cs" />
+    <Compile Include="ContractsEx\Assertions\Statements\ContractAssumeStatement.cs" />
+    <Compile Include="ContractsEx\Assertions\Statements\ContractPreconditionAssertionVisitorExtension.cs" />
+    <Compile Include="ContractsEx\Assertions\Statements\ContractStatementBase.cs" />
+    <Compile Include="ContractsEx\Assertions\Statements\ContractStatementFactory.cs" />
+    <Compile Include="ContractsEx\Assertions\Expressions\ContractAssertExpression.cs" />
+    <Compile Include="ContractsEx\Assertions\Expressions\ContractAssumeExpression.cs" />
+    <Compile Include="ContractsEx\Assertions\Expressions\ContractExpressionBase.cs" />
+    <Compile Include="ContractsEx\Assertions\Expressions\ContractEnsuresExpression.cs" />
+    <Compile Include="ContractsEx\Assertions\Expressions\ContractExpressionFactory.cs" />
+    <Compile Include="ContractsEx\Assertions\Expressions\ContractExpressionType.cs" />
+    <Compile Include="ContractsEx\Assertions\Expressions\ContractInvariantExpression.cs" />
     <Compile Include="ContractsEx\Assertions\Expressions\ContractRequiresExpression.cs" />
     <Compile Include="ContractsEx\Assertions\Expressions\IfThrowPreconditionExpression.cs" />
-    <Compile Include="ContractsEx\Assertions\Preconditions\ContractRequiresPreconditionAssertion.cs" />
-    <Compile Include="ContractsEx\Assertions\ContractInvariantAssertion.cs" />
-    <Compile Include="ContractsEx\Assertions\ContractEnsuresAssertion.cs" />
+    <Compile Include="ContractsEx\Assertions\Expressions\Message.cs" />
+    <Compile Include="ContractsEx\Assertions\Statements\ContractRequiresStatement.cs" />
+    <Compile Include="ContractsEx\Assertions\Statements\ContractInvariantStatement.cs" />
+    <Compile Include="ContractsEx\Assertions\Statements\ContractEnsuresStatement.cs" />
     <Compile Include="ContractsEx\Assertions\PredicateChecks\EnumValidationPredicateCheck.cs" />
     <Compile Include="ContractsEx\Assertions\PredicateChecks\EqualityExpressionPredicateCheck.cs" />
-    <Compile Include="ContractsEx\Assertions\Preconditions\GuardBasedPreconditionAssertion.cs" />
-    <Compile Include="ContractsEx\Assertions\Preconditions\IfThrowPreconditionAssertion.cs" />
+    <Compile Include="ContractsEx\Assertions\Statements\GuardBasedPreconditionStatement.cs" />
+    <Compile Include="ContractsEx\Assertions\Statements\IContractStatement.cs" />
+    <Compile Include="ContractsEx\Assertions\Statements\IfThrowPreconditionStatement.cs" />
     <Compile Include="ContractsEx\Assertions\PredicateChecks\ExpressionPredicateCheck.cs" />
     <Compile Include="ContractsEx\Assertions\PredicateChecks\PredicateArgument.cs" />
     <Compile Include="ContractsEx\Assertions\PredicateChecks\PredicateCheck.cs" />
     <Compile Include="ContractsEx\Assertions\PredicateChecks\MethodCallPredicateCheck.cs" />
-    <Compile Include="ContractsEx\Assertions\Preconditions\ContractPreconditionAssertion.cs" />
-    <Compile Include="ContractsEx\Assertions\Preconditions\PreconditionType.cs" />
+    <Compile Include="ContractsEx\Assertions\Statements\ContractPreconditionStatementBase.cs" />
+    <Compile Include="ContractsEx\Assertions\Statements\PreconditionType.cs" />
     <Compile Include="ContractsEx\Assertions\PredicateChecks\PredicateCheckFactory.cs" />
-    <Compile Include="ContractUtils\InvariantUtils.cs" />
+    <Compile Include="ContractsEx\Statements\CodeContractStatement.cs" />
+    <Compile Include="ContractsEx\InvariantUtils.cs" />
     <Compile Include="ContractsEx\ContractStatementExtensions.cs" />
     <Compile Include="ContractsEx\Impl\InvocationVisitor.cs" />
-    <Compile Include="ContractsEx\Assertions\Expressions\ContractAssertionExpression.cs" />
+    <Compile Include="ContractsEx\Assertions\Expressions\CodeContractExpression.cs" />
     <Compile Include="ContextActions\Requires\ArgumentRequiresAvailability.cs" />
     <Compile Include="ContextActions\Requires\ArgumentRequiresContextAction.cs" />
     <Compile Include="ContextActions\Requires\ArgumentRequiresExecutor.cs" />
-    <Compile Include="ContractUtils\ContractExtensions.cs" />
+    <Compile Include="ContractsEx\ContractExtensions.cs" />
+    <Compile Include="ContractsEx\Statements\CodeContractStatementUtils.cs" />
+    <Compile Include="ContractsEx\Statements\ContractValidatorStatement.cs" />
+    <Compile Include="ContractsEx\Statements\ContractAbbreviationStatement.cs" />
+    <Compile Include="ContractsEx\Statements\ContractBlock.cs" />
+    <Compile Include="ContractsEx\Statements\ContractStatement.cs" />
+    <Compile Include="ContractsEx\Statements\ContractStatementFactory.cs" />
+    <Compile Include="ContractsEx\Statements\ProcessedStatement.cs" />
+    <Compile Include="ContractsEx\Validation\PostconditionValidator.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\CaretUtils.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\ICodeContractFixableIssue.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\MalformedContractStatementChecker.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\MalformedContractStatementErrorHighlighting.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\QuickFixes\MalformedContractStatementFix.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\QuickFixes\MalformedContractStatementQuickFix.cs" />
+    <Compile Include="ContractsEx\Validation\ContractBlockValidator.cs" />
+    <Compile Include="ContractsEx\Validation\ContractStatementValidator.cs" />
+    <Compile Include="ContractsEx\Validation\MalformedContractErrors.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\CodeContractWarningHighlighting.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\QuickFixes\MalformedContractFix.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\QuickFixes\MalformedMethodContractQuickFix.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\StatementUtils.cs" />
+    <Compile Include="ContractsEx\Validation\SingleStatementValidationRule.cs" />
+    <Compile Include="ContractsEx\Validation\ValidatedContractBlock.cs" />
+    <Compile Include="ContractsEx\Validation\ValidationResult.cs" />
+    <Compile Include="ContractsEx\Validation\ValidationRule.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\PreconditionIncosistentVisibility\AccessVisibilityChecker.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\ContractPublicPropertyNameCheckers\ContractPublicPropertyNameChecker.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\ContractPublicPropertyNameCheckers\ContractPublicPropertyNameHighlighing.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\ContractPublicPropertyNameCheckers\ContractPublicPropertyNameQuickFix.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\MalformedMethodContractChecker.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\CodeContractErrorHighlighting.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\MalformedObjectInvariantChecker.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\PreconditionIncosistentVisibility\ContractUtils.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\PreconditionIncosistentVisibility\RequiresExceptionChecker.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\PreconditionIncosistentVisibility\MemberWithAccess.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\PreconditionIncosistentVisibility\RequiresExceptionValidityHighlighting.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\PreconditionIncosistentVisibility\RequiresExceptionInconsistentVisibiityHighlighting.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\PreconditionIncosistentVisibility\RequiresExceptionValidityQuickFix.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\PreconditionIncosistentVisibility\RequiresExceptionInconsistentVisibilityQuickFix.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\PreconditionProblemAnalyzer.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\PreconditionProblemAnalyzerBase.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\RedundantRequiresCheckerHighlighting.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\PreconditionIncosistentVisibility\RequiresInconsistentVisibiityHighlighting.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\PreconditionIncosistentVisibility\RequiresInconsistentVisibiityQuickFix.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\PreconditionIncosistentVisibility\RequiresInconsistentVisibiityChecker.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\RedundantRequiresChecker.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\RedundantRequiresQuickFix.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\RequiresMessageAnalyzer\InvalidRequiresMessageHighlighting.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings\ContractExtensionsOptionsPage.xaml.cs" />
     <Compile Include="Settings\ContractExtensionsOptionsViewModel.cs" />
     <Compile Include="Settings\ContractExtensionsSettings.cs" />
+    <Compile Include="Utilities\AccessRightsEx.cs" />
     <Compile Include="Utilities\AttributeExtensions.cs" />
+    <Compile Include="Utilities\ClassEx.cs" />
     <Compile Include="Utilities\ClassLikeDeclarationExtensions.cs" />
     <Compile Include="Utilities\CSharpContextActionDataProviderExtensions.cs" />
+    <Compile Include="Utilities\EnumerableEx.cs" />
     <Compile Include="Utilities\ExpressionEx.cs" />
     <Compile Include="Utilities\MethodDeclarationEx.cs" />
     <Compile Include="Utilities\Monadic.cs" />
+    <Compile Include="Utilities\ParameterEx.cs" />
     <Compile Include="Utilities\StringExtensions.cs" />
     <Compile Include="Utilities\TreeNodeExtensions.cs" />
     <Compile Include="Utilities\JetTypeEx.cs" />
@@ -160,7 +228,9 @@
     <None Include="packages.R81.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Configuration\" />
+    <Folder Include="ContractsEx\Assertions\Preconditions\" />
+    <Folder Include="ContractsEx\ContractValidation\" />
+    <Folder Include="ProblemAnalyzers\PreconditionAnalyzers\PurityAnalyzers\" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="Settings\ContractExtensionsOptionsPage.xaml">

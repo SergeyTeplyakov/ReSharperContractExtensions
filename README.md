@@ -7,7 +7,34 @@ Are you using Code Contracts library in your project? Do you want to simplify so
 
 Currently supported ReSharper versions are 8.2
 
-This plugin is available for download in [ReSharper extensions gallery](https://resharper-plugins.jetbrains.com/packages/ReSharper.ContractExtensions/0.7.51);
+This plugin is available for download in [ReSharper extensions gallery](https://resharper-plugins.jetbrains.com/packages/ReSharper.ContractExtensions/0.8.0);
+
+### Support for Code Contract Compiler warnings and errors inside the editor
+
+1. Inconsistent preconditions visibility
+ - Warn on Contract.Requires&lt;CustomException&gt;() when CustomException does not have ctor(string) or ctor(string, string) (#4).
+ - Warn on Contfact.Requires&lt;CustomException&gt;() when CustomException is less visible then the enclosing method (#3).
+ - Error when Contract.Requires less visible members in the predicate than the enclosing method.
+
+2. Errors for malformed method contracts
+ - Error for Requires/Ensures after EndContractBlock (#21)
+ - Error for Requires/Ensures in the middle of the method (#26, #22)
+ - Error when Ensures placed before Requires (#29, #9)
+ - Error for calling void-return method in the contract block (#5)
+ - Warning for calling non-void return method in the contract block (#25)
+ - Error on method calls as a source of contract error message (Contract.Requires(false, GetMessage())
+ - Error on non-static internal strings used as a source of contract error message (#2)
+ - Error on assignments in the contract block (#9)
+ - Error on Assert/Assume calls in the contract block (#6)
+ - Error on using Requires/Ensures in the try block (#10)
+ - Warning on redundant EndContractBlock (for instance used after Contract.Requires/Ensures).
+
+3. Postcondition checks
+ - Error for inconsistent method return type with Contract.Result&lt;T&gt; (#34)
+
+4. Other features
+ - Generated contract classes would be marked with ExlucdeFromCodeCoverageAttribute if this option is enabled in the plug-in options page. (#31)
+ - Warn on redundant Contract.Requires on nullable arguments
 
 ### Basic use cases
 
