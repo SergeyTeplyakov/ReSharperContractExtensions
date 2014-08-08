@@ -28,6 +28,7 @@ namespace ReSharper.ContractExtensions.Tests.Preconditions
         [TestCase("IfThrowToContractRequiresSimple")]
         [TestCase("IfThrowToContractRequiresWithMethodCall")]
         [TestCase("IfThrowTOContractRequiresWithMessage")]
+        [TestCase("IfThrowTOContractRequiresWithMessage2")]
         public void TestExecutionToNonGenericVersion(string testSrc)
         {
             UseGenerics(false);

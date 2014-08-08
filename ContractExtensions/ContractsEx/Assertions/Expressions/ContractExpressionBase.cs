@@ -68,10 +68,7 @@ namespace ReSharper.ContractExtensions.ContractsEx
             Contract.Requires(argument != null);
             Contract.Ensures(Contract.Result<Message>() != null);
 
-            return argument.Expression
-                .With(x => x as ICSharpLiteralExpression)
-                .With(x => x.Literal.GetText())
-                .Return(x => new LiteralMessage(x) as Message, NoMessage.Instance);
+            return argument.Expression.With(Message.Create);
         }
     }
 }

@@ -132,11 +132,19 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             Message message)
         {
             Contract.Requires(message != null);
-            string stringMessage = message.GetStringLiteral();
+            
+            var originalExpression = message.OriginalExpression;
+            
+            if (originalExpression != null)
+            {
+                var formatWithMessage = string.Format("$0.Requires<$1>({0}, $2);", predicateExpression);
 
-            string optionalMessage = stringMessage != null ? string.Format(", {0}", stringMessage) : null;
+                return _factory.CreateStatement(
+                    formatWithMessage, ContractType, 
+                    CreateDeclaredType(exceptionType), originalExpression);
+            }
 
-            var format = string.Format("$0.Requires<$1>({0}{1});", predicateExpression, optionalMessage);
+            var format = string.Format("$0.Requires<$1>({0});", predicateExpression);
 
             return _factory.CreateStatement(format, ContractType, CreateDeclaredType(exceptionType));
         }
@@ -146,12 +154,16 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         {
             Contract.Requires(message != null);
 
-            string stringMessage = message.GetStringLiteral();
+            var originalExpression = message.OriginalExpression;
 
-            string optionalMessage = stringMessage != null ? string.Format(", {0}", stringMessage) : null;
+            if (originalExpression != null)
+            {
+                var formatWithMessage = string.Format("$0.Requires({0}, $1);", predicateExpression);
 
-            var stringStatement = string.Format("$0.Requires({0}{1});",
-                    predicateExpression, optionalMessage);
+                return _factory.CreateStatement(formatWithMessage, ContractType, originalExpression);
+
+            }
+            var stringStatement = string.Format("$0.Requires({0});", predicateExpression);
 
             return _factory.CreateStatement(stringStatement, ContractType);
         }

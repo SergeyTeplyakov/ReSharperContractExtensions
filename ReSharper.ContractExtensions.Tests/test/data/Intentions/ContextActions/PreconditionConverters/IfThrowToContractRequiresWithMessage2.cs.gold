@@ -1,0 +1,10 @@
+using System.Diagnostics.Contracts;
+
+class A
+{
+  private string GetMessage() { return "foo"; }
+  public void EnabledOnAbstractMethod(string s)
+  {
+    {caret}Contract.Requires(s != null, GetMessage());
+  }
+}

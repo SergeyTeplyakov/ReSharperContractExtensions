@@ -18,6 +18,13 @@ namespace ReSharper.ContractExtensions.ContractsEx
     /// </remarks>
     public abstract class Message
     {
+        private readonly IExpression _originalExpression;
+
+        protected Message(IExpression originalExpression)
+        {
+            _originalExpression = originalExpression;
+        }
+
         public static Message Create(IExpression expression)
         {
             Contract.Requires(expression != null);
@@ -25,23 +32,26 @@ namespace ReSharper.ContractExtensions.ContractsEx
 
             var literal = expression as ICSharpLiteralExpression;
             if (literal != null)
-                return new LiteralMessage(literal.Literal.GetText());
+                return new LiteralMessage(expression, literal.Literal.GetText());
 
             var reference = expression as IReferenceExpression;
             if (reference != null)
-                return new ReferenceMessage(reference);
+                return new ReferenceMessage(expression, reference);
 
             var invocationExpression = expression as IInvocationExpression;
             if (invocationExpression != null)
-                return new InvocationMessage(invocationExpression);
+                return new InvocationMessage(expression, invocationExpression);
 
             return NoMessage.Instance;
         }
+
+        public IExpression OriginalExpression { get { return _originalExpression; } }
     }
 
     public sealed class NoMessage : Message
     {
         private NoMessage()
+            : base(null)
         {}
 
         public static readonly NoMessage Instance = new NoMessage();
@@ -51,7 +61,8 @@ namespace ReSharper.ContractExtensions.ContractsEx
     {
         private readonly string _literal;
 
-        public LiteralMessage(string literal)
+        public LiteralMessage(IExpression originalExpression, string literal)
+            : base(originalExpression)
         {
             Contract.Requires(!string.IsNullOrEmpty(literal));
             _literal = literal;
@@ -67,7 +78,8 @@ namespace ReSharper.ContractExtensions.ContractsEx
     {
         private readonly IInvocationExpression _invocationExpression;
 
-        public InvocationMessage(IInvocationExpression invocationExpression)
+        public InvocationMessage(IExpression originalExpression, IInvocationExpression invocationExpression)
+            : base(originalExpression)
         {
             Contract.Requires(invocationExpression != null);
 
@@ -84,7 +96,8 @@ namespace ReSharper.ContractExtensions.ContractsEx
     {
         private readonly IReferenceExpression _reference;
 
-        public ReferenceMessage(IReferenceExpression reference)
+        public ReferenceMessage(IExpression originalExpression, IReferenceExpression reference)
+            : base(originalExpression)
         {
             Contract.Requires(reference != null);
             _reference = reference;
@@ -133,13 +146,13 @@ namespace ReSharper.ContractExtensions.ContractsEx
             return noMessageFunc();
         }
 
-        [CanBeNull]
-        public static string GetStringLiteral(this Message message)
-        {
-            Contract.Requires(message != null);
-            var literal = message as LiteralMessage;
-            return literal != null ? literal.Literal : null;
-        }
+        //[CanBeNull]
+        //public static string GetStringLiteral(this Message message)
+        //{
+        //    Contract.Requires(message != null);
+        //    var literal = message as LiteralMessage;
+        //    return literal != null ? literal.Literal : null;
+        //}
 
         public static bool IsValidForRequires(this Message message)
         {
