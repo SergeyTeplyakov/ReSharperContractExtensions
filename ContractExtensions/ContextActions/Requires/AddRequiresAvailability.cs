@@ -11,16 +11,16 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
     /// Shows whether "Add Requires" action is available or not.
     /// </summary>
     // TODO: rename to null-check requiers availability
-    public sealed class ArgumentRequiresAvailability : ContextActionAvailabilityBase<ArgumentRequiresAvailability>
+    public sealed class AddRequiresAvailability : ContextActionAvailabilityBase<AddRequiresAvailability>
     {
         private readonly string _parameterName;
         private readonly IClrTypeName _parameterType;
         private readonly ICSharpFunctionDeclaration _functionToInsertPrecondition;
 
-        public ArgumentRequiresAvailability()
+        public AddRequiresAvailability()
         {}
 
-        public ArgumentRequiresAvailability(ICSharpContextActionDataProvider provider)
+        public AddRequiresAvailability(ICSharpContextActionDataProvider provider)
             : base(provider)
         {
             Contract.Requires(provider != null);

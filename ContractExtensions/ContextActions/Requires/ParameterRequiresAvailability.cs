@@ -14,7 +14,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
     /// Checkes that Contract.Requires should be available based on parameter declaration.
     /// </summary>
     /// <remarks>
-    /// Extracting this class out from the main <see cref="ArgumentRequiresAvailability"/> explained by
+    /// Extracting this class out from the main <see cref="AddRequiresAvailability"/> explained by
     /// the need of this check out of the main requires availability check.
     /// For example, this stuff is needed by <see cref="ComboRequiresAvailability"/> class as well.
     /// </remarks>

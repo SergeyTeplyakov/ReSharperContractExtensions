@@ -7,7 +7,7 @@ namespace ReSharper.ContractExtensions.Tests.Preconditions
 {
     [TestFixture]
     public class RequiresContextActionAvailabilityTest 
-        : CSharpContextActionAvailabilityTestBase<ArgumentRequiresContextAction>
+        : CSharpContextActionAvailabilityTestBase<AddRequiresContextAction>
     {
         protected override string ExtraPath
         {

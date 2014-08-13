@@ -146,14 +146,6 @@ namespace ReSharper.ContractExtensions.ContractsEx
             return noMessageFunc();
         }
 
-        //[CanBeNull]
-        //public static string GetStringLiteral(this Message message)
-        //{
-        //    Contract.Requires(message != null);
-        //    var literal = message as LiteralMessage;
-        //    return literal != null ? literal.Literal : null;
-        //}
-
         public static bool IsValidForRequires(this Message message)
         {
             Contract.Requires(message != null);

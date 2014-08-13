@@ -11,7 +11,7 @@ using ReSharper.ContractExtensions.Settings;
 namespace ReSharper.ContractExtensions.Tests.Preconditions
 {
     [TestFixture]
-    public class RequiresContextActionExecuteTestForStringArg : CSharpContextActionExecuteTestBase<ArgumentRequiresContextAction>
+    public class RequiresContextActionExecuteTestForStringArg : CSharpContextActionExecuteTestBase<AddRequiresContextAction>
     {
         protected override void DoTest(IProject testProject)
         {

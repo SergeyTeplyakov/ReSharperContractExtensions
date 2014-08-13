@@ -107,16 +107,22 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
 
         public override bool IsAvailable(IUserDataHolder cache)
         {
-            return ComputeDestinationTypeAndMemberAccess(out _destinationTypeAccess, out _destinationMemberAccess);
+            return ComputeDestinationTypeAndMemberAccessCore(out _destinationTypeAccess, out _destinationMemberAccess);
         }
 
-        private bool ComputeDestinationTypeAndMemberAccess(out AccessRights? typeAccess, out AccessRights? memberAccess)
+        private bool ComputeDestinationTypeAndMemberAccessCore(out AccessRights? typeAccess, out AccessRights? memberAccess)
         {
             typeAccess = null;
             memberAccess = null;
 
             var preconditionContainer = _highlighting.PreconditionContainer;
             var referencedMember = _highlighting.LessVisibleReferencedMember;
+
+            if (referencedMember.MemberType == MemberType.Event)
+            {
+                // We can't fix event visibility!
+                return false;
+            }
 
             if (preconditionContainer.BelongToTheSameType(referencedMember))
             {

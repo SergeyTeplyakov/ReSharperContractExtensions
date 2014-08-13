@@ -79,7 +79,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         {
             Contract.Requires(contractFunction != null);
 
-            var addRequiresExecutor = new ArgumentRequiresExecutor(_provider, _requiresShouldBeGeneric,
+            var addRequiresExecutor = new AddRequiresExecutor(_provider, _requiresShouldBeGeneric,
                 contractFunction, _availability.ParameterName, _availability.ParameterType);
             addRequiresExecutor.ExecuteTransaction();
         }

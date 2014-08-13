@@ -22,12 +22,14 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
         Method,
         Property,
         Field,
+        Event,
         Member
     }
 
     public sealed class MemberWithAccess
     {
         private readonly IClrDeclaredElement _declaredElement;
+        private readonly AccessRights _memberAccessRights;
 
         internal MemberWithAccess(IClrDeclaredElement declaredElement, AccessRights typeAccessRights,
             MemberType memberType, AccessRights memberAccessRights)
@@ -39,7 +41,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
             MemberName = declaredElement.ShortName;
             TypeAccessRights = typeAccessRights;
             MemberType = memberType;
-            MemberAccessRights = memberAccessRights;
+            _memberAccessRights = memberAccessRights;
         }
 
         [ContractInvariantMethod]
@@ -97,7 +99,19 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
         public string MemberName { get; private set; }
 
         public AccessRights TypeAccessRights { get; private set; }
-        public AccessRights MemberAccessRights { get; private set; }
+
+        public AccessRights MemberAccessRights
+        {
+            get
+            {
+                // TODO: looks like a hack, but this is the easierst solution for now!!
+                // Events are actually less visible than they apprears!
+                if (MemberType == MemberType.Event)
+                    return AccessRights.PRIVATE;
+
+                return _memberAccessRights;
+            }
+        }
 
         public MemberType MemberType { get; private set; }
 
@@ -138,6 +152,8 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
                 return MemberType.Method;
             if (element is IField)
                 return MemberType.Field;
+            if (element is IEvent)
+                return MemberType.Event;
 
             return MemberType.Member;
         }

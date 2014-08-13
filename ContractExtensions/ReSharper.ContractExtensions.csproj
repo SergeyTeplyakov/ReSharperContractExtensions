@@ -153,9 +153,9 @@
     <Compile Include="ContractsEx\ContractStatementExtensions.cs" />
     <Compile Include="ContractsEx\Impl\InvocationVisitor.cs" />
     <Compile Include="ContractsEx\Assertions\Expressions\CodeContractExpression.cs" />
-    <Compile Include="ContextActions\Requires\ArgumentRequiresAvailability.cs" />
-    <Compile Include="ContextActions\Requires\ArgumentRequiresContextAction.cs" />
-    <Compile Include="ContextActions\Requires\ArgumentRequiresExecutor.cs" />
+    <Compile Include="ContextActions\Requires\AddRequiresAvailability.cs" />
+    <Compile Include="ContextActions\Requires\AddRequiresContextAction.cs" />
+    <Compile Include="ContextActions\Requires\AddRequiresExecutor.cs" />
     <Compile Include="ContractsEx\ContractExtensions.cs" />
     <Compile Include="ContractsEx\Statements\CodeContractStatementUtils.cs" />
     <Compile Include="ContractsEx\Statements\ContractValidatorStatement.cs" />

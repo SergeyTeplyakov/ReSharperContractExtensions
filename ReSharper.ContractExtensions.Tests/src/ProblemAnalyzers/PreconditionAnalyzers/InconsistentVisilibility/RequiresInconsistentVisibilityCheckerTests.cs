@@ -31,6 +31,8 @@ namespace ReSharper.ContractExtensions.Tests.ProblemAnalyzers.PreconditionAnalyz
         [TestCase("PublicProtectedWarning.cs")]
         [TestCase("PublicInternalWarning.cs")]
         [TestCase("PublicPrivateWarning.cs")]
+
+        [TestCase("WarningForUsingFieldLikeEvent.cs")]
         public void Test(string testName)
         {
             DoTestSolution(testName);

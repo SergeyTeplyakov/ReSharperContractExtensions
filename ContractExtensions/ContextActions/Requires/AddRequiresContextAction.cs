@@ -1,25 +1,20 @@
-﻿using System;
-using System.Diagnostics.Contracts;
-using JetBrains.Application.Progress;
-using JetBrains.ProjectModel;
+﻿using System.Diagnostics.Contracts;
 using JetBrains.ReSharper.Feature.Services.Bulbs;
 using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
-using JetBrains.TextControl;
-using JetBrains.Util;
 
 namespace ReSharper.ContractExtensions.ContextActions.Requires
 {
     [ContextAction(Name = Name, Group = "Contracts", Description = Description, Priority = 100)]
-    public sealed class ArgumentRequiresContextAction : RequiresContextActionBase
+    public sealed class AddRequiresContextAction : RequiresContextActionBase
     {
-        private ArgumentRequiresAvailability _argumentRequiresAvailability = ArgumentRequiresAvailability.Unavailable;
+        private AddRequiresAvailability _argumentRequiresAvailability = AddRequiresAvailability.Unavailable;
 
         private const string Name = "Add Contract.Requires";
         private const string Description = "Add Contract.Requires on potentially nullable argument.";
 
         private const string Format = "Requires '{0}' is not null";
 
-        public ArgumentRequiresContextAction(ICSharpContextActionDataProvider provider)
+        public AddRequiresContextAction(ICSharpContextActionDataProvider provider)
             : base(provider)
         {}
 
@@ -33,7 +28,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         {
             Contract.Assert(_argumentRequiresAvailability.IsAvailable);
 
-            var executor = new ArgumentRequiresExecutor(_provider, _requiresShouldBeGeneric,
+            var executor = new AddRequiresExecutor(_provider, _requiresShouldBeGeneric,
                 _argumentRequiresAvailability.FunctionToInsertPrecondition,
                 _argumentRequiresAvailability.SelectedParameterName,
                 _argumentRequiresAvailability.SelectedParameterType);
@@ -43,7 +38,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
 
         protected override bool DoIsAvailable()
         {
-            _argumentRequiresAvailability = ArgumentRequiresAvailability.CheckIsAvailable(_provider);
+            _argumentRequiresAvailability = AddRequiresAvailability.CheckIsAvailable(_provider);
             return _argumentRequiresAvailability.IsAvailable;
         }
 
@@ -54,7 +49,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
 
         protected override RequiresContextActionBase CreateContextAction()
         {
-            return new ArgumentRequiresContextAction(_provider);
+            return new AddRequiresContextAction(_provider);
         }
     }
 }

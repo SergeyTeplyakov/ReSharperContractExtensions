@@ -1,0 +1,13 @@
+using System.Diagnostics.Contracts;
+
+class A
+{
+  public event EventHandler E;
+  protected void Foo()
+  {
+    |Contract.Requires(E != null)|(0);
+  }
+}
+------------------------------------------------
+0: Member 'E' has less visibility than the enclosing method 'Foo'
+NO QUICKFIXES

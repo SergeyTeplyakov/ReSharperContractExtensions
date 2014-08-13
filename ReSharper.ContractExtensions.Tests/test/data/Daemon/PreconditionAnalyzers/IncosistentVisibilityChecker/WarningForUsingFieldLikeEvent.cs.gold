@@ -1,0 +1,13 @@
+using System.Diagnostics.Contracts;
+
+class A
+{
+  public event EventHandler E;
+
+  public void Foo()
+  {
+    |Contract.Requires(E != null)|(0);
+  }
+}
+---------------------------------------------------------
+(0): ReSharper Underlined Error Highlighting: Member 'E' has less visibility than the enclosing method 'Foo'

@@ -18,6 +18,7 @@ namespace ReSharper.ContractExtensions.Tests.ProblemAnalyzers.PreconditionAnalyz
         [TestCase("FixAvailableForPropertyInTheSameType.cs")]
         [TestCase("FixUnavailableForProtectedContractHolder.cs")]
         [TestCase("FixAvailableForTypeVisibilityOnly.cs")]
+        [TestCase("FixUnavailableForEvent.cs")]
         public void AvailabilityTest(string fileName)
         {
             DoTestFiles(fileName);

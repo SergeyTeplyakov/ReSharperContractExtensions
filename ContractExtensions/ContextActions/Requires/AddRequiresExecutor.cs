@@ -11,7 +11,7 @@ using ReSharper.ContractExtensions.Utilities;
 
 namespace ReSharper.ContractExtensions.ContextActions.Requires
 {
-    internal sealed class ArgumentRequiresExecutor : ContextActionExecutorBase
+    internal sealed class AddRequiresExecutor : ContextActionExecutorBase
     {
         private readonly string _parameterName;
         private readonly IClrTypeName _propertyType;
@@ -20,7 +20,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
 
         private readonly ICSharpFunctionDeclaration _functionDeclaration;
 
-        public ArgumentRequiresExecutor(ICSharpContextActionDataProvider provider, bool shouldBeGeneric, 
+        public AddRequiresExecutor(ICSharpContextActionDataProvider provider, bool shouldBeGeneric, 
             ICSharpFunctionDeclaration functionDeclaration, string parameterName, IClrTypeName propertyType)
             : base(provider)
         {
