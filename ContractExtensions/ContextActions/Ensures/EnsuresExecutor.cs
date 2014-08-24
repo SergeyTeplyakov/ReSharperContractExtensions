@@ -8,7 +8,7 @@ using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using ReSharper.ContractExtensions.ContextActions.Infrastructure;
-using ReSharper.ContractExtensions.ContractsEx;
+using ReSharper.ContractExtensions.ContractsEx.Assertions;
 using ReSharper.ContractExtensions.ContractUtils;
 
 namespace ReSharper.ContractExtensions.ContextActions.Ensures
@@ -121,8 +121,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Ensures
 
         private ICSharpStatement GetLastRequiresStatementIfAny(ICSharpFunctionDeclaration functionDeclaration)
         {
-            return functionDeclaration.GetContractPreconditions()
-                .Select(r => r.Statement).LastOrDefault();
+            return functionDeclaration.GetRequires().Select(r => r.CSharpStatement).LastOrDefault();
         }
 
         private void AddStatementAfter(ICSharpFunctionDeclaration functionDeclaration,

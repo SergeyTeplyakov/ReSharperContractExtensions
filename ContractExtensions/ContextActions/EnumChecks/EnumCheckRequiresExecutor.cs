@@ -4,7 +4,7 @@ using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Impl.Types;
 using ReSharper.ContractExtensions.ContextActions.Infrastructure;
-using ReSharper.ContractExtensions.ContractsEx;
+using ReSharper.ContractExtensions.ContractsEx.Assertions;
 using ReSharper.ContractExtensions.Utilities;
 
 namespace ReSharper.ContractExtensions.ContextActions.EnumChecks
@@ -64,8 +64,10 @@ namespace ReSharper.ContractExtensions.ContextActions.EnumChecks
         [System.Diagnostics.Contracts.Pure, CanBeNull]
         ICSharpStatement GetPreviousRequires()
         {
-            return _availability.FunctionToInsertPrecondition.GetLastPreconditionFor(
-                _availability.ParameterName).With(x => x.Statement);
+            return _availability
+                .FunctionToInsertPrecondition
+                .GetLastRequiresFor(_availability.ParameterName)
+                .With(x => x.CSharpStatement);
         }
 
 

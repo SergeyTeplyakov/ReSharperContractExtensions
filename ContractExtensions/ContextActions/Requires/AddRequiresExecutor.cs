@@ -5,7 +5,7 @@ using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using ReSharper.ContractExtensions.ContextActions.Infrastructure;
-using ReSharper.ContractExtensions.ContractsEx;
+using ReSharper.ContractExtensions.ContractsEx.Assertions;
 using ReSharper.ContractExtensions.Settings;
 using ReSharper.ContractExtensions.Utilities;
 
@@ -98,7 +98,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         [System.Diagnostics.Contracts.Pure, CanBeNull]
         ICSharpStatement GetPreviousRequires()
         {
-            return _functionDeclaration.GetLastPreconditionFor(_parameterName).With(x => x.Statement);
+            return _functionDeclaration.GetLastRequiresFor(_parameterName).With(x => x.CSharpStatement);
         }
     }
 }

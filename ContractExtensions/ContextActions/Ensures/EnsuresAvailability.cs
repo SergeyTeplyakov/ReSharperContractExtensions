@@ -5,7 +5,6 @@ using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Util;
-using ReSharper.ContractExtensions.ContractsEx;
 using ReSharper.ContractExtensions.ContractsEx.Assertions;
 using ReSharper.ContractExtensions.ContractUtils;
 using ReSharper.ContractExtensions.Utilities;
@@ -93,17 +92,17 @@ namespace ReSharper.ContractExtensions.ContextActions.Ensures
                 return false;
 
             return ResultIsAlreadyCheckedByContractEnsures(
-                functionDeclaration.GetContractEnsures(), returnType);
+                functionDeclaration.GetEnsures(), returnType);
         }
 
         protected virtual bool ResultIsAlreadyCheckedByContractEnsures(
-            IEnumerable<ContractEnsuresStatement> ensureAssertions, IDeclaredType methodReturnType)
+            IEnumerable<ContractEnsures> ensureAssertions, IDeclaredType methodReturnType)
         {
             Contract.Requires(ensureAssertions != null);
             Contract.Requires(methodReturnType != null);
 
             return ensureAssertions
-                .Any(e => e.AssertsArgumentIsNotNull(
+                .Any(e => e.ChecksForNotNull(
                     pa => pa.With(x => x as ContractResultPredicateArgument)
                         .With(x => x.ResultTypeName.FullName) == methodReturnType.GetClrName().FullName));
         }
@@ -116,13 +115,13 @@ namespace ReSharper.ContractExtensions.ContextActions.Ensures
             : base(provider, returnTypeEnsuresAvailability)
         {}
 
-        protected override bool ResultIsAlreadyCheckedByContractEnsures(IEnumerable<ContractEnsuresStatement> ensureAssertions, IDeclaredType methodReturnType)
+        protected override bool ResultIsAlreadyCheckedByContractEnsures(IEnumerable<ContractEnsures> ensureAssertions, IDeclaredType methodReturnType)
         {
             // Ensures for enums should be available for System.Enum and for System.Enum?
             // thats why we should extract underlying type out of the nullable type.
             var returnType = methodReturnType.IsNullable() ? methodReturnType.GetNullableUnderlyingType() : methodReturnType;
             return ensureAssertions
-                .Any(e => e.AssertsArgumentIsNotNull(
+                .Any(e => e.ChecksForNotNull(
                     pa => pa.With(x => x as ContractResultPredicateArgument)
                         .With(x => x.ResultTypeName.FullName) == returnType.GetClrTypeName().FullName));
         }

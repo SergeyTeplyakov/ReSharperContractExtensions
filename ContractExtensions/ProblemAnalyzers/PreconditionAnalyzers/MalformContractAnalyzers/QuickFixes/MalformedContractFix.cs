@@ -8,8 +8,8 @@ using JetBrains.ReSharper.Psi.CSharp;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.TextControl;
 using JetBrains.Util;
-using ReSharper.ContractExtensions.ContractsEx;
-using ReSharper.ContractExtensions.ContractsEx.Statements;
+using ReSharper.ContractExtensions.ContractsEx.Assertions;
+using ReSharper.ContractExtensions.ContractsEx.Assertions.Statements;
 using ReSharper.ContractExtensions.Utilities;
 
 namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.MalformContractAnalyzers
@@ -72,13 +72,13 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
         public static bool IsFixableCore(ValidationResult validationResult)
         {
             return validationResult.Match(
-                _ => false,
-
                 error => error.Error == MalformedContractError.AssignmentInContractBlock ||
                          error.Error == MalformedContractError.AssertOrAssumeInContractBlock ||
                          error.Error == MalformedContractError.VoidReturnMethodCall,
 
-                warning => warning.Warning == MalformedContractWarning.NonVoidReturnMethodCall);
+                warning => warning.Warning == MalformedContractWarning.NonVoidReturnMethodCall,
+
+                _ => false);
         }
 
         protected override Action<ITextControl> DoExecuteFix(IList<ValidationResult> statementsToFix)
@@ -311,7 +311,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
             Contract.Assert(_currentStatement.ProcessedStatement.CodeContractStatement != null);
 
             var ensures =
-                _currentStatement.ProcessedStatement.CodeContractStatement.CodeContractExpression.Value as ContractEnsuresExpression;
+                _currentStatement.ProcessedStatement.CodeContractStatement.CodeContractExpression.Value as ContractEnsures;
             
             Contract.Assert(ensures != null);
             ensures.SetContractResultType(_targetType);

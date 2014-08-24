@@ -10,11 +10,11 @@ namespace ReSharper.ContractExtensions.ContextActions.Ensures
 {
     internal sealed class ComboEnsuresExecutor : ContextActionExecutorBase
     {
-        private readonly AddContractAvailability _addContractAvailability;
+        private readonly AddContractClassAvailability _addContractAvailability;
         private readonly ICSharpFunctionDeclaration _selectedFunctionDeclaration;
 
         public ComboEnsuresExecutor(ICSharpContextActionDataProvider provider, 
-            AddContractAvailability addContractAvailability,
+            AddContractClassAvailability addContractAvailability,
             ICSharpFunctionDeclaration selectedFunctionDeclaration)
             : base(provider)
         {
@@ -30,7 +30,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Ensures
 
         protected override void DoExecuteTransaction()
         {
-            var addContractExecutor = new AddContractExecutor(_provider, _addContractAvailability, 
+            var addContractExecutor = new AddContractClassExecutor(_provider, _addContractAvailability, 
                 _selectedFunctionDeclaration);
             addContractExecutor.Execute();
 

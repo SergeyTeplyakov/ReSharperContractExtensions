@@ -1,14 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using System.Linq;
-using System.Reflection;
-using JetBrains.Application.Progress;
-using JetBrains.ProjectModel;
+﻿using System.Diagnostics.Contracts;
 using JetBrains.ReSharper.Feature.Services.Bulbs;
 using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
-using JetBrains.TextControl;
-using JetBrains.Util;
 using ReSharper.ContractExtensions.ContractsEx.Assertions;
 
 namespace ReSharper.ContractExtensions.ContextActions.Requires
@@ -35,7 +27,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         {
             get
             {
-                var requires = (ContractRequiresStatement)_availability.PreconditionAssertion;
+                var requires = (ContractRequires)_availability.Requires;
                 string exceptionType = requires.PotentialGenericVersionException().ShortName;
                 return string.Format("Convert to Contract.Requires<{0}>", exceptionType);
             }
@@ -107,8 +99,8 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
                 if (!_requiresShouldBeGeneric)
                     return "Convert to Contract.Requires";
 
-                var requires = (IfThrowPreconditionStatement) _availability.PreconditionAssertion;
-                string exceptionType = requires.ExceptionType.ShortName;
+                var requires = (IfThrowPrecondition) _availability.Requires;
+                string exceptionType = requires.ExceptionTypeName.ShortName;
                 return string.Format("Convert to Contract.Requires<{0}>", exceptionType);
             }
         }

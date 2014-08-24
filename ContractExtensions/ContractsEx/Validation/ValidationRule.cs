@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Windows.Controls;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
-using ReSharper.ContractExtensions.ContractsEx.Statements;
+using ReSharper.ContractExtensions.ContractsEx.Assertions.Statements;
 
 namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.MalformContractAnalyzers
 {

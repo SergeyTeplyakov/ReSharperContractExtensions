@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using ReSharper.ContractExtensions.ContractsEx.Statements;
+using ReSharper.ContractExtensions.ContractsEx.Assertions.Statements;
 
 namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.MalformContractAnalyzers
 {

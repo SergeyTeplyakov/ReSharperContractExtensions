@@ -114,7 +114,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             Contract.Assert(_availability.AddContractAvailability != null,
                 "Adding contract class requires AddContractAvailability!");
 
-            var addContractExecutor = new AddContractExecutor(
+            var addContractExecutor = new AddContractClassExecutor(
                 _provider, _availability.AddContractAvailability,
                 _availability.SelectedFunctionDeclaration);
 

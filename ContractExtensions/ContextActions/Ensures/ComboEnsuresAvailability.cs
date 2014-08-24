@@ -9,7 +9,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Ensures
     internal sealed class ComboEnsuresAvailability
     {
         private readonly ICSharpContextActionDataProvider _provider;
-        private readonly AddContractAvailability _addContractAvailability;
+        private readonly AddContractClassAvailability _addContractAvailability;
         private readonly ICSharpFunctionDeclaration _selectedFunctionDeclaration;
         private ComboEnsuresAvailability()
         {}
@@ -30,7 +30,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Ensures
         }
 
         public bool IsAvailable { get; private set; }
-        public AddContractAvailability AddContractAvailability { get { return _addContractAvailability; } }
+        public AddContractClassAvailability AddContractAvailability { get { return _addContractAvailability; } }
         public ICSharpFunctionDeclaration SelectedFunction { get { return _selectedFunctionDeclaration; } }
 
         public static readonly ComboEnsuresAvailability Unavailable = new ComboEnsuresAvailability {IsAvailable = false};
@@ -55,10 +55,10 @@ namespace ReSharper.ContractExtensions.ContextActions.Ensures
             return returnTypeEnsuresAvailability.IsAvailable;
         }
 
-        private bool CanAddContractForSelectedMethod(out AddContractAvailability addContractAvailability, 
+        private bool CanAddContractForSelectedMethod(out AddContractClassAvailability addContractAvailability, 
             ICSharpFunctionDeclaration selectedFunction)
         {
-            addContractAvailability = AddContractAvailability.IsAvailableForSelectedMethod(_provider, selectedFunction);
+            addContractAvailability = AddContractClassAvailability.IsAvailableForSelectedMethod(_provider, selectedFunction);
             return addContractAvailability.IsAvailable;
         }
     }

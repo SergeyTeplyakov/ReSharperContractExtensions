@@ -1,9 +1,10 @@
 ﻿using System.Diagnostics.Contracts;
 using System.Linq;
+using JetBrains.Annotations;
 using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using ReSharper.ContractExtensions.ContextActions.Infrastructure;
-using ReSharper.ContractExtensions.ContractsEx;
+using ReSharper.ContractExtensions.ContractsEx.Assertions;
 using ReSharper.ContractExtensions.ContractUtils;
 using ReSharper.ContractExtensions.Utilities;
 
@@ -28,12 +29,20 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             : base(provider)
         {
             Contract.Requires(provider != null);
-            Contract.Requires(parameterName != null);
+            Contract.Requires(!string.IsNullOrEmpty(parameterName));
 
             ParameterName = parameterName;
             
-            _functionToInsertPrecondition = selectedFunction ?? GetSelectedFunctionDeclaration();
-            _isAvailable = IsRequiresAvailable(parameterName, ref _functionToInsertPrecondition);
+            _functionToInsertPrecondition = GetContractFunction(selectedFunction);
+            
+            if (_functionToInsertPrecondition != null)
+                _isAvailable = IsRequiresAvailable(parameterName, _functionToInsertPrecondition);
+        }
+
+        [CanBeNull]
+        private ICSharpFunctionDeclaration GetContractFunction(ICSharpFunctionDeclaration selectedFunction)
+        {
+            return (selectedFunction ?? GetSelectedFunctionDeclaration()).GetContractFunction();
         }
 
         [ContractInvariantMethod]
@@ -47,34 +56,33 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         public string ParameterName { get; private set; }
         public ICSharpFunctionDeclaration FunctionToInsertPrecondition { get { return _functionToInsertPrecondition; } }
 
-        [Pure]
-        private bool IsRequiresAvailable(string parameterName, ref ICSharpFunctionDeclaration functionDeclaration)
+        [System.Diagnostics.Contracts.Pure]
+        private bool IsRequiresAvailable(string parameterName, ICSharpFunctionDeclaration functionToInsertPrecondition)
         {
-            var functionToInsertPrecondition = functionDeclaration.GetContractFunction();
+            Contract.Requires(!string.IsNullOrEmpty(parameterName));
+            Contract.Requires(functionToInsertPrecondition != null);
 
             if (!functionToInsertPrecondition.IsValidForContracts())
                 return false;
 
-            if (ArgumentIsAlreadyVerifiedByArgCheckOrRequires(functionToInsertPrecondition, parameterName))
+            if (IsArgumentAlreadyVerifiedByPrecondition(functionToInsertPrecondition, parameterName))
                 return false;
-
-            functionDeclaration = functionToInsertPrecondition;
 
             return true;
         }
 
-        [Pure]
+        [System.Diagnostics.Contracts.Pure]
         private ICSharpFunctionDeclaration GetSelectedFunctionDeclaration()
         {
             return _provider.GetSelectedElement<ICSharpFunctionDeclaration>(true, true);
         }
 
-        [Pure]
-        private bool ArgumentIsAlreadyVerifiedByArgCheckOrRequires(
+        [System.Diagnostics.Contracts.Pure]
+        private bool IsArgumentAlreadyVerifiedByPrecondition(
             ICSharpFunctionDeclaration functionDeclaration, string parameterName)
         {
             return functionDeclaration.GetPreconditions()
-                .Any(p => p.AssertsArgumentIsNotNull(parameterName));
+                .Any(p => p.ChecksForNotNull(parameterName));
         }
     }
 }

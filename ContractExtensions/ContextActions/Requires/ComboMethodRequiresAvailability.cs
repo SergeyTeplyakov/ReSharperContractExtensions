@@ -26,7 +26,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
     internal sealed class ComboMethodRequiresAvailability : ContextActionAvailabilityBase<ComboMethodRequiresAvailability>
     {
         private readonly ICSharpFunctionDeclaration _selectedFunctionDeclaration;
-        private readonly AddContractAvailability _addContractAvailability;
+        private readonly AddContractClassAvailability _addContractAvailability;
         private readonly List<ArgumentDescription> _argumentNames;
 
         public ComboMethodRequiresAvailability()
@@ -67,7 +67,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         public ICSharpFunctionDeclaration SelectedFunctionDeclaration { get { return _selectedFunctionDeclaration; } }
 
         [CanBeNull]
-        public AddContractAvailability AddContractAvailability { get { return _addContractAvailability; } }
+        public AddContractClassAvailability AddContractAvailability { get { return _addContractAvailability; } }
         public IList<ArgumentDescription> ArgumentNames { get { return _argumentNames; } }
 
         [System.Diagnostics.Contracts.Pure]
@@ -90,10 +90,10 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         }
 
         private bool CanAddContractClassIfNecessary(ICSharpFunctionDeclaration selectedFunction,
-            out AddContractAvailability addContractAvailability)
+            out AddContractClassAvailability addContractAvailability)
         {
             // Adding contract class could be unavailable, thats ok, because this "combo" part is optional!
-            addContractAvailability = AddContractAvailability.IsAvailableForSelectedMethod(_provider, selectedFunction);
+            addContractAvailability = AddContractClassAvailability.IsAvailableForSelectedMethod(_provider, selectedFunction);
             return true;
         }
 

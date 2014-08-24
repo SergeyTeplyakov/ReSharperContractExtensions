@@ -57,12 +57,6 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
             if (argument == null)
                 return null;
 
-            //var enumValueName =
-            //    arguments[1].Value
-            //        .With(x => x as IReferenceExpression)
-            //        .With(x => x.NameIdentifier)
-            //        .With(x => x.Name);
-
             return new EnumValidationPredicateCheck(argument, callSiteType)
             {
                 CheckedEnumTypeName = enumType,

@@ -5,7 +5,7 @@ using JetBrains.ReSharper.Daemon.Stages;
 using JetBrains.ReSharper.Daemon.Stages.Dispatcher;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Tree;
-using ReSharper.ContractExtensions.ContractsEx;
+using ReSharper.ContractExtensions.ContractsEx.Assertions;
 using ReSharper.ContractExtensions.Utilities;
 
 namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
@@ -15,7 +15,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
     {
         protected override sealed void Run(IInvocationExpression element, ElementProblemAnalyzerData data, IHighlightingConsumer consumer)
         {
-            var contractAssertion = CodeContractExpression.FromInvocationExpression(element) as ContractRequiresExpression;
+            var contractAssertion = CodeContractAssertion.FromInvocationExpression(element) as ContractRequires;
             if (contractAssertion == null)
                 return;
 
@@ -37,7 +37,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
         }
 
         protected abstract IEnumerable<IHighlighting> DoRun(IInvocationExpression invocationExpression,
-            ContractRequiresExpression contractAssertion, 
+            ContractRequires contractAssertion, 
             MemberWithAccess preconditionContainer);
     }
 
@@ -45,7 +45,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
     abstract class PreconditionProblemAnalyzerContract : PreconditionProblemAnalyzer
     {
         protected override IEnumerable<IHighlighting> DoRun(IInvocationExpression invocationExpression, 
-            ContractRequiresExpression contractAssertion, MemberWithAccess preconditionContainer)
+            ContractRequires contractAssertion, MemberWithAccess preconditionContainer)
         {
             Contract.Requires(invocationExpression != null);
             Contract.Requires(contractAssertion != null);

@@ -8,7 +8,7 @@ using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.Util;
 using ReSharper.ContractExtensions.ContextActions.Infrastructure;
-using ReSharper.ContractExtensions.ContractsEx;
+using ReSharper.ContractExtensions.ContractsEx.Assertions;
 using ReSharper.ContractExtensions.ContractUtils;
 
 namespace ReSharper.ContractExtensions.ContextActions.Invariants
@@ -81,7 +81,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Invariants
             members.AddRange(properties);
 
             // Creating lookup where key is argument name, and the value is statements.
-            var assertions = _classDeclaration.GetInvariantAssertions().ToList();
+            var assertions = _classDeclaration.GetInvariants().ToList();
 
             // We should consider only members, declared previously to current member
             var previousInvariants =
@@ -93,10 +93,10 @@ namespace ReSharper.ContractExtensions.ContextActions.Invariants
             // Looking for the last usage of the parameters in the requires statements
             foreach (var p in previousInvariants)
             {
-                var assertion = assertions.LastOrDefault(a => a.AssertsArgumentIsNotNull(p));
+                var assertion = assertions.LastOrDefault(a => a.ChecksForNotNull(p));
                 if (assertion != null)
                 {
-                    return assertion.Statement;
+                    return assertion.CSharpStatement;
                 }
             }
 

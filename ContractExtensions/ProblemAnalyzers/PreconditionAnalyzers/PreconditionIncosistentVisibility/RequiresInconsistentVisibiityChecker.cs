@@ -7,7 +7,6 @@ using JetBrains.ReSharper.Daemon.Stages.Dispatcher;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Tree;
-using ReSharper.ContractExtensions.ContractsEx;
 using ReSharper.ContractExtensions.ContractsEx.Assertions;
 using ReSharper.ContractExtensions.Utilities;
 
@@ -47,8 +46,8 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
             preconditionContainer = null;
             lessVisibleMember = null;
 
-            var contractAssertion = CodeContractExpression.FromInvocationExpression(expression);
-            if (contractAssertion == null || contractAssertion.AssertionType != AssertionType.Requires)
+            var contractAssertion = CodeContractAssertion.FromInvocationExpression(expression);
+            if (contractAssertion == null || contractAssertion.AssertionType != ContractAssertionType.Requires)
                 return false;
             
             var preconditionHolder =

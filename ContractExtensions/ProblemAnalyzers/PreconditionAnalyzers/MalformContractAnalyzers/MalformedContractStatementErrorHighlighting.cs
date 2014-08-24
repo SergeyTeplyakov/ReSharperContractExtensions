@@ -2,7 +2,7 @@
 using System.Linq;
 using JetBrains.ReSharper.Daemon;
 using JetBrains.ReSharper.Psi.CSharp;
-using ReSharper.ContractExtensions.ContractsEx.Statements;
+using ReSharper.ContractExtensions.ContractsEx.Assertions.Statements;
 using ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.MalformContractAnalyzers;
 
 [assembly: RegisterConfigurableSeverity(MalformedContractStatementErrorHighlighting.Id,

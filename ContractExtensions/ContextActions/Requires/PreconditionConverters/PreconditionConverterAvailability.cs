@@ -10,7 +10,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
 {
     internal sealed class PreconditionConverterAvailability : ContextActionAvailabilityBase<PreconditionConverterAvailability>
     {
-        private ContractPreconditionStatementBase _contractPreconditionAssertion;
+        private IPrecondition _contractRequires;
 
         public PreconditionConverterAvailability()
         {}
@@ -20,16 +20,16 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
 
         protected override void CheckAvailability()
         {
-            _contractPreconditionAssertion = GetSelectedPreconditionAssertion();
-            _isAvailable = _contractPreconditionAssertion != null;
+            _contractRequires = GetSelectedRequires();
+            _isAvailable = _contractRequires != null;
         }
 
-        public ContractPreconditionStatementBase PreconditionAssertion
+        public IPrecondition Requires
         {
             get
             {
-                Contract.Ensures(!IsAvailable || Contract.Result<ContractPreconditionStatementBase>() != null);
-                return _contractPreconditionAssertion;
+                Contract.Ensures(!IsAvailable || Contract.Result<IPrecondition>() != null);
+                return _contractRequires;
             }
         }
 
@@ -38,12 +38,12 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             get
             {
                 Contract.Requires(IsAvailable);
-                return PreconditionAssertion.PreconditionType;
+                return Requires.PreconditionType;
             }
         }
 
         [CanBeNull]
-        private ContractPreconditionStatementBase GetSelectedPreconditionAssertion()
+        private IPrecondition GetSelectedRequires()
         {
             var statement = _provider.GetSelectedElement<ICSharpStatement>(true, true);
             if (statement == null)
@@ -53,7 +53,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
                         .Return(x => x.GetContainingStatement());
             }
 
-            return statement.Return(ContractPreconditionStatementBase.TryCreate);
+            return statement.Return(ContractStatementFactory.TryCreatePrecondition);
         }
     }
 }

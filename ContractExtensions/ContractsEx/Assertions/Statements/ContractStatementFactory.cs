@@ -1,67 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using System.Linq;
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
-using ReSharper.ContractExtensions.Utilities;
 
 namespace ReSharper.ContractExtensions.ContractsEx.Assertions
 {
     public static class ContractStatementFactory
     {
-        public static IList<ContractStatementBase> FromFunctionDeclaration(
-            ICSharpFunctionDeclaration functionDeclaration)
-        {
-            Contract.Requires(functionDeclaration != null);
-
-            return functionDeclaration.Body
-                .Return(x => x.Statements.AsEnumerable(), Enumerable.Empty<ICSharpStatement>())
-                .Select(FromCSharpStatement)
-                .ToList();
-        }
-
-        // TODO: ugly stuff!!
         [CanBeNull]
-        public static ContractStatementBase FromCSharpStatement(ICSharpStatement statement)
+        public static IPrecondition TryCreatePrecondition(ICSharpStatement statement)
         {
-            Contract.Requires(statement != null);
+            var ifThrowPrecondition = IfThrowPrecondition.TryCreate(statement);
+            if (ifThrowPrecondition != null)
+                return ifThrowPrecondition;
 
-            var ifThrowExpression = IfThrowPreconditionExpression.FromCSharpStatement(statement);
-            if (ifThrowExpression != null)
-                return new IfThrowPreconditionStatement(statement, ifThrowExpression);
-
-            var codeContractExpression = CodeContractExpression.FromCSharpStatement(statement);
-            if (codeContractExpression != null)
-                return CreateCodeContractStatement(statement, codeContractExpression);
+            var requires = CodeContractAssertion.TryCreate(statement) as IPrecondition;
+            if (requires != null)
+                return requires;
 
             return null;
         }
 
-        private static ContractStatementBase CreateCodeContractStatement(ICSharpStatement statement, 
-            CodeContractExpression codeContractExpression)
+        [CanBeNull]
+        public static CodeContractAssertion TryCreateAssertion(ICSharpStatement statement)
         {
-            Contract.Requires(statement != null);
-            Contract.Requires(codeContractExpression != null);
-            Contract.Ensures(Contract.Result<ContractStatementBase>() != null);
+            return CodeContractAssertion.TryCreate(statement);
+        }
 
-            switch (codeContractExpression.AssertionType)
-            {
-                case AssertionType.Requires:
-                    return new ContractRequiresStatement(statement, (ContractRequiresExpression)codeContractExpression);
-                case AssertionType.Ensures:
-                    return new ContractEnsuresStatement(statement, (ContractEnsuresExpression)codeContractExpression);
-                case AssertionType.Invariant:
-                    return new ContractInvariantStatement(statement, (ContractInvariantExpression)codeContractExpression);
-                case AssertionType.Assert:
-                    return new ContractAssertStatement(statement, (ContractAssertExpression)codeContractExpression);
-                case AssertionType.Assume:
-                    return new ContractAssumeStatement(statement, (ContractAssumeExpression)codeContractExpression);
-                default:
-                    Contract.Assert(false, "Unknown assertion type: " + codeContractExpression.AssertionType);
-                    throw new InvalidOperationException("Unknown assertion type: " + 
-                        codeContractExpression.AssertionType);
-            }
+        [CanBeNull]
+        public static CodeContractAssertion TryCreateAssertion(IInvocationExpression invocationExpression)
+        {
+            return CodeContractAssertion.FromInvocationExpression(invocationExpression);
         }
     }
 }

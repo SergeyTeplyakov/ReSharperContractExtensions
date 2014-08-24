@@ -68,7 +68,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
 
         private void AddContractClass()
         {
-            var addContractExecutor = new AddContractExecutor(
+            var addContractExecutor = new AddContractClassExecutor(
                 _provider, _availability.AddContractAvailability,
                 _availability.SelectedFunction);
 

@@ -6,7 +6,6 @@ using JetBrains.ReSharper.Daemon.Stages.Dispatcher;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Tree;
-using ReSharper.ContractExtensions.ContractsEx;
 using ReSharper.ContractExtensions.ContractsEx.Assertions;
 using ReSharper.ContractExtensions.Utilities;
 
@@ -36,7 +35,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
         {
             argumentName = null;
 
-            var contractAssertion = CodeContractExpression.FromInvocationExpression(invocationExpression) as CodeContractExpression;
+            var contractAssertion = CodeContractAssertion.FromInvocationExpression(invocationExpression) as ContractRequires;
             if (contractAssertion == null)
                 return false;
 

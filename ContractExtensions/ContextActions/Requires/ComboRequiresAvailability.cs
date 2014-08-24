@@ -21,7 +21,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         private readonly string _parameterName;
         private readonly IClrTypeName _parameterType;
         private readonly ICSharpFunctionDeclaration _selectedAbstractMethod;
-        private readonly AddContractAvailability _addContractAvailability;
+        private readonly AddContractClassAvailability _addContractAvailability;
 
         public ComboRequiresAvailability()
         {}
@@ -54,7 +54,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         public string ParameterName { get { return _parameterName; } }
         public IClrTypeName ParameterType { get { return _parameterType; } }
         public ICSharpFunctionDeclaration SelectedFunction { get { return _selectedAbstractMethod; } }
-        public AddContractAvailability AddContractAvailability { get { return _addContractAvailability; } }
+        public AddContractClassAvailability AddContractAvailability { get { return _addContractAvailability; } }
 
         private bool IsAbstractClassOrInterface()
         {
@@ -70,9 +70,9 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         }
 
         private bool CanAddContractForSelectedMethod(ICSharpFunctionDeclaration selectedFunction, 
-            out AddContractAvailability addContractAvailability)
+            out AddContractClassAvailability addContractAvailability)
         {
-            addContractAvailability = AddContractAvailability.IsAvailableForSelectedMethod(_provider, selectedFunction);
+            addContractAvailability = AddContractClassAvailability.IsAvailableForSelectedMethod(_provider, selectedFunction);
             return addContractAvailability.IsAvailable;
         }
 

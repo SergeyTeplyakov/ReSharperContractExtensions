@@ -12,7 +12,7 @@ using ContextRange = JetBrains.Application.Settings.ContextRange;
 namespace ReSharper.ContractExtensions.Tests.ContractFor
 {
     [TestFixture]
-    public class AddContractForWIthExcludeCodeCoverageTest : CSharpContextActionExecuteTestBase<AddContractContextAction>
+    public class AddContractForWIthExcludeCodeCoverageTest : CSharpContextActionExecuteTestBase<AddContractClassContextAction>
     {
         protected override string ExtraPath
         {

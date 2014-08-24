@@ -9,7 +9,6 @@ using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.CSharp.Util;
 using JetBrains.ReSharper.Psi.ExtensionsAPI.Tree;
 using ReSharper.ContractExtensions.ContextActions.Infrastructure;
-using ReSharper.ContractExtensions.ContractsEx;
 using ReSharper.ContractExtensions.ContractsEx.Assertions;
 
 namespace ReSharper.ContractExtensions.ContextActions.Requires
@@ -33,7 +32,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             }
         }
 
-        private readonly Dictionary<Key, Action<ContractPreconditionStatementBase>> _converters = new Dictionary<Key, Action<ContractPreconditionStatementBase>>();
+        private readonly Dictionary<Key, Action<IPrecondition>> _converters = new Dictionary<Key, Action<IPrecondition>>();
 
         private readonly PreconditionConverterAvailability _availability;
         private readonly PreconditionType _destinationPreconditionType;
@@ -56,14 +55,14 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             Contract.Assert(converter != null, 
                 string.Format("Converter from {0} to {1} is unavailable", _availability.SourcePreconditionType, _destinationPreconditionType));
 
-            converter(_availability.PreconditionAssertion);
+            converter(_availability.Requires);
         }
 
         [CanBeNull]
-        private Action<ContractPreconditionStatementBase> GetConverter(PreconditionType sourcePreconditionType, PreconditionType destinationPreconditionType)
+        private Action<IPrecondition> GetConverter(PreconditionType sourcePreconditionType, PreconditionType destinationPreconditionType)
         {
             var key = Key.From(sourcePreconditionType).To(destinationPreconditionType);
-            Action<ContractPreconditionStatementBase> result;
+            Action<IPrecondition> result;
             _converters.TryGetValue(key, out result);
             return result;
         }
@@ -82,7 +81,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
                 a => FromIfThrowToRequires(a, isGeneric: true);
         }
 
-        private void FromIfThrowToRequires(ContractPreconditionStatementBase assertion, bool isGeneric)
+        private void FromIfThrowToRequires(IPrecondition assertion, bool isGeneric)
         {
             // Convertion from if-throw precondition to Contract.Requires
             // contains following steps:
@@ -91,7 +90,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             // 3. Add required using statements if necessary (for Contract class and Exception type)
             // 4. Replace if-throw statement with newly created contract statement
 
-            var ifThrowAssertion = (IfThrowPreconditionStatement) assertion;
+            var ifThrowAssertion = (IfThrowPrecondition) assertion;
 
             ICSharpExpression negatedExpression = 
                 CSharpExpressionUtil.CreateLogicallyNegatedExpression(ifThrowAssertion.IfStatement.Condition);
@@ -103,7 +102,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             ICSharpStatement newStatement = null;
             if (isGeneric)
             {
-                newStatement = CreateGenericContractRequires(ifThrowAssertion.ExceptionType, predicateCheck,
+                newStatement = CreateGenericContractRequires(ifThrowAssertion.ExceptionTypeName, predicateCheck,
                     ifThrowAssertion.Message);
             }
             else
@@ -111,18 +110,18 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
                 newStatement = CreateNonGenericContractRequires(predicateCheck, ifThrowAssertion.Message);
             }
 
-            ReplaceStatements(ifThrowAssertion.Statement, newStatement);
+            ReplaceStatements(ifThrowAssertion.CSharpStatement, newStatement);
         }
 
-        private void FromGenericRequiresToRequires(ContractPreconditionStatementBase assertion)
+        private void FromGenericRequiresToRequires(IPrecondition assertion)
         {
-            var requiresAssertion = (ContractRequiresStatement)assertion;
-            Contract.Assert(requiresAssertion.IsGeneric);
+            var requiresAssertion = (ContractRequires)assertion;
+            Contract.Assert(requiresAssertion.IsGenericRequires);
 
-            string predicateCheck = requiresAssertion.ContractRequiresExpression.OriginalPredicateExpression.GetText();
+            string predicateCheck = requiresAssertion.OriginalPredicateExpression.GetText();
             var newStatement = CreateNonGenericContractRequires(predicateCheck, requiresAssertion.Message);
             
-            ReplaceStatements(requiresAssertion.Statement, newStatement);
+            ReplaceStatements(requiresAssertion.CSharpStatement, newStatement);
 
             RemoveSystemNamespaceUsingIfPossible();
         }
@@ -168,17 +167,17 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             return _factory.CreateStatement(stringStatement, ContractType);
         }
 
-        private void FromRequiresToGenericRequires(ContractPreconditionStatementBase assertion)
+        private void FromRequiresToGenericRequires(IPrecondition assertion)
         {
-            var requiresAssertion = (ContractRequiresStatement) assertion;
-            Contract.Assert(!requiresAssertion.IsGeneric);
+            var requiresAssertion = (ContractRequires) assertion;
+            Contract.Assert(!requiresAssertion.IsGenericRequires);
 
             var exceptionType = requiresAssertion.PotentialGenericVersionException();
-
-            string predicate = requiresAssertion.ContractRequiresExpression.OriginalPredicateExpression.GetText();
+            
+            string predicate = requiresAssertion.OriginalPredicateExpression.GetText();
             var newStatement = CreateGenericContractRequires(exceptionType, predicate, requiresAssertion.Message);
 
-            ReplaceStatements(requiresAssertion.Statement, newStatement);
+            ReplaceStatements(requiresAssertion.CSharpStatement, newStatement);
         }
 
         private void ReplaceStatements(ICSharpStatement original, ICSharpStatement @new)

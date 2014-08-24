@@ -7,8 +7,8 @@ using JetBrains.ReSharper.Psi.CSharp.Impl;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Resx.Impl;
 using JetBrains.ReSharper.Psi.Util;
-using ReSharper.ContractExtensions.ContractsEx;
-using ReSharper.ContractExtensions.ContractsEx.Statements;
+using ReSharper.ContractExtensions.ContractsEx.Assertions;
+using ReSharper.ContractExtensions.ContractsEx.Assertions.Statements;
 using ReSharper.ContractExtensions.Utilities;
 
 namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.MalformContractAnalyzers
@@ -27,7 +27,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
             var contractResultTypes =
                 statement.CodeContractExpression
                     .Value
-                    .With(x => x as ContractEnsuresExpression)
+                    .With(x => x as ContractEnsures)
                     .Return(ensures => ensures.ContractResultTypes, Enumerable.Empty<IDeclaredType>().ToList());
 
             var method = statement.GetDeclaredMethod();

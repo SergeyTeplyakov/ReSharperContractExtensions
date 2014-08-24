@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics.Contracts;
 using JetBrains.Annotations;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
-using ReSharper.ContractExtensions.Utilities;
 
 namespace ReSharper.ContractExtensions.ContractsEx.Assertions
 {

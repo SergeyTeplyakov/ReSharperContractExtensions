@@ -1,8 +1,7 @@
 using System;
 using System.Diagnostics.Contracts;
-using JetBrains.Annotations;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
-using ReSharper.ContractExtensions.ContractsEx.Statements;
+using ReSharper.ContractExtensions.ContractsEx.Assertions.Statements;
 
 namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.MalformContractAnalyzers
 {
@@ -36,6 +35,27 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
             Contract.Requires(statement != null);
             _statement = statement;
         }
+
+        public T Match<T>(
+            Func<CodeContractErrorValidationResult, T> errorMatch,
+            Func<CodeContractWarningValidationResult, T> warningMatch,
+            Func<ValidationResult, T> defaultMatch)
+        {
+            Contract.Requires(errorMatch != null);
+            Contract.Requires(warningMatch != null);
+            Contract.Requires(defaultMatch != null);
+
+            var errorResult = this as CodeContractErrorValidationResult;
+            if (errorResult != null)
+                return errorMatch(errorResult);
+
+            var warningResult = this as CodeContractWarningValidationResult;
+            if (warningResult != null)
+                return warningMatch(warningResult);
+
+            return defaultMatch(this);
+        }
+
 
         public T Match<T>(
             Func<NoErrorValidationResult, T> noErrorMatch,

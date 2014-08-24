@@ -8,7 +8,7 @@ using JetBrains.ReSharper.Daemon.Stages.Dispatcher;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Tree;
-using ReSharper.ContractExtensions.ContractsEx;
+using ReSharper.ContractExtensions.ContractsEx.Assertions;
 using ReSharper.ContractExtensions.Utilities;
 
 namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
@@ -22,7 +22,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
     public sealed class RequiresExceptionInconsistentVisibilityChecker : PreconditionProblemAnalyzer
     {
         protected override IEnumerable<IHighlighting> DoRun(IInvocationExpression invocationExpression, 
-            ContractRequiresExpression contractAssertion,
+            ContractRequires contractAssertion,
             MemberWithAccess preconditionContainer)
         {
             var preconditionException = 

@@ -3,42 +3,40 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using JetBrains.Annotations;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
-using ReSharper.ContractExtensions.ContractsEx.Assertions;
 using ReSharper.ContractExtensions.ContractUtils;
-using ReSharper.ContractExtensions.Utilities;
 
-namespace ReSharper.ContractExtensions.ContractsEx
+namespace ReSharper.ContractExtensions.ContractsEx.Assertions
 {
     static class ContractStatementExtensions
     {
         /// <summary>
         /// Returns Code contract based preconditions only for specified <paramref name="functionDeclaration"/>.
         /// </summary>
-        public static IEnumerable<ContractPreconditionStatementBase> GetContractPreconditions(
-            this ICSharpFunctionDeclaration functionDeclaration)
+        public static IEnumerable<ContractRequires> GetRequires(this ICSharpFunctionDeclaration functionDeclaration)
         {
             Contract.Requires(functionDeclaration != null);
-            Contract.Ensures(Contract.Result<IEnumerable<ContractPreconditionStatementBase>>() != null);
+            Contract.Ensures(Contract.Result<IEnumerable<ContractRequires>>() != null);
 
-            return functionDeclaration.GetPreconditions().Where(p => p.IsCodeContractBasedPrecondition);
+            return functionDeclaration.GetPreconditions().OfType<ContractRequires>();
         }
 
         /// <summary>
         /// Returns all preconditions for specified <paramref name="functionDeclaration"/> including simple argument checks.
         /// </summary>
-        public static IEnumerable<ContractPreconditionStatementBase> GetPreconditions(
-            this ICSharpFunctionDeclaration functionDeclaration)
+        public static IEnumerable<IPrecondition> GetPreconditions(this ICSharpFunctionDeclaration functionDeclaration)
         {
             Contract.Requires(functionDeclaration != null);
-            Contract.Ensures(Contract.Result<IEnumerable<ContractPreconditionStatementBase>>() != null);
+            Contract.Ensures(Contract.Result<IEnumerable<IPrecondition>>() != null);
 
-            Contract.Assert(functionDeclaration.Body != null);
+            if (functionDeclaration.Body == null)
+                return Enumerable.Empty<IPrecondition>();
+
             return functionDeclaration.Body.Statements
-                .Select(ContractPreconditionStatementBase.TryCreate).Where(p => p != null);
+                .Select(ContractStatementFactory.TryCreatePrecondition).Where(p => p != null);
         }
 
-        [System.Diagnostics.Contracts.Pure, CanBeNull]
-        public static ContractPreconditionStatementBase GetLastPreconditionFor(this ICSharpFunctionDeclaration functionDeclaration, 
+        [CanBeNull]
+        public static ContractRequires GetLastRequiresFor(this ICSharpFunctionDeclaration functionDeclaration,
             string parameterName)
         {
             var parameters = functionDeclaration.DeclaredElement.Parameters
@@ -48,8 +46,7 @@ namespace ReSharper.ContractExtensions.ContractsEx
             // Creating lookup where key is argument name, and the value is statements.
             var requiresStatements =
                 functionDeclaration
-                    .GetContractPreconditions()
-                    .OfType<ContractRequiresStatement>()
+                    .GetRequires()
                     .ToList();
             /*.SelectMany(x => x.ArgumentNames.Select(a => new {Statement = x, ArgumentName = a}))
             .ToLookup(x => x.ArgumentName, x => x.Statement)*/
@@ -60,7 +57,7 @@ namespace ReSharper.ContractExtensions.ContractsEx
             {
                 // TODO: it seems terrible!!! and ugly!
                 var precondition = requiresStatements
-                    .LastOrDefault(r => r.AssertsArgumentIsNotNull(pa => 
+                    .LastOrDefault(r => r.ChecksForNotNull(pa =>
                         pa.CompareReferenceArgument(ra => ra.BaseArgumentName == p)));
 
                 if (precondition != null)
@@ -70,47 +67,48 @@ namespace ReSharper.ContractExtensions.ContractsEx
             return null;
         }
 
-        public static IEnumerable<ContractStatementBase> GetContractStatements(
+        public static IEnumerable<CodeContractAssertion> GetContractAssertions(
             this ICSharpFunctionDeclaration functionDeclaration)
         {
             Contract.Requires(functionDeclaration != null);
-            Contract.Ensures(Contract.Result<IEnumerable<ContractStatementBase>>() != null);
+            Contract.Ensures(Contract.Result<IEnumerable<CodeContractAssertion>>() != null);
+
+            if (functionDeclaration.Body == null)
+                return Enumerable.Empty<CodeContractAssertion>();
 
             Contract.Assert(functionDeclaration.Body != null);
 
-            return functionDeclaration.Body
-                .Return(x => x.Statements.AsEnumerable(), Enumerable.Empty<ICSharpStatement>())
-                .Select(ContractStatementFactory.FromCSharpStatement)
+            return functionDeclaration.Body.Statements
+                .Select(ContractStatementFactory.TryCreateAssertion)
                 .ToList();
         }
 
-        public static IEnumerable<ContractEnsuresStatement> GetContractEnsures(
-            this ICSharpFunctionDeclaration functionDeclaration)
+        public static IEnumerable<ContractEnsures> GetEnsures(this ICSharpFunctionDeclaration functionDeclaration)
         {
             Contract.Requires(functionDeclaration != null);
-            Contract.Ensures(Contract.Result<IEnumerable<ContractEnsuresStatement>>() != null);
+            Contract.Ensures(Contract.Result<IEnumerable<ContractEnsures>>() != null);
 
-            return GetContractStatements(functionDeclaration).OfType<ContractEnsuresStatement>();
+            return GetContractAssertions(functionDeclaration).OfType<ContractEnsures>();
         }
 
         /// <summary>
         /// Return all invariant assertions (like Contract.Invariant(Prop != null)) for 
         /// the specified <paramref name="classLikeDeclaration"/>.
         /// </summary>
-        public static IEnumerable<ContractInvariantStatement> GetInvariantAssertions(this IClassLikeDeclaration classLikeDeclaration)
+        public static IEnumerable<ContractInvariant> GetInvariants(this IClassLikeDeclaration classLikeDeclaration)
         {
             Contract.Requires(classLikeDeclaration != null);
-            Contract.Ensures(Contract.Result<IEnumerable<ContractInvariantStatement>>() != null);
+            Contract.Ensures(Contract.Result<IEnumerable<ContractInvariant>>() != null);
 
-            return classLikeDeclaration.GetInvariantMethods().SelectMany(GetInvariantAssertions);
+            return classLikeDeclaration.GetInvariantMethods().SelectMany(GetInvariants);
         }
 
-        public static IEnumerable<ContractInvariantStatement> GetInvariantAssertions(this ICSharpFunctionDeclaration invariantMethod)
+        public static IEnumerable<ContractInvariant> GetInvariants(this ICSharpFunctionDeclaration invariantMethod)
         {
             Contract.Requires(invariantMethod != null);
-            Contract.Ensures(Contract.Result<IEnumerable<ContractInvariantStatement>>() != null);
+            Contract.Ensures(Contract.Result<IEnumerable<ContractInvariant>>() != null);
 
-            return GetContractStatements(invariantMethod).OfType<ContractInvariantStatement>();
+            return GetContractAssertions(invariantMethod).OfType<ContractInvariant>();
         }
     }
 }

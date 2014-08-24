@@ -3,7 +3,7 @@ using JetBrains.ReSharper.Daemon.Stages;
 using JetBrains.ReSharper.Daemon.Stages.Dispatcher;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Tree;
-using ReSharper.ContractExtensions.ContractsEx.Statements;
+using ReSharper.ContractExtensions.ContractsEx.Assertions.Statements;
 
 namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.MalformContractAnalyzers
 {
@@ -28,9 +28,10 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
 
             foreach (var vr in validateContractBlock.ValidationResults)
             {
-                var highlighting = vr.Match(_ => (IHighlighting)null,
+                var highlighting = vr.Match(
                     error => new CodeContractErrorHighlighting(error, validateContractBlock),
-                    warning => new CodeContractWarningHighlighting(warning, validateContractBlock));
+                    warning => new CodeContractWarningHighlighting(warning, validateContractBlock),
+                    _ => (IHighlighting)null);
 
                 if (highlighting != null)
                 {

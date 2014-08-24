@@ -1,7 +1,7 @@
 using System.Diagnostics.Contracts;
 using JetBrains.ReSharper.Daemon;
 using JetBrains.ReSharper.Psi.CSharp;
-using ReSharper.ContractExtensions.ContractsEx;
+using ReSharper.ContractExtensions.ContractsEx.Assertions;
 using ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers;
 
 [assembly: RegisterConfigurableSeverity(InvalidRequiresMessageHighlighting.ServerityId,
