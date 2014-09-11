@@ -69,9 +69,8 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
                 name = name.Replace("get_", "");
             }
             
-            //string methodOrProperty = method.
-            return string.Format("Detected a call to Contract.Result<{0}>() in {1} '{2}' with return type '{3}'",
-                contractResult.GetClrName().ShortName, kind, name, 
+            return string.Format("Detected a call to Result with '{0}' in {1} '{2}', should be '{3}'",
+                contractResult.GetPresentableName(CSharpLanguage.Instance), kind, name,
                 methodResult.GetPresentableName(CSharpLanguage.Instance));
         }
 
@@ -84,8 +83,15 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
                 contractResultTypes
                 .All(contractResult =>
                 {
-                    // Result compatibility should consider tasks as an 
-                    var resultType = methodResult.IsGenericTask() ? methodResult.GetTaskUnderlyingType() : methodResult;
+                    var resultType = methodResult;
+                    var contractResultType = contractResult;
+
+                    // Corner case: we can use Contract.Result<object>() for method that returns Task<string>!
+                    if (resultType.IsGenericTask() && !contractResultType.IsGenericTask())
+                    {
+                        resultType = resultType.GetTaskUnderlyingType();
+                    }
+                    
                     Contract.Assert(resultType != null);
 
                     return resultType.IsImplicitlyConvertibleTo(contractResult, rule);
