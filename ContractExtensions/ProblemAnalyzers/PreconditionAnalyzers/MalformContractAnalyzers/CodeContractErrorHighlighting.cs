@@ -48,7 +48,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
         public string ErrorStripeToolTip { get { return ToolTip; } }
         public int NavigationOffsetPatch { get { return 0; } }
 
-        ValidationResult ICodeContractFixableIssue.CurrentStatement
+        ValidationResult ICodeContractFixableIssue.ValidationResult
         {
             get { return _error; }
         }

@@ -18,7 +18,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
         {
             Contract.Requires(highlighting != null);
 
-            _malformedContractFix = MalformedContractFix.TryCreate(highlighting.CurrentStatement, highlighting.ValidatedContractBlock);
+            _malformedContractFix = MalformedContractFix.TryCreate(highlighting.ValidationResult, highlighting.ValidatedContractBlock);
         }
 
         public MalformedMethodContractQuickFix(CodeContractErrorHighlighting errorHighlighting)

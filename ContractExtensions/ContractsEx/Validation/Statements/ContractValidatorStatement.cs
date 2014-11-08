@@ -19,5 +19,10 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions.Statements
 
             return new ContractValidatorStatement(statement);
         }
+
+        public override bool IsPrecondition
+        {
+            get { return true; }
+        }
     }
 }

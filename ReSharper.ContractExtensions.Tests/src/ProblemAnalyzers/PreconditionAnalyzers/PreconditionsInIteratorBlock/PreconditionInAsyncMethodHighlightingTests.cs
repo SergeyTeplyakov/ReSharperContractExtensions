@@ -1,0 +1,26 @@
+﻿using NUnit.Framework;
+using ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.MalformContractAnalyzers;
+
+namespace ReSharper.ContractExtensions.Tests.ProblemAnalyzers.PreconditionAnalyzers
+{
+    [TestFixture]
+    public class PreconditionInMethodsWithIteratorBlockHighlightingTests : CSharpHighlightingTestBase<PreconditionInMethodWithIteratorBlockHighlighing>
+    {
+        protected override string RelativeTestDataPath
+        {
+            get { return @"Daemon\PreconditionAnalyzers\PreconditionsInMethodsWithIteratorBlock"; }
+        }
+
+        [TestCase("NoWarning.cs")]
+        public void Test_No_Warning(string testName)
+        {
+            DoTestSolution(testName);
+        }
+
+        [TestCase("Warnings.cs")]
+        public void Test_Warnings(string testName)
+        {
+            DoTestSolution(testName);
+        }
+    }
+}

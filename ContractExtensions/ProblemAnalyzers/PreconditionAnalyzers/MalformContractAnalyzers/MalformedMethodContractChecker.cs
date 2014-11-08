@@ -14,7 +14,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
     /// - Ensures statement is after precondition check
     /// </summary>
     [ElementProblemAnalyzer(new[] { typeof(ICSharpFunctionDeclaration) },
-    HighlightingTypes = new[] { typeof(MalformedContractStatementErrorHighlighting), typeof(CodeContractWarningHighlighting) })]
+    HighlightingTypes = new[] { typeof(ContractCustomWarningHighlighting), typeof(CodeContractWarningHighlighting) })]
     public sealed class MalformedMethodContractChecker : ElementProblemAnalyzer<ICSharpFunctionDeclaration>
     {
         protected override void Run(ICSharpFunctionDeclaration element, ElementProblemAnalyzerData data, IHighlightingConsumer consumer)
@@ -29,9 +29,10 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
             foreach (var vr in validateContractBlock.ValidationResults)
             {
                 var highlighting = vr.Match(
-                    error => new CodeContractErrorHighlighting(error, validateContractBlock),
+                    error => (IHighlighting)new CodeContractErrorHighlighting(error, validateContractBlock),
                     warning => new CodeContractWarningHighlighting(warning, validateContractBlock),
-                    _ => (IHighlighting)null);
+                    customWarning => ContractCustomWarningHighlighting.Create(customWarning, validateContractBlock),
+                    _ => null);
 
                 if (highlighting != null)
                 {

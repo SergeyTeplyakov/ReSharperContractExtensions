@@ -3,6 +3,20 @@ using System.Threading.Tasks;
 
 class A
 {
+  public Task<string> PostconditionWithMismatchedTaskReturnType()
+  {
+    // error CC1002: In method A.PostconditionWithMismatchedTaskReturnType: Detected a call to Result with 'System.Threading.Tasks.Task`1<System.Boolean>', should be 'System.Threading.Tasks.Task`1<System.String>'.
+    Contract.Ensures(Contract.Result<Task<bool>>() != null);
+    throw new NotImplementedException();
+  }
+
+  public Task<bool> PostconditionWithMismatchedTaskReturnType2()
+  {
+    // error CC1002: In method ConsoleApplication8.CDeleteCommandContract`1.PostconditionWithMismatchedTaskReturnType2: Detected a call to Result with 'System.String', should be 'System.Threading.Tasks.Task`1<System.Boolean>'.
+    Contract.Ensures(Contract.Result<string>() != null);
+    throw new NotImplementedException();
+  }
+
   public void PostconditionInVoidMethod()
   {
      // error CC1002: In method CodeContractInvestigations.Postconditions.PostconditionInVoidMethod: Detected a call to Result with 'System.String', should be 'System.Void'.
@@ -69,6 +83,13 @@ class A
     throw new NotImplementedException();
   }
 
+  public Task<string> EnsuresOnTask2()
+  {
+    // OK
+    Contract.Ensures(Contract.Result<Task<string>>() != null);
+    throw new NotImplementedException();
+  }
+
   public Task<string> EnsuresOnTask()
   {
     // OK
@@ -80,6 +101,13 @@ class A
   {
     // OK
     Contract.Ensures(Contract.Result<string>() != null);
+    throw new NotImplementedException();
+  }
+
+  public Task<bool> EnsuresOnTaskOfBool()
+  {
+    // OK
+    Contract.Ensures(Contract.Result<bool>() != null);
     throw new NotImplementedException();
   }
 }

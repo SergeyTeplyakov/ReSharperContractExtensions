@@ -56,6 +56,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
             return ValidationResult.CreateNoError(statement.Statement);
         }
 
+        // TODO: move close to the rest of errors and messages!!
         private static string ErrorForIncompatibleEnsuresAndReturnType(IType methodResult, IDeclaredType contractResult, 
             ICSharpFunctionDeclaration method)
         {

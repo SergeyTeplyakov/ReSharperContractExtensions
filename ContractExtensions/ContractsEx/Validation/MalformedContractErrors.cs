@@ -24,6 +24,12 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
         NonVoidReturnMethodCall,
     }
 
+    public enum MalformedContractCustomWarning
+    {
+        PreconditionInAsyncMethod,
+        PreconditionInMethodWithIteratorBlock,
+    }
+
     public static class MalformedContractErrorEx
     {
         public static string GetErrorText(this MalformedContractError error, string contractMethodName)
@@ -71,6 +77,38 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
                 default:
                     Contract.Assert(false, "Unknown malformed contract error: " + error);
                     throw new InvalidOperationException("Unknown malformed contract error: " + error);
+            }
+        }
+
+        //public static string ErrorForIncompatibleEnsuresAndReturnType(IType methodResult, IDeclaredType contractResult,
+        //    ICSharpFunctionDeclaration method)
+        //{
+        //    string kind = "method";
+        //    string name = method.DeclaredName;
+
+        //    var property = method as IAccessorDeclaration;
+        //    if (property != null)
+        //    {
+        //        kind = "property";
+        //        name = name.Replace("get_", "");
+        //    }
+
+        //    return string.Format("Detected a call to Result with '{0}' in {1} '{2}', should be '{3}'",
+        //        contractResult.GetPresentableName(CSharpLanguage.Instance), kind, name,
+        //        methodResult.GetPresentableName(CSharpLanguage.Instance));
+        //}
+
+        public static string GetErrorText(this MalformedContractCustomWarning warning, string contractMethodName)
+        {
+            switch (warning)
+            {
+                case MalformedContractCustomWarning.PreconditionInAsyncMethod:
+                    return string.Format("Suspicios precondition: precondition will fail returning task");
+                case MalformedContractCustomWarning.PreconditionInMethodWithIteratorBlock:
+                    return string.Format("Suspicious precondition: precondition will be lazy evaluated due to iterator block");
+                default:
+                    Contract.Assert(false, "Unknown custom warning: " + warning);
+                    throw new InvalidOperationException("Unknown custom warning: " + warning);
             }
         }
     }

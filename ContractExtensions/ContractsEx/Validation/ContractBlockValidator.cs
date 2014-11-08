@@ -31,6 +31,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
         private static IEnumerable<ValidationRule> GetAllValidationRules()
         {
             return GetValidationRules()
+                .Union(PreconditionValidator.GetValidationRules())
                 .Union(PostconditionValidator.GetValidationRules());
         }
 

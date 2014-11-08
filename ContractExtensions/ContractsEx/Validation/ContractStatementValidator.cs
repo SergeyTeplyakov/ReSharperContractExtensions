@@ -7,6 +7,9 @@ using ReSharper.ContractExtensions.ContractsEx.Assertions.Statements;
 
 namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.MalformContractAnalyzers
 {
+    /// <summary>
+    /// Root class that validates all contract statements.
+    /// </summary>
     internal static class ContractStatementValidator
     {
         private static readonly List<SingleStatementValidationRule> _validationRules = GetValidationRules().ToList();

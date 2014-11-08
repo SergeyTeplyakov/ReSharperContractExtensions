@@ -82,6 +82,8 @@
     <Compile Include="src\ProblemAnalyzers\PreconditionAnalyzers\MalformedContractAnalyzer\MalformedContractErrorHighlightingTests.cs" />
     <Compile Include="src\ProblemAnalyzers\PostconditionAnalyzers\FixPostconditionErrorTests.cs" />
     <Compile Include="src\ProblemAnalyzers\PostconditionAnalyzers\PostconditionErrorHighlightingTests.cs" />
+    <Compile Include="src\ProblemAnalyzers\PreconditionAnalyzers\PreconditionsInAsyncMethods\PreconditionInAsyncMethodHighlightingTests.cs" />
+    <Compile Include="src\ProblemAnalyzers\PreconditionAnalyzers\PreconditionsInIteratorBlock\PreconditionInAsyncMethodHighlightingTests.cs" />
     <Compile Include="src\ProblemAnalyzers\PreconditionAnalyzers\RedundantRequiresCheckerTests.cs" />
     <Compile Include="src\ProblemAnalyzers\PreconditionAnalyzers\RedundantRequiresQuickFixAvailabilityTests.cs" />
     <Compile Include="src\ProblemAnalyzers\PreconditionAnalyzers\RequiresMessageAnalyzer\RequiresMessageHighlightingTests.cs" />
@@ -114,6 +116,7 @@
       <Name>ReSharper.ContractExtensions</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\JetBrains.ReSharper.SDK.8.2.1158\build\JetBrains.ReSharper.SDK.Targets" Condition="Exists('..\packages\JetBrains.ReSharper.SDK.8.2.1158\build\JetBrains.ReSharper.SDK.Targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

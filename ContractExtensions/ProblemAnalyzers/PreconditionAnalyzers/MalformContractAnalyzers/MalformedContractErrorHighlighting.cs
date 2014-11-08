@@ -5,10 +5,10 @@ using JetBrains.ReSharper.Psi.CSharp;
 using ReSharper.ContractExtensions.ContractsEx.Assertions.Statements;
 using ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.MalformContractAnalyzers;
 
-[assembly: RegisterConfigurableSeverity(MalformedContractStatementErrorHighlighting.Id,
+[assembly: RegisterConfigurableSeverity(MalformedContractErrorHighlighting.Id,
   null,
   HighlightingGroupIds.CompilerWarnings,
-  MalformedContractStatementErrorHighlighting.Id,
+  MalformedContractErrorHighlighting.Id,
   "Warn for malformed contract statement",
   Severity.ERROR,
   false)]
@@ -21,14 +21,14 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
     /// Shows errors, produced by Code Contract compiler.
     /// </summary>
     [ConfigurableSeverityHighlighting(Id, CSharpLanguage.Name)]
-    public sealed class MalformedContractStatementErrorHighlighting : IHighlighting
+    public sealed class MalformedContractErrorHighlighting : IHighlighting
     {
         private readonly ValidationResult _validationResult;
         private readonly CodeContractStatement _validatedStatement;
         public const string Id = "Malformed contract statement error highlighting";
         private readonly string _toolTip;
 
-        internal MalformedContractStatementErrorHighlighting(CodeContractStatement validatedStatement, ValidationResult validationResult)
+        internal MalformedContractErrorHighlighting(CodeContractStatement validatedStatement, ValidationResult validationResult)
         {
             Contract.Requires(validatedStatement != null);
             Contract.Requires(validationResult != null);

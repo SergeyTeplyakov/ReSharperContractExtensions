@@ -55,6 +55,32 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
 
             return defaultMatch(this);
         }
+        
+        public T Match<T>(
+            Func<CodeContractErrorValidationResult, T> errorMatch,
+            Func<CodeContractWarningValidationResult, T> warningMatch,
+            Func<CustomWarningValidationResult, T> customWarningMatch,
+            Func<ValidationResult, T> defaultMatch)
+        {
+            Contract.Requires(errorMatch != null);
+            Contract.Requires(warningMatch != null);
+            Contract.Requires(customWarningMatch != null);
+            Contract.Requires(defaultMatch != null);
+
+            var errorResult = this as CodeContractErrorValidationResult;
+            if (errorResult != null)
+                return errorMatch(errorResult);
+
+            var warningResult = this as CodeContractWarningValidationResult;
+            if (warningResult != null)
+                return warningMatch(warningResult);
+            
+            var customWarning = this as CustomWarningValidationResult;
+            if (customWarning != null)
+                return customWarningMatch(customWarning);
+
+            return defaultMatch(this);
+        }
 
 
         public T Match<T>(
@@ -118,7 +144,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
             _processedStatement = processedStatement;
         }
 
-        private string GetEnclosingMethodName()
+        public string GetEnclosingMethodName()
         {
             return Statement.GetContainingTypeMemberDeclaration().DeclaredName;
         }
@@ -136,6 +162,12 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
         public static ValidationResult CreateWarning(ICSharpStatement statement, MalformedContractWarning warning)
         {
             return new CodeContractWarningValidationResult(statement, warning);
+        }
+
+        public static ValidationResult CreateCustomWarning(ICSharpStatement statement,
+            MalformedContractCustomWarning customWarning)
+        {
+            return new CustomWarningValidationResult(statement, customWarning);
         }
     }
 
@@ -197,6 +229,33 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
         protected override string DoGetErrorText(string methodName)
         {
             return Warning.GetErrorText(methodName);
+        }
+    }
+
+    public sealed class CustomWarningValidationResult : ValidationResult
+    {
+        private readonly MalformedContractCustomWarning _customWarning;
+
+        public CustomWarningValidationResult(ICSharpStatement statement, 
+            MalformedContractCustomWarning customWarning) 
+            : base(statement)
+        {
+            _customWarning = customWarning;
+        }
+
+        public override ErrorType ErrorType
+        {
+            get { return ErrorType.CustomWarning; }
+        }
+
+        public MalformedContractCustomWarning Warning
+        {
+            get { return _customWarning; }
+        }
+
+        protected override string DoGetErrorText(string methodName)
+        {
+            return _customWarning.GetErrorText(methodName);
         }
     }
 

@@ -17,6 +17,7 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions.Statements
         {
             yield return CodeContractStatement.TryCreate;
             yield return CreateSpecialInvocationContractStatement;
+            yield return IfThrowStatement.TryCreate;
         }
 
         [CanBeNull]

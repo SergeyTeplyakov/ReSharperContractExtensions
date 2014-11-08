@@ -41,10 +41,12 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions.Statements
                 .ToList();
 
             int lastContractIndex =
-                statements.LastIndexOf(s => s.CodeContractStatement != null &&
-                            (s.CodeContractStatement.IsPrecondition ||
-                             s.CodeContractStatement.IsPostcondition ||
-                             s.CodeContractStatement.StatementType == CodeContractStatementType.EndContractBlock));
+                statements.LastIndexOf(
+                    s => (s.ContractStatement != null && s.ContractStatement.IsPrecondition) ||
+                         (s.CodeContractStatement != null &&
+                         (s.CodeContractStatement.IsPrecondition ||
+                          s.CodeContractStatement.IsPostcondition ||
+                          s.CodeContractStatement.StatementType == CodeContractStatementType.EndContractBlock)));
 
             // Because we're taking +1 item we can skip check for -1!
             return new ContractBlock(statements.Take(lastContractIndex + 1).ToList());

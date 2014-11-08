@@ -5,7 +5,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
     /// </summary>
     internal interface ICodeContractFixableIssue
     {
-        ValidationResult CurrentStatement { get; }
+        ValidationResult ValidationResult { get; }
         ValidatedContractBlock ValidatedContractBlock { get; }
     }
 }

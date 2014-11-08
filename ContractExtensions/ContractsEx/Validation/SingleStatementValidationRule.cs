@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
-using JetBrains.ReSharper.Psi.CSharp.Tree;
 using ReSharper.ContractExtensions.ContractsEx.Assertions.Statements;
 
 namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.MalformContractAnalyzers
 {
+    /// <summary>
+    /// Proxy class taht contains single validation rule as a func.
+    /// </summary>
     internal sealed class SingleStatementValidationRule
     {
         private readonly Func<CodeContractStatement, ValidationResult> _statementValidationRule;

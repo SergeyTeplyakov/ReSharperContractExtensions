@@ -1,0 +1,28 @@
+using System;
+using System.Diagnostics.Contracts;
+
+class A
+{
+  private IEnumerable<int> FooWithArgCheck(string s)
+  {
+    |if (s == null) throw new ArgumentNullException("s");|(0)
+    yield break;
+  }
+
+  public IEnumerable<int> FooWithLegacyContract(string s)
+  {
+    |if (s == null) throw new ArgumentNullException("s");|(1)
+    Contract.EndContractBlock();
+    yield break;
+  }
+
+  public IEnumerable<int> Foo(string s)
+  {
+    |Contract.Requires(s != null);|(2)
+    yield break;
+  }
+}
+---------------------------------------------------------
+(0): ReSharper Warning: Suspicious precondition in method with iterator block
+(1): ReSharper Warning: Suspicious precondition in method with iterator block
+(2): ReSharper Warning: Suspicious precondition in method with iterator block

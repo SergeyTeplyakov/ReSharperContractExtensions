@@ -21,7 +21,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
         private readonly ValidationResult _validationResult;
         private readonly CodeContractStatement _contractStatement;
 
-        public MalformedContractStatementQuickFix(MalformedContractStatementErrorHighlighting highlighting)
+        public MalformedContractStatementQuickFix(MalformedContractErrorHighlighting highlighting)
         {
             Contract.Requires(highlighting != null);
 

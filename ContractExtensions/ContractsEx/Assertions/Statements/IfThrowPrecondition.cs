@@ -43,6 +43,9 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
             var arguments = throwStatement.GetArguments().ToList();
             var exceptionType = throwStatement.GetExceptionType();
 
+            if (exceptionType == null)
+                return null;
+
             // We can deal with any exception derived from the ArgumentException
             if (!IsDerivedOrEqualFor(exceptionType, typeof(ArgumentException)) ||
                 arguments.Count == 0)

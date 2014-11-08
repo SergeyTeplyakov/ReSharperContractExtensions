@@ -27,7 +27,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
                 return;
 
             consumer.AddHighlighting(
-                    new MalformedContractStatementErrorHighlighting(contractStatement, validationResult),
+                    new MalformedContractErrorHighlighting(contractStatement, validationResult),
                     validationResult.Statement.GetDocumentRange(), element.GetContainingFile());
         }
     }

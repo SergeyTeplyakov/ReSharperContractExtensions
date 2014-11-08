@@ -18,5 +18,12 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions.Statements
 
             _statement = statement;
         }
+
+        public abstract bool IsPrecondition { get; }
+
+        public ICSharpStatement Statement
+        {
+            get { return _statement; }
+        }
     }
 }

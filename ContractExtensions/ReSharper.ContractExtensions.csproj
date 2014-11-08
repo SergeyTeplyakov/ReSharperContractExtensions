@@ -144,6 +144,8 @@
     <Compile Include="ContractsEx\Assertions\Statements\PreconditionValidator.cs" />
     <Compile Include="ContractsEx\Assertions\Statements\ContractStatementFactory.cs" />
     <Compile Include="ContractsEx\Impl\StatementUtils.cs" />
+    <Compile Include="ContractsEx\Validation\PreconditionValidation\PreconditionVisibilityValidator.cs" />
+    <Compile Include="ContractsEx\Validation\PreconditionValidation\PreconditionValidator.cs" />
     <Compile Include="ContractsEx\Validation\Statements\CodeContractStatement.cs" />
     <Compile Include="ContractsEx\InvariantUtils.cs" />
     <Compile Include="ContractsEx\ContractStatementExtensions.cs" />
@@ -159,12 +161,17 @@
     <Compile Include="ContractsEx\Validation\Statements\ContractBlock.cs" />
     <Compile Include="ContractsEx\Validation\Statements\ContractStatement.cs" />
     <Compile Include="ContractsEx\Validation\Statements\ContractStatementFactory.cs" />
+    <Compile Include="ContractsEx\Validation\Statements\IfThrowStatement.cs" />
     <Compile Include="ContractsEx\Validation\Statements\ProcessedStatement.cs" />
     <Compile Include="ContractsEx\Validation\PostconditionValidator.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\CaretUtils.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\CustomWarnings\PreconditionInAsyncMethodQuickFix.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\CustomWarnings\PreconditionInMethodWithIteratorBlockHighlighing.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\CustomWarnings\PreconditionInAsyncMethodHighlighing.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\ICodeContractFixableIssue.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\MalformedContractStatementChecker.cs" />
-    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\MalformedContractStatementErrorHighlighting.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\MalformedContractErrorHighlighting.cs" />
+    <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\CustomWarnings\ContractCustomWarningHighlighting.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\QuickFixes\MalformedContractStatementFix.cs" />
     <Compile Include="ProblemAnalyzers\PreconditionAnalyzers\MalformContractAnalyzers\QuickFixes\MalformedContractStatementQuickFix.cs" />
     <Compile Include="ContractsEx\Validation\ContractBlockValidator.cs" />

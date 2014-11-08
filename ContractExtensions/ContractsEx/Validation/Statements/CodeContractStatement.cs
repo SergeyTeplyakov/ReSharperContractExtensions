@@ -80,17 +80,10 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions.Statements
             get { return IsPrecondition || IsPostcondition || IsEndContractBlock; }
         }
 
-        public bool IsPrecondition
+        public override bool IsPrecondition
         {
             get { return StatementType == CodeContractStatementType.Requires; }
         }
-
-        public ICSharpStatement Statement
-        {
-            get { return _statement; }
-        }
-
-
 
         public ICSharpFunctionDeclaration GetDeclaredMethod()
         {

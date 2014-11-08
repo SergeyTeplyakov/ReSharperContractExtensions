@@ -43,6 +43,12 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
             return new CodeContractStatementValidationRule(validationFunc);
         }
 
+        public static ValidationRule CheckContractStatement(Func<ContractStatement, ValidationResult> validationFunc)
+        {
+            Contract.Requires(validationFunc != null);
+            return new ContractStatementValidationRule(validationFunc);
+        }
+
         /// <summary>
         /// Factory method for validating full processed contract block.
         /// </summary>
@@ -51,6 +57,25 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
         {
             Contract.Requires(validationFunc != null);
             return new CodeContractStatementWithContractBlockValidationRule(validationFunc);
+        }
+    }
+
+    public class ContractStatementValidationRule : ValidationRule
+    {
+        private readonly Func<ContractStatement, ValidationResult> _validationFunc;
+
+        public ContractStatementValidationRule(Func<ContractStatement, ValidationResult> validationFunc)
+        {
+            Contract.Requires(validationFunc != null);
+
+            _validationFunc = validationFunc;
+        }
+
+        protected override ValidationResult DoValidate(ProcessedStatement currentStatement, IList<ProcessedStatement> contractBlock)
+        {
+            if (currentStatement.ContractStatement == null)
+                return ValidationResult.CreateNoError(currentStatement.CSharpStatement);
+            return _validationFunc(currentStatement.ContractStatement);
         }
     }
 
