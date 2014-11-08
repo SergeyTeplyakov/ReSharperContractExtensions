@@ -1,4 +1,5 @@
-﻿using JetBrains.ReSharper.Intentions.CSharp.Test;
+﻿using System.Diagnostics.Contracts;
+using JetBrains.ReSharper.Intentions.CSharp.Test;
 using NUnit.Framework;
 using ReSharper.ContractExtensions.ContextActions.Requires;
 

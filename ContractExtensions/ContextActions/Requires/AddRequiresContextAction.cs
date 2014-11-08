@@ -29,7 +29,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             Contract.Assert(_argumentRequiresAvailability.IsAvailable);
 
             var executor = new AddRequiresExecutor(_provider, _requiresShouldBeGeneric,
-                _argumentRequiresAvailability.FunctionToInsertPrecondition,
+                _argumentRequiresAvailability.FunctionsToInsertPrecondition,
                 _argumentRequiresAvailability.SelectedParameterName,
                 _argumentRequiresAvailability.SelectedParameterType);
 

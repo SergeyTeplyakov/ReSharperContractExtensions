@@ -1,8 +1,11 @@
-﻿using System.Diagnostics.Contracts;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using JetBrains.Annotations;
 using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
+using JetBrains.ReSharper.Psi.Tree;
 using ReSharper.ContractExtensions.ContextActions.Infrastructure;
 using ReSharper.ContractExtensions.ContractsEx.Assertions;
 using ReSharper.ContractExtensions.ContractUtils;
@@ -17,44 +20,60 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
     internal sealed class FunctionRequiresAvailability : ContextActionAvailabilityBase<FunctionRequiresAvailability>
     {
         /// <summary>
-        /// Function, where the tool should insert precondition. Note that this could be different
+        /// Functions, where the tool should insert precondition. Note that this could be different
         /// from the selected function (because selected function could be in the abstract class).
+        /// There is a list of possible functions to insert precondition, because indexer could have
+        /// more then one function to insert precondition: getter and setter.
         /// </summary>
-        private readonly ICSharpFunctionDeclaration _functionToInsertPrecondition;
+        private readonly List<ICSharpFunctionDeclaration> _functionsToInsertPrecondition;
 
         public FunctionRequiresAvailability() { }
 
         public FunctionRequiresAvailability(ICSharpContextActionDataProvider provider, string parameterName, 
-            ICSharpFunctionDeclaration selectedFunction = null)
+            IEnumerable<ICSharpFunctionDeclaration> selectedFunctions)
             : base(provider)
         {
             Contract.Requires(provider != null);
             Contract.Requires(!string.IsNullOrEmpty(parameterName));
 
             ParameterName = parameterName;
-            
-            _functionToInsertPrecondition = GetContractFunction(selectedFunction);
-            
-            if (_functionToInsertPrecondition != null)
-                _isAvailable = IsRequiresAvailable(parameterName, _functionToInsertPrecondition);
+
+            _functionsToInsertPrecondition = 
+                selectedFunctions
+                .Select(GetContractFunction)
+                .Where(x => x != null && IsRequiresAvailable(parameterName, x))
+                .ToList();
+
+            _isAvailable = _functionsToInsertPrecondition.Any();
         }
+
+        public FunctionRequiresAvailability(ICSharpContextActionDataProvider provider, string parameterName, 
+            ICSharpFunctionDeclaration selectedFunction = null)
+            : this(provider, parameterName, new []{selectedFunction ?? GetSelectedFunctionDeclaration(provider)})
+        {}
 
         [CanBeNull]
         private ICSharpFunctionDeclaration GetContractFunction(ICSharpFunctionDeclaration selectedFunction)
         {
-            return (selectedFunction ?? GetSelectedFunctionDeclaration()).GetContractFunction();
+            return (selectedFunction ?? GetSelectedFunctionDeclaration(_provider)).With(x => x.GetContractFunction());
         }
 
         [ContractInvariantMethod]
         private void ObjectInvariant()
         {
             Contract.Invariant(!IsAvailable || _provider != null);
-            Contract.Invariant(!IsAvailable || _functionToInsertPrecondition != null);
+            Contract.Invariant(!IsAvailable || _functionsToInsertPrecondition.Count != 0);
             Contract.Invariant(!IsAvailable || ParameterName != null);
         }
 
         public string ParameterName { get; private set; }
-        public ICSharpFunctionDeclaration FunctionToInsertPrecondition { get { return _functionToInsertPrecondition; } }
+
+        public ReadOnlyCollection<ICSharpFunctionDeclaration> FunctionsToInsertPrecondition
+        {
+            get { return _functionsToInsertPrecondition.AsReadOnly(); }
+        }
+
+        public ICSharpFunctionDeclaration FunctionToInsertPrecondition { get { return _functionsToInsertPrecondition[0]; } }
 
         [System.Diagnostics.Contracts.Pure]
         private bool IsRequiresAvailable(string parameterName, ICSharpFunctionDeclaration functionToInsertPrecondition)
@@ -71,10 +90,9 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             return true;
         }
 
-        [System.Diagnostics.Contracts.Pure]
-        private ICSharpFunctionDeclaration GetSelectedFunctionDeclaration()
+        private static ICSharpFunctionDeclaration GetSelectedFunctionDeclaration(ICSharpContextActionDataProvider provider)
         {
-            return _provider.GetSelectedElement<ICSharpFunctionDeclaration>(true, true);
+            return provider.GetSelectedElement<ICSharpFunctionDeclaration>(true, true);
         }
 
         [System.Diagnostics.Contracts.Pure]

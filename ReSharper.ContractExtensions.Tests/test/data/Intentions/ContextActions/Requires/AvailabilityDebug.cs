@@ -6,12 +6,13 @@ class Person
   public string Name {get; set;}
 }
 
-
-abstract class A
+abstract class D3
 {  
-  public void DisabledOnAlreadyCheckByIfThrow(string s{off})
+  public string this[int index]
   {
-    if (s == null)
-     throw new System.ArgumentNullException("s");
+    s{on}et
+    {
+        return "42";
+    }
   }
 }

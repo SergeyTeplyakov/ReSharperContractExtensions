@@ -1,4 +1,6 @@
-﻿using System.Diagnostics.Contracts;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics.Contracts;
 using JetBrains.Annotations;
 using JetBrains.Application.Settings;
 using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
@@ -18,18 +20,24 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
 
         private readonly bool _shouldBeGeneric;
 
-        private readonly ICSharpFunctionDeclaration _functionDeclaration;
+        private readonly IEnumerable<ICSharpFunctionDeclaration> _functionsDeclaration;
+
+        public AddRequiresExecutor(ICSharpContextActionDataProvider provider, bool shouldBeGeneric,
+            ICSharpFunctionDeclaration functionDeclaration, string parameterName, IClrTypeName propertyType)
+            : this(provider, shouldBeGeneric, new []{functionDeclaration}, parameterName, propertyType)
+        {
+        }
 
         public AddRequiresExecutor(ICSharpContextActionDataProvider provider, bool shouldBeGeneric, 
-            ICSharpFunctionDeclaration functionDeclaration, string parameterName, IClrTypeName propertyType)
+            IEnumerable<ICSharpFunctionDeclaration> functionsDeclaration, string parameterName, IClrTypeName propertyType)
             : base(provider)
         {
-            Contract.Requires(functionDeclaration != null);
+            Contract.Requires(functionsDeclaration != null);
             Contract.Requires(parameterName != null);
             Contract.Requires(propertyType != null);
 
             _shouldBeGeneric = shouldBeGeneric;
-            _functionDeclaration = functionDeclaration;
+            _functionsDeclaration = functionsDeclaration;
             _parameterName = parameterName;
             _propertyType = propertyType;
         }
@@ -39,18 +47,22 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         {
             Contract.Invariant(_parameterName != null);
             Contract.Invariant(_propertyType != null);
-            Contract.Invariant(_functionDeclaration != null);
+            Contract.Invariant(_functionsDeclaration != null);
         }
 
         protected override void DoExecuteTransaction()
         {
             var statement = CreateContractRequires();
-            var addAfter = GetPreviousRequires();
+            
 
             // Tried to fix an issue that I can't find a precondition for the newly created Contract.Requires
             // Controlflow talked about physical trees, but in this case didn't help!!
-
-            _functionDeclaration.Body.AddStatementAfter(statement, addAfter);
+            foreach (var functionDeclaration in _functionsDeclaration)
+            {
+                var addAfter = GetPreviousRequires(functionDeclaration);
+                functionDeclaration.Body.AddStatementAfter(statement, addAfter);
+            }
+            
             // Following line will break a lot of tests (because will add internal class for generatec classes etc)
             // ContextActionUtils.FormatWithDefaultProfile(_currentFile);
         }
@@ -96,9 +108,9 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         }
 
         [System.Diagnostics.Contracts.Pure, CanBeNull]
-        ICSharpStatement GetPreviousRequires()
+        ICSharpStatement GetPreviousRequires(ICSharpFunctionDeclaration functionDeclaration)
         {
-            return _functionDeclaration.GetLastRequiresFor(_parameterName).With(x => x.CSharpStatement);
+            return functionDeclaration.GetLastRequiresFor(_parameterName).With(x => x.CSharpStatement);
         }
     }
 }

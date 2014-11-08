@@ -99,7 +99,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         private AddRequiresExecutor ArgumentCheckExecutor(string argumentName, IClrTypeName argumentType,
             ICSharpFunctionDeclaration functionWithContract)
         {
-            return new AddRequiresExecutor(_provider, _requiresShouldBeGeneric, functionWithContract, argumentName, argumentType);
+            return new AddRequiresExecutor(_provider, _requiresShouldBeGeneric, new []{functionWithContract}, argumentName, argumentType);
         }
 
 

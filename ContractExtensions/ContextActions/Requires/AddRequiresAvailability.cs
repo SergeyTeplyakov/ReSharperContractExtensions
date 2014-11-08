@@ -1,4 +1,7 @@
-﻿using System.Diagnostics.Contracts;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics.Contracts;
+using System.Linq;
 using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
@@ -16,6 +19,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         private readonly string _parameterName;
         private readonly IClrTypeName _parameterType;
         private readonly ICSharpFunctionDeclaration _functionToInsertPrecondition;
+        private readonly ReadOnlyCollection<ICSharpFunctionDeclaration> _functionsToInsertPrecondition;
 
         public AddRequiresAvailability()
         {}
@@ -25,8 +29,8 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         {
             Contract.Requires(provider != null);
 
-            if (MethodSupportsRequires(out _parameterName, out _parameterType, out _functionToInsertPrecondition)
-                || PropertySetterSupportRequires(out _parameterName, out _parameterType, out _functionToInsertPrecondition))
+            if (MethodSupportsRequires(out _parameterName, out _parameterType, out _functionsToInsertPrecondition)
+                || PropertySetterSupportRequires(out _parameterName, out _parameterType, out _functionsToInsertPrecondition))
             {
                 _isAvailable = true;
             }
@@ -37,7 +41,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         {
             Contract.Invariant(!_isAvailable || _provider != null);
             Contract.Invariant(!_isAvailable || _parameterName != null);
-            Contract.Invariant(!_isAvailable || _functionToInsertPrecondition != null);
+            Contract.Invariant(!_isAvailable || FunctionToInsertPrecondition != null);
             Contract.Invariant(!_isAvailable || _parameterType != null);
         }
 
@@ -45,12 +49,12 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         {}
 
         private bool MethodSupportsRequires(out string parameterName, out IClrTypeName parameterType,
-            out ICSharpFunctionDeclaration functionToInsertPrecondition)
+            out ReadOnlyCollection<ICSharpFunctionDeclaration> functionsToInsertPrecondition)
         {
-            functionToInsertPrecondition = null;
+            functionsToInsertPrecondition = null;
 
             return ParameterSupportRequires(out parameterName, out parameterType) &&
-                   FunctionSupportRequiers(parameterName, out functionToInsertPrecondition);
+                   FunctionSupportRequiers(parameterName, out functionsToInsertPrecondition);
         }
 
         [Pure]
@@ -70,46 +74,51 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
         }
 
         [Pure]
-        private bool FunctionSupportRequiers(string parameterName, out ICSharpFunctionDeclaration functionDeclaration)
+        private bool FunctionSupportRequiers(string parameterName, out ReadOnlyCollection<ICSharpFunctionDeclaration> functionsDeclaration)
         {
             var func = new FunctionRequiresAvailability(_provider, parameterName);
             if (func.IsAvailable)
             {
-                functionDeclaration = func.FunctionToInsertPrecondition;
+                functionsDeclaration = func.FunctionsToInsertPrecondition;
                 return true;
             }
 
-            functionDeclaration = null;
+            functionsDeclaration = null;
             return false;
         }
 
         private bool PropertySetterSupportRequires(out string parameterName, out IClrTypeName parameterType,
-            out ICSharpFunctionDeclaration functionToInsertPrecondition)
+            out ReadOnlyCollection<ICSharpFunctionDeclaration> functionsToInsertPrecondition)
         {
             parameterName = null;
             parameterType = null;
-            functionToInsertPrecondition = null;
+            functionsToInsertPrecondition = null;
 
             var propertySetterAvailability = new PropertySetterRequiresAvailability(_provider);
             if (!propertySetterAvailability.IsAvailable)
                 return false;
 
-            parameterName = "value";
+            parameterName = propertySetterAvailability.ParameterName;
             parameterType = propertySetterAvailability.PropertyType;
 
             var func = new FunctionRequiresAvailability(_provider, parameterName,
-                propertySetterAvailability.SelectedFunctionDeclaration);
+                propertySetterAvailability.GetSelectedFunctions());
 
             if (func.IsAvailable)
             {
-                functionToInsertPrecondition = func.FunctionToInsertPrecondition;
+                functionsToInsertPrecondition = func.FunctionsToInsertPrecondition;
                 return true;
             }
 
             return false;
         }
 
-        public ICSharpFunctionDeclaration FunctionToInsertPrecondition { get { return _functionToInsertPrecondition; } }
+        public ReadOnlyCollection<ICSharpFunctionDeclaration> FunctionsToInsertPrecondition
+        {
+            get { return _functionsToInsertPrecondition ?? new List<ICSharpFunctionDeclaration>().AsReadOnly(); }
+        }
+
+        public ICSharpFunctionDeclaration FunctionToInsertPrecondition { get { return FunctionsToInsertPrecondition.FirstOrDefault(); } }
         public string SelectedParameterName { get { return _parameterName; } }
         public IClrTypeName SelectedParameterType { get { return _parameterType; } }
     }

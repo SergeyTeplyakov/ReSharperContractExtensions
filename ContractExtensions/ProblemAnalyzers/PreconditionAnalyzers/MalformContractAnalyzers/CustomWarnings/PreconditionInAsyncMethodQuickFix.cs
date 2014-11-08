@@ -32,7 +32,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
 
             var flow = new CSharpExtractMethodFromStatementsWorkflow(null, "foo");
             //flow.Execute()
-            throw 
+            throw new NotImplementedException();
         }
 
         public override string Text
