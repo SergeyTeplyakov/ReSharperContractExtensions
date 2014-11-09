@@ -92,14 +92,9 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             setterDeclaration = null;
             propertyType = null;
             parameterName = null;
-            
+
             var indexerDeclaration = _provider.GetSelectedElement<IIndexerDeclaration>(true, true);
             if (indexerDeclaration == null)
-                return false;
-
-            getterDeclaration = indexerDeclaration.AccessorDeclarations.FirstOrDefault(a => a.Kind == AccessorKind.GETTER);
-            setterDeclaration = indexerDeclaration.AccessorDeclarations.FirstOrDefault(a => a.Kind == AccessorKind.SETTER);
-            if (getterDeclaration == null && setterDeclaration == null)
                 return false;
 
             propertyType = indexerDeclaration.Type.GetClrTypeName();
@@ -108,9 +103,19 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             if (accessorDeclaration != null)
             {
                 parameterName = "value";
+
+                if (accessorDeclaration.Kind == AccessorKind.GETTER)
+                    return false;
+
+                setterDeclaration = accessorDeclaration;
                 // Selected property setter. Action should be available for reference and non-nullable value types.
                 return indexerDeclaration.Type.IsReferenceOrNullableType();
             }
+
+            getterDeclaration = indexerDeclaration.AccessorDeclarations.FirstOrDefault(a => a.Kind == AccessorKind.GETTER);
+            setterDeclaration = indexerDeclaration.AccessorDeclarations.FirstOrDefault(a => a.Kind == AccessorKind.SETTER);
+            if (getterDeclaration == null && setterDeclaration == null)
+                return false;
 
             var parameterDeclaration = ParameterRequiresAvailability.Create(_provider);
             parameterName = parameterDeclaration.ParameterName;

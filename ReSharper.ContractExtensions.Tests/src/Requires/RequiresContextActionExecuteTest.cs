@@ -14,7 +14,6 @@ namespace ReSharper.ContractExtensions.Tests.Preconditions
         }
 
         [TestCase("GetterAndSetter")]
-        [TestCase("OnGetter")]
         [TestCase("OnSetter")]
         [TestCase("SetterOnly")]
         [TestCase("SimpleIndexer")]

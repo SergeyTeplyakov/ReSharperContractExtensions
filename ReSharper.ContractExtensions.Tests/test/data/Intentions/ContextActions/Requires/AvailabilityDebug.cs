@@ -6,13 +6,13 @@ class Person
   public string Name {get; set;}
 }
 
-abstract class D3
+abstract class A0
 {  
-  public string this[int index]
+  public object this[string index]
   {
-    s{on}et
+    g{off}et
     {
-        return "42";
+      return new object();
     }
   }
 }

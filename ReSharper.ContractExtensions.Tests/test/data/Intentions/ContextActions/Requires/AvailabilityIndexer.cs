@@ -1,6 +1,17 @@
 using System;
 using System.Diagnostics.Contracts;
 
+abstract class A0
+{  
+  public object this[string index]
+  {
+    g{off}et
+    {
+      return new object();
+    }
+  }
+}
+
 abstract class A
 {  
   public object this[string inde{on}x]
@@ -126,6 +137,40 @@ abstract class D1
     }
   }
 }
+
+abstract class D11
+{
+    public object this[string index]
+    {
+        g{off}et
+        {
+            Contract.Requires(index != null);
+            return new object();
+        }
+        set
+        {
+            Contract.Requires(index != null);
+            Contract.Requires<ArgumentNullException>(value != null);
+        }
+    }
+}
+
+abstract class D12
+{
+    public object this[string index]
+    {
+        get
+        {
+            return new object();
+        }
+        s{off}et
+        {
+            Contract.Requires(index != null);
+            Contract.Requires<ArgumentNullException>(value != null);
+        }
+    }
+}
+
 
 abstract class D2
 {  

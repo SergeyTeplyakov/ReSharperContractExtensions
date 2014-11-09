@@ -103,9 +103,9 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
             switch (warning)
             {
                 case MalformedContractCustomWarning.PreconditionInAsyncMethod:
-                    return string.Format("Precondition will fail returning task in async method");
+                    return string.Format("Precondition in async method is asynchronous and will fail returning task");
                 case MalformedContractCustomWarning.PreconditionInMethodWithIteratorBlock:
-                    return string.Format("Precondition will be lazy evaluated due to iterator block");
+                    return string.Format("Precondition in iterator block will throw only on first MoveNext() call");
                 default:
                     Contract.Assert(false, "Unknown custom warning: " + warning);
                     throw new InvalidOperationException("Unknown custom warning: " + warning);
