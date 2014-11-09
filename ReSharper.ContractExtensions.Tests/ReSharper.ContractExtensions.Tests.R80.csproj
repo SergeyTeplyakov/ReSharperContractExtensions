@@ -49,8 +49,7 @@
     <Compile Include="src\ContractEx\ContractPreconditionExpressionTests.cs" />
     <Compile Include="src\ContractFor\AddContractForContextActionAvailabilityTest.cs" />
     <Compile Include="src\CSharpContextActionAvailabilityTestBase.cs" />
-    <Compile Include="src\CSharpContextActionExecuteTestBase.cs" />
-    <Compile Include="src\ContractFor\AddContractForContextActionExecuteTest.cs" />
+    <Compile Include="src\CSharpContextActionExecuteTestBase.cs" />    <Compile Include="src\ContractFor\AddContractForContextActionExecuteTest.cs" />
     <Compile Include="src\ContractFor\AddContractForWIthExcludeCodeCoverageTest.cs" />
     <Compile Include="src\Ensures\ComboEnsuresContextActionAvailabilityTest.cs" />
     <Compile Include="src\Ensures\ComboEnsuresContextActionExecuteTest.cs" />
@@ -84,6 +83,8 @@
     <Compile Include="src\ProblemAnalyzers\PreconditionAnalyzers\MalformedContractAnalyzer\MalformedContractErrorHighlightingTests.cs" />
     <Compile Include="src\ProblemAnalyzers\PostconditionAnalyzers\FixPostconditionErrorTests.cs" />
     <Compile Include="src\ProblemAnalyzers\PostconditionAnalyzers\PostconditionErrorHighlightingTests.cs" />
+    <Compile Include="src\ProblemAnalyzers\PreconditionAnalyzers\PreconditionsInAsyncMethods\PreconditionInAsyncMethodHighlightingTests.cs" />
+    <Compile Include="src\ProblemAnalyzers\PreconditionAnalyzers\PreconditionsInIteratorBlock\PreconditionInAsyncMethodHighlightingTests.cs" />
     <Compile Include="src\ProblemAnalyzers\PreconditionAnalyzers\RedundantRequiresCheckerTests.cs" />
     <Compile Include="src\ProblemAnalyzers\PreconditionAnalyzers\RedundantRequiresQuickFixAvailabilityTests.cs" />
     <Compile Include="src\ProblemAnalyzers\PreconditionAnalyzers\RequiresMessageAnalyzer\RequiresMessageHighlightingTests.cs" />

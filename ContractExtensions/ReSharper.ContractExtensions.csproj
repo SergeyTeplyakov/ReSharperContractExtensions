@@ -156,7 +156,7 @@
     <Compile Include="ContextActions\Requires\AddRequiresExecutor.cs" />
     <Compile Include="ContractsEx\ContractExtensions.cs" />
     <Compile Include="ContractsEx\Validation\Statements\CodeContractStatementUtils.cs" />
-    <Compile Include="ContractsEx\Validation\Statements\ContractValidatorStatement.cs" />
+    <Compile Include="ContractsEx\Validation\ContractValidatorStatement.cs" />
     <Compile Include="ContractsEx\Validation\Statements\ContractAbbreviationStatement.cs" />
     <Compile Include="ContractsEx\Validation\Statements\ContractBlock.cs" />
     <Compile Include="ContractsEx\Validation\Statements\ContractStatement.cs" />

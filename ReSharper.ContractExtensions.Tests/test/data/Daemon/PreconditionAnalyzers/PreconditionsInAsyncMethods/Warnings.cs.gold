@@ -27,7 +27,7 @@ class A
   }
 }
 ---------------------------------------------------------
-(0): ReSharper Warning: Suspicios precondition in public/protected async method
-(1): ReSharper Warning: Suspicios precondition in public/protected async method
-(2): ReSharper Warning: Suspicios precondition in public/protected async method
-(3): ReSharper Warning: Suspicios precondition in public/protected async method
+(0): ReSharper Warning: Precondition will fail returning task in async method
+(1): ReSharper Warning: Precondition will fail returning task in async method
+(2): ReSharper Warning: Precondition will fail returning task in async method
+(3): ReSharper Warning: Precondition will fail returning task in async method

@@ -23,6 +23,6 @@ class A
   }
 }
 ---------------------------------------------------------
-(0): ReSharper Warning: Suspicious precondition in method with iterator block
-(1): ReSharper Warning: Suspicious precondition in method with iterator block
-(2): ReSharper Warning: Suspicious precondition in method with iterator block
+(0): ReSharper Warning: Precondition will be lazy evaluated due to iterator block
+(1): ReSharper Warning: Precondition will be lazy evaluated due to iterator block
+(2): ReSharper Warning: Precondition will be lazy evaluated due to iterator block

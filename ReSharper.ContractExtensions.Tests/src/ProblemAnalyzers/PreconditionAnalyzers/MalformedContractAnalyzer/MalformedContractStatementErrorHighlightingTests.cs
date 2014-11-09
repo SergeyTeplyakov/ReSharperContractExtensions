@@ -5,8 +5,8 @@ using ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Malfor
 namespace ReSharper.ContractExtensions.Tests.ProblemAnalyzers.PreconditionAnalyzers
 {
     [TestFixture]
-    public class MalformedContractStatementErrorHighlightingTests 
-        : CSharpHighlightingTestBase<ContractCustomWarningHighlighting>
+    public class MalformedContractStatementErrorHighlightingTests
+        : CSharpHighlightingTestBase<MalformedContractErrorHighlighting>
     {
         protected override string RelativeTestDataPath
         {

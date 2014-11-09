@@ -3,15 +3,15 @@ using System.Diagnostics.Contracts;
 
 class A
 {
-  private async Task Foo(string s)
+  public Task Foo(string s)
   {
     Contract.Requires(s != null);
+    return DoFoo(s);
   }
 
-  public Task FooWithoutAsyncKeyword(string s)
+  private async Task DoFoo(string s)
   {
-    Contract.Requires(s != null);
-    throw new System.NotImplementedException();
+    await Task.Delay(42);
   }
 }
 ---------------------------------------------------------

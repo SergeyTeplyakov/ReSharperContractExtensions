@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>ReSharper.ContractExtensions</id>
-    <version>0.8.0</version>
+    <version>0.9.0</version>
     <!-- update plugin ver in AssemblyInfo.cs plz -->
     <title>Code Contract editing extensions</title>
     <authors>Sergey Teplyakov</authors>
@@ -15,6 +15,16 @@
       Detects Code Contract error/warnings in the IDE.
     </description>
     <releaseNotes>
+*What's new in 0.9.0*
+1. Indexer Support (#46)
+ - Context actions for adding preconditions and postconditions for indexers
+2. Warning for preconditions in async methods (#39)
+3. Warning for preconditions in methods with iterator block (#37)
+4. Warning for using events in preconditions (#18)
+
+Bug fixes
+1. #42 - warning for incompatible return types in properties.
+
 *What's new in 0.8.0*
 Support for Code Contract Compiler warnings and errors inside the editor.
 
