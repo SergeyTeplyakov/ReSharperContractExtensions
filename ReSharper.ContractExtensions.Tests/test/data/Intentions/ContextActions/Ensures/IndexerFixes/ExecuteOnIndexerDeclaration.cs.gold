@@ -1,0 +1,14 @@
+﻿using System.Diagnostics.Contracts;
+
+class A
+{
+  public ob{caret}ject this[string index]
+  {
+    get
+    {
+      Contract.Requires(index != null);
+      Contract.Ensures(Contract.Result<object>() != null);
+      return new object();
+    }
+  }
+}

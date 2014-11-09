@@ -19,6 +19,12 @@ namespace ReSharper.ContractExtensions.Tests.Postconditions
             DoOneTest(testSrc);
         }
 
+        [TestCase("AvailabilityIndexer")]
+        public void TestIndexerAvailability(string testSrc)
+        {
+            DoOneTest(testSrc);
+        }
+
         [TestCase("AvailabilityFull")]
         [TestCase("AvailabilityOnStaticClass")]
         [TestCase("AvailabilityOnInterface")]

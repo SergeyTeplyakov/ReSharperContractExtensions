@@ -89,6 +89,20 @@ namespace ReSharper.ContractExtensions.ContextActions.Ensures
 
         [Pure] private bool IsPropertyWithGetterSelected()
         {
+            // Ensures is available for indexer, but should not be available for selected setters
+            var indexedPropertyDeclaration = _provider.GetSelectedElement<IIndexerDeclaration>(true, true);
+            if (indexedPropertyDeclaration != null)
+            {
+                var selectedAccessor = _provider.GetSelectedElement<IAccessorDeclaration>(true, true);
+
+                var getter = indexedPropertyDeclaration.AccessorDeclarations.FirstOrDefault(a => a.Kind == AccessorKind.GETTER);
+                if (getter != null)
+                {
+                    if (selectedAccessor == null || selectedAccessor == getter)
+                        return true;
+                }
+            }
+
             var propertyDeclaration = _provider.GetSelectedElement<IPropertyDeclaration>(true, true);
             if (propertyDeclaration == null)
                 return false;
@@ -111,8 +125,12 @@ namespace ReSharper.ContractExtensions.ContextActions.Ensures
 
             if (IsPropertyWithGetterSelected())
             {
-                return _provider.GetSelectedElement<IPropertyDeclaration>(true, true)
-                    .AccessorDeclarations.First(d => d.Kind == AccessorKind.GETTER);
+                var propertyOwner = (IAccessorOwnerDeclaration)_provider.GetSelectedElement<IIndexerDeclaration>(true, true) ??
+                              _provider.GetSelectedElement<IPropertyDeclaration>(true, true);
+                
+                Contract.Assert(propertyOwner != null);
+
+                return propertyOwner.AccessorDeclarations.First(d => d.Kind == AccessorKind.GETTER);
             }
 
             Contract.Assert(false, "Impossible situation");
