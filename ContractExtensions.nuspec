@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>ReSharper.ContractExtensions</id>
-    <version>0.9.0</version>
+    <version>0.9.0.1</version>
     <!-- update plugin ver in AssemblyInfo.cs plz -->
     <title>Code Contract editing extensions</title>
     <authors>Sergey Teplyakov</authors>
@@ -15,6 +15,9 @@
       Detects Code Contract error/warnings in the IDE.
     </description>
     <releaseNotes>
+*What's new in 0.9.0.1*
+Fixed an issue that if-throw preconditions were checked via Code Contract Statements rules. (#47)
+
 *What's new in 0.9.0*
 1. Indexer Support (#46)
  - Context actions for adding preconditions and postconditions for indexers
