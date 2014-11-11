@@ -39,6 +39,20 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions.Statements
 
             return ContractBlock.Create(functionDeclaration).ProcessedStatements;
         }
+        
+        /// <summary>
+        /// Returns a list of statements for specified function.
+        /// </summary>
+        public static IList<ProcessedStatement> GetCodeContractBlockStatements(
+            this ICSharpFunctionDeclaration functionDeclaration)
+        {
+            Contract.Requires(functionDeclaration != null);
+            Contract.Ensures(Contract.Result<IList<ProcessedStatement>>() != null);
+
+            return ContractBlock.CreateCodeContractBlock(functionDeclaration).ProcessedStatements;
+        }
+
+        
 
 
     }

@@ -2,6 +2,7 @@
 using JetBrains.ReSharper.Daemon.Stages.Dispatcher;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Tree;
+using ReSharper.ContractExtensions.ContractsEx.Assertions;
 using ReSharper.ContractExtensions.ContractsEx.Assertions.Statements;
 
 namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.MalformContractAnalyzers
@@ -19,7 +20,8 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
         protected override void Run(ICSharpStatement element, ElementProblemAnalyzerData data, IHighlightingConsumer consumer)
         {
             var contractStatement = CodeContractStatement.TryCreate(element);
-            if (contractStatement == null)
+            // We're interested only in Code Contract Statements for know!
+            if (contractStatement == null || contractStatement.CodeContractExpression == null)
                 return;
 
             var validationResult = ContractStatementValidator.ValidateStatement(contractStatement);

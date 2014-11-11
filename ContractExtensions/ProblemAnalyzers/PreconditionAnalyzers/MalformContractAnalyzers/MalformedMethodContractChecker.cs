@@ -1,4 +1,5 @@
-﻿using JetBrains.ReSharper.Daemon;
+﻿using System.Linq;
+using JetBrains.ReSharper.Daemon;
 using JetBrains.ReSharper.Daemon.Stages;
 using JetBrains.ReSharper.Daemon.Stages.Dispatcher;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
@@ -19,14 +20,12 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
     {
         protected override void Run(ICSharpFunctionDeclaration element, ElementProblemAnalyzerData data, IHighlightingConsumer consumer)
         {
-            var contractBlockStatements = element.GetContractBlockStatements();
+            // Right now there is two different rule sets for Code Contract statements and for any preconditions.
+            var validateContractBlock = CodeContractBlockValidator.ValidateCodeContractBlock(element.GetCodeContractBlockStatements());
 
-            if (contractBlockStatements.Count == 0)
-                return;
+            var preconditions = CodeContractBlockValidator.ValidateAllPreconditions(element.GetContractBlockStatements());
 
-            var validateContractBlock = ContractBlockValidator.ValidateContractBlock(contractBlockStatements);
-
-            foreach (var vr in validateContractBlock.ValidationResults)
+            foreach (var vr in validateContractBlock.ValidationResults.Union(preconditions.ValidationResults))
             {
                 var highlighting = vr.Match(
                     error => (IHighlighting)new CodeContractErrorHighlighting(error, validateContractBlock),

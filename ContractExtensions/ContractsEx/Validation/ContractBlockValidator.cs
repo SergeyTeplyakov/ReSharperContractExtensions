@@ -12,17 +12,34 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
     ///*private static bool MethodResultIsIncompatibleWith(*/)
 
     /// <summary>
+    /// Validates code contract statementents within contract block.
     /// Class that validates <see cref="ProcessedStatement"/> into the <see cref="ValidatedContractBlock"/>.
     /// </summary>
-    internal static class ContractBlockValidator
+    internal static class CodeContractBlockValidator
     {
-        private static readonly List<ValidationRule> _validationRules = GetAllValidationRules().ToList();
+        private static readonly List<ValidationRule> _codeContractValidationRules = GetAllValidationRules().ToList();
+        private static readonly List<ValidationRule> _preconditionValidationRules = PreconditionValidator.GetValidationRules().ToList();
 
-        public static ValidatedContractBlock ValidateContractBlock(IList<ProcessedStatement> contractBlock)
+        /// <summary>
+        ///  Validate all statements and precondition types not only Code Contract preconditions
+        /// </summary>
+        /// <param name="contractBlock"></param>
+        /// <returns></returns>
+        public static ValidatedContractBlock ValidateAllPreconditions(IList<ProcessedStatement> contractBlock)
         {
             var validatedContractBlock =
                 from st in contractBlock
-                let vs = ValidateStatement(contractBlock, st)
+                let vs = ValidateStatement(_preconditionValidationRules, contractBlock, st)
+                select new ValidatedStatement(st, vs.ToList());
+            
+            return new ValidatedContractBlock(validatedContractBlock.ToList());
+        }
+        
+        public static ValidatedContractBlock ValidateCodeContractBlock(IList<ProcessedStatement> contractBlock)
+        {
+            var validatedContractBlock =
+                from st in contractBlock
+                let vs = ValidateStatement(_codeContractValidationRules, contractBlock, st)
                 select new ValidatedStatement(st, vs.ToList());
             
             return new ValidatedContractBlock(validatedContractBlock.ToList());
@@ -31,7 +48,6 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
         private static IEnumerable<ValidationRule> GetAllValidationRules()
         {
             return GetValidationRules()
-                .Union(PreconditionValidator.GetValidationRules())
                 .Union(PostconditionValidator.GetValidationRules());
         }
 
@@ -158,14 +174,14 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
             throw new InvalidOperationException("Current statement not found in the contract block");
         }
 
-        private static IEnumerable<ValidationResult> ValidateStatement(IList<ProcessedStatement> contractBlock,
-            ProcessedStatement currentStatement)
+        private static IEnumerable<ValidationResult> ValidateStatement(IList<ValidationRule> validationRules, 
+            IList<ProcessedStatement> contractBlock, ProcessedStatement currentStatement)
         {
             Contract.Requires(contractBlock != null);
             Contract.Requires(currentStatement != null);
             Contract.Ensures(Contract.Result<IEnumerable<ValidationResult>>() != null);
 
-            return _validationRules
+            return validationRules
                 .Select(rule => rule.Validate(currentStatement, contractBlock))
                 .Where(vr => vr.ErrorType != ErrorType.NoError)
                 .ToList();

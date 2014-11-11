@@ -51,6 +51,30 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions.Statements
             // Because we're taking +1 item we can skip check for -1!
             return new ContractBlock(statements.Take(lastContractIndex + 1).ToList());
         }
+        
+        /// <summary>
+        /// Code contract statement contains only a list of Code Contract statements.
+        /// </summary>
+        public static ContractBlock CreateCodeContractBlock(ICSharpFunctionDeclaration functionDeclaration)
+        {
+            Contract.Requires(functionDeclaration != null);
+            Contract.Ensures(Contract.Result<ContractBlock>() != null);
+
+            var statements =
+                GetStatements(functionDeclaration.Body)
+                .Select(ProcessedStatement.Create)
+                .ToList();
+
+            int lastContractIndex =
+                statements.LastIndexOf(
+                    s => (s.CodeContractStatement != null &&
+                         (s.CodeContractStatement.IsPrecondition ||
+                          s.CodeContractStatement.IsPostcondition ||
+                          s.CodeContractStatement.StatementType == CodeContractStatementType.EndContractBlock)));
+
+            // Because we're taking +1 item we can skip check for -1!
+            return new ContractBlock(statements.Take(lastContractIndex + 1).ToList());
+        }
 
         /// <summary>
         /// Return statements for specified <see cref="block"/> and "sub-blocks" recursively.

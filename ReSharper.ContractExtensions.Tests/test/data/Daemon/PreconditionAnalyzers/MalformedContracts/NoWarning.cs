@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics.Contracts;
 
 class Guard
@@ -29,5 +30,11 @@ class A
   {
     ContractCheck(s);
     Contract.Requires(false);
+  }
+
+  public void NoWarningForIfThrow(string s)
+  {
+    Console.WriteLine(s);
+    if (s == null) throw new ArgumentNullException("s");
   }
 }
