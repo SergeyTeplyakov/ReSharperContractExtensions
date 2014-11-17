@@ -3,13 +3,18 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Windows.Forms;
+using JetBrains.Application.Settings;
+using JetBrains.ProjectModel;
+using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.TextControl;
 using JetBrains.Util;
+using ReSharper.ContractExtensions.ContextActions.Requires;
 using ReSharper.ContractExtensions.ContractsEx.Assertions;
 using ReSharper.ContractExtensions.ContractsEx.Assertions.Statements;
+using ReSharper.ContractExtensions.Settings;
 using ReSharper.ContractExtensions.Utilities;
 
 namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.MalformContractAnalyzers
@@ -30,6 +35,9 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
 
         public static MalformedContractFix TryCreate(ValidationResult currentStatement, ValidatedContractBlock validatedContractBlock)
         {
+            if (ConvertToContractRequiresFix.IsFixableCore(currentStatement))
+                return new ConvertToContractRequiresFix(currentStatement, validatedContractBlock);
+
             if (MoveStatementsOutOfTheContractBlockFix.IsFixableCore(currentStatement))
                 return new MoveStatementsOutOfTheContractBlockFix(currentStatement, validatedContractBlock);
 
@@ -48,19 +56,75 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
             return null;
         }
 
-        public Action<ITextControl> ExecuteFix()
+        public Action<ITextControl> ExecuteFix(ISolution solution)
         {
-            return DoExecuteFix(_validatedContractBlock.ValidationResults.Where(IsFixable).ToList());
+            return DoExecuteFix(solution, _validatedContractBlock.ValidationResults.Where(IsFixable).ToList());
         }
 
         protected ICSharpStatement GetLastStatementInContractBlock()
         {
             return _validatedContractBlock.ContractBlock.Last().CSharpStatement;
         }
-        protected abstract Action<ITextControl> DoExecuteFix(IList<ValidationResult> toFix);
+        protected abstract Action<ITextControl> DoExecuteFix(ISolution solution, IList<ValidationResult> toFix);
 
         public abstract string FixName { get; }
         protected abstract bool IsFixable(ValidationResult validationResult);
+    }
+
+    internal sealed class ConvertToContractRequiresFix : MalformedContractFix
+    {
+        private readonly IPrecondition _precondition;
+        public ConvertToContractRequiresFix(ValidationResult currentStatement, ValidatedContractBlock validatedContractBlock)
+            : base(currentStatement, validatedContractBlock)
+        {
+            // TODO: refactoring required!! Not clear logic
+            _precondition =
+                ContractsEx.Assertions.ContractStatementFactory.TryCreatePrecondition(currentStatement.Statement);
+        }
+
+        public static bool IsFixableCore(ValidationResult validationResult)
+        {
+            return validationResult.Match(
+                error => false,
+
+                warning => false,
+
+                customWarning => customWarning.Warning == MalformedContractCustomWarning.PreconditionInAsyncMethod ||
+                                 customWarning.Warning == MalformedContractCustomWarning.PreconditionInMethodWithIteratorBlock,
+                _ => false);
+        }
+
+        private bool IsGenericByDefault()
+        {
+            return _currentStatement.Statement.GetSourceFile()
+                .With(x => x.GetSettingsStore())
+                .With(x => x.GetKey<ContractExtensionsSettings>(SettingsOptimization.OptimizeDefault))
+                .ReturnStruct(x => x.UseGenericContractRequires) == true;
+        }
+
+
+        protected override Action<ITextControl> DoExecuteFix(ISolution solution, IList<ValidationResult> statementsToFix)
+        {
+            var targetType = IsGenericByDefault()
+                ? PreconditionType.GenericContractRequires
+                : PreconditionType.ContractRequires;
+
+            var converter = new PreconditionConverterExecutor(_currentStatement.Statement, _precondition, 
+                PreconditionType.IfThrowStatement, targetType);
+            converter.ExecuteTransaction();
+
+            return null;
+        }
+
+        public override string FixName
+        {
+            get { return "Convert to Contract.Requires"; }
+        }
+
+        protected override bool IsFixable(ValidationResult validationResult)
+        {
+            return _precondition != null && IsFixableCore(validationResult);
+        }
     }
 
     internal sealed class MoveStatementsOutOfTheContractBlockFix : MalformedContractFix
@@ -81,7 +145,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
                 _ => false);
         }
 
-        protected override Action<ITextControl> DoExecuteFix(IList<ValidationResult> statementsToFix)
+        protected override Action<ITextControl> DoExecuteFix(ISolution solution, IList<ValidationResult> statementsToFix)
         {
             foreach (var s in statementsToFix)
             {
@@ -124,7 +188,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
                 _ => false);
         }
 
-        protected override Action<ITextControl> DoExecuteFix(IList<ValidationResult> statementsToFix)
+        protected override Action<ITextControl> DoExecuteFix(ISolution solution, IList<ValidationResult> statementsToFix)
         {
             var contractStatements = _validatedContractBlock.ContractBlock.Where(ps => ps.CodeContractStatement != null).ToList();
 
@@ -174,7 +238,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
                 _ => false);
         }
 
-        protected override Action<ITextControl> DoExecuteFix(IList<ValidationResult> statementsToFix)
+        protected override Action<ITextControl> DoExecuteFix(ISolution solution, IList<ValidationResult> statementsToFix)
         {
             // This fix has following logic:
             // 1. Find first occurrance of the EndContracBlock statement (will be required later)
@@ -244,7 +308,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
                 _ => false);
         }
 
-        protected override Action<ITextControl> DoExecuteFix(IList<ValidationResult> statementsToFix)
+        protected override Action<ITextControl> DoExecuteFix(ISolution solution, IList<ValidationResult> statementsToFix)
         {
             _currentStatement.Statement.RemoveOrReplaceByEmptyStatement();
             return null;
@@ -306,7 +370,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
                 _ => false);
         }
 
-        protected override Action<ITextControl> DoExecuteFix(IList<ValidationResult> toFix)
+        protected override Action<ITextControl> DoExecuteFix(ISolution solution, IList<ValidationResult> toFix)
         {
             Contract.Assert(_currentStatement.ProcessedStatement.CodeContractStatement != null);
 

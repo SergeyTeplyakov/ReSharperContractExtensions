@@ -1,4 +1,5 @@
-﻿using JetBrains.ReSharper.Psi.CSharp.Tree;
+﻿using System;
+using JetBrains.ReSharper.Psi.CSharp.Tree;
 using ReSharper.ContractExtensions.Utilities;
 
 namespace ReSharper.ContractExtensions.ContractsEx.Assertions.Statements
@@ -17,6 +18,14 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions.Statements
         public override bool IsPrecondition
         {
             get { return true; }
+        }
+    }
+
+    public static class ContractStatementEx
+    {
+        public static bool IsIfThrowStatement(this ContractStatement statement)
+        {
+            return statement is IfThrowStatement;
         }
     }
 }

@@ -15,6 +15,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
 {
     internal sealed class AddRequiresExecutor : ContextActionExecutorBase
     {
+        private readonly ICSharpContextActionDataProvider _provider;
         private readonly string _parameterName;
         private readonly IClrTypeName _propertyType;
 
@@ -26,6 +27,8 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             ICSharpFunctionDeclaration functionDeclaration, string parameterName, IClrTypeName propertyType)
             : this(provider, shouldBeGeneric, new []{functionDeclaration}, parameterName, propertyType)
         {
+            Contract.Requires(provider != null);
+            _provider = provider;
         }
 
         public AddRequiresExecutor(ICSharpContextActionDataProvider provider, bool shouldBeGeneric, 
@@ -35,6 +38,8 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
             Contract.Requires(functionsDeclaration != null);
             Contract.Requires(parameterName != null);
             Contract.Requires(propertyType != null);
+
+            _provider = provider;
 
             _shouldBeGeneric = shouldBeGeneric;
             _functionsDeclaration = functionsDeclaration;

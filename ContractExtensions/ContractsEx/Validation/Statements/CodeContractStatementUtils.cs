@@ -31,6 +31,18 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions.Statements
         /// <summary>
         /// Returns a list of statements for specified function.
         /// </summary>
+        public static IList<ProcessedStatement> GetLegacyContractBlockStatements(
+            this ICSharpFunctionDeclaration functionDeclaration)
+        {
+            Contract.Requires(functionDeclaration != null);
+            Contract.Ensures(Contract.Result<IList<ProcessedStatement>>() != null);
+
+            return ContractBlock.CreateLegacyContractBlock(functionDeclaration).ProcessedStatements;
+        }
+        
+        /// <summary>
+        /// Returns a list of statements for specified function.
+        /// </summary>
         public static IList<ProcessedStatement> GetContractBlockStatements(
             this ICSharpFunctionDeclaration functionDeclaration)
         {

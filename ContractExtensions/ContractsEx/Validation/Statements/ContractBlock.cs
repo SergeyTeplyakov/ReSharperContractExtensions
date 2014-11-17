@@ -52,6 +52,23 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions.Statements
             return new ContractBlock(statements.Take(lastContractIndex + 1).ToList());
         }
         
+        public static ContractBlock CreateLegacyContractBlock(ICSharpFunctionDeclaration functionDeclaration)
+        {
+            Contract.Requires(functionDeclaration != null);
+            Contract.Ensures(Contract.Result<ContractBlock>() != null);
+
+            var statements =
+                GetStatements(functionDeclaration.Body)
+                .Select(ProcessedStatement.Create)
+                .Where(x => x.ContractStatement != null)
+                .ToList();
+
+            if (statements.All(s => s.ContractStatement.IsIfThrowStatement()))
+                return new ContractBlock(statements);
+            
+            return new ContractBlock(new ProcessedStatement[]{});
+        }
+        
         /// <summary>
         /// Code contract statement contains only a list of Code Contract statements.
         /// </summary>

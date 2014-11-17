@@ -24,8 +24,8 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
 
         public InvalidRequiresMessageHighlighting(Message contractMessage)
         {
-            _contractMessage = contractMessage;
             Contract.Requires(contractMessage != null);
+            _contractMessage = contractMessage;
         }
 
         public const string ServerityId = "InvalidRequiresMessageHighlighting";

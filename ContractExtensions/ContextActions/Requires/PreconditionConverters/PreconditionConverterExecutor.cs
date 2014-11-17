@@ -15,6 +15,9 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
 {
     internal sealed class PreconditionConverterExecutor : ContextActionExecutorBase
     {
+        private readonly IPrecondition _precondition;
+        private readonly PreconditionType _sourcePreconditionType;
+
         private struct Key
         {
             public PreconditionType from;
@@ -34,32 +37,43 @@ namespace ReSharper.ContractExtensions.ContextActions.Requires
 
         private readonly Dictionary<Key, Action<IPrecondition>> _converters = new Dictionary<Key, Action<IPrecondition>>();
 
-        private readonly PreconditionConverterAvailability _availability;
+        //private readonly PreconditionConverterAvailability _availability;
         private readonly PreconditionType _destinationPreconditionType;
 
-        public PreconditionConverterExecutor(PreconditionConverterAvailability availability,
+        public PreconditionConverterExecutor(ICSharpStatement preconditionStatement, IPrecondition precondition,
+            PreconditionType sourcePreconditionType,
             PreconditionType destinationPreconditionType)
-            : base(availability)
+            : base(preconditionStatement)
         {
-            Contract.Requires(availability.SourcePreconditionType != destinationPreconditionType);
+            Contract.Requires(precondition != null);
 
-            _availability = availability;
+            Contract.Requires(sourcePreconditionType != destinationPreconditionType);
+
+            _precondition = precondition;
+            _sourcePreconditionType = sourcePreconditionType;
             _destinationPreconditionType = destinationPreconditionType;
 
             InitializeConverters();
         }
 
+
+        public PreconditionConverterExecutor(PreconditionConverterAvailability availability,
+            PreconditionType destinationPreconditionType)
+            : this(availability.Requires.CSharpStatement, availability.Requires, availability.SourcePreconditionType, destinationPreconditionType)
+        {
+        }
+
         protected override void DoExecuteTransaction()
         {
-            var converter = GetConverter(_availability.SourcePreconditionType, _destinationPreconditionType);
+            var converter = GetConverter(_sourcePreconditionType, _destinationPreconditionType);
             Contract.Assert(converter != null, 
-                string.Format("Converter from {0} to {1} is unavailable", _availability.SourcePreconditionType, _destinationPreconditionType));
+                string.Format("Converter from {0} to {1} is unavailable", _sourcePreconditionType, _destinationPreconditionType));
 
-            converter(_availability.Requires);
+            converter(_precondition);
         }
 
         [CanBeNull]
-        private Action<IPrecondition> GetConverter(PreconditionType sourcePreconditionType, PreconditionType destinationPreconditionType)
+        public Action<IPrecondition> GetConverter(PreconditionType sourcePreconditionType, PreconditionType destinationPreconditionType)
         {
             var key = Key.From(sourcePreconditionType).To(destinationPreconditionType);
             Action<IPrecondition> result;

@@ -16,6 +16,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Invariants
     internal sealed class InvariantActionExecutor : ContextActionExecutorBase
     {
         private readonly InvariantAvailability _invariantAvailability;
+        private readonly ICSharpContextActionDataProvider _provider;
         private readonly IClassLikeDeclaration _classDeclaration;
 
         public InvariantActionExecutor(InvariantAvailability invariantAvailability,
@@ -23,9 +24,11 @@ namespace ReSharper.ContractExtensions.ContextActions.Invariants
             : base(provider)
         {
             Contract.Requires(invariantAvailability != null);
+            Contract.Requires(provider != null);
             Contract.Requires(invariantAvailability.IsAvailable);
 
             _invariantAvailability = invariantAvailability;
+            _provider = provider;
             // TODO: look at this class CSharpStatementNavigator
 
             _classDeclaration = provider.GetSelectedElement<IClassLikeDeclaration>(true, true);

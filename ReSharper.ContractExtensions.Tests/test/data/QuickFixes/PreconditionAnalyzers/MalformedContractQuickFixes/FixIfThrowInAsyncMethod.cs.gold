@@ -1,0 +1,13 @@
+using System.Diagnostics.Contracts;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+
+class A
+{
+  public async Task Foo(string s)
+  {
+    {caret}Contract.Requires(s != null);
+
+    await Task.Delay(42);
+  }
+}

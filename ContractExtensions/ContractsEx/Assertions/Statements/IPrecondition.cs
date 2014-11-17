@@ -1,4 +1,5 @@
 ﻿using JetBrains.ReSharper.Psi;
+using JetBrains.ReSharper.Psi.CSharp.Tree;
 
 namespace ReSharper.ContractExtensions.ContractsEx.Assertions
 {
@@ -14,6 +15,7 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
     /// </summary>
     public interface IPrecondition
     {
+        ICSharpStatement CSharpStatement { get; }
         PreconditionType PreconditionType { get; }
 
         /// <summary>

@@ -6,7 +6,7 @@ using ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Malfor
   null,
   HighlightingGroupIds.CodeSmell,
   PreconditionInMethodWithIteratorBlockHighlighing.Id,
-  "Precondition in methods with iterator block",
+  "Legacy precondition in methods with iterator block",
   Severity.WARNING,
   false)]
 
@@ -18,7 +18,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
     /// Shows errors, produced by Code Contract compiler.
     /// </summary>
     [ConfigurableSeverityHighlighting(Id, CSharpLanguage.Name)]
-    public class PreconditionInMethodWithIteratorBlockHighlighing : ContractCustomWarningHighlighting
+    public class PreconditionInMethodWithIteratorBlockHighlighing : LegacyContractCustomWarningHighlighting
     {
         public const string Id = "Preconditions in method with iterator block";
 

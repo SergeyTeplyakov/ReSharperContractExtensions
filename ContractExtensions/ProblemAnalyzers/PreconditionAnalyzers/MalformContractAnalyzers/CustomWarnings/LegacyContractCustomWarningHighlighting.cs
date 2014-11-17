@@ -3,10 +3,10 @@ using JetBrains.ReSharper.Daemon;
 using JetBrains.ReSharper.Psi.CSharp;
 using ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.MalformContractAnalyzers;
 
-[assembly: RegisterConfigurableSeverity(ContractCustomWarningHighlighting.Id,
+[assembly: RegisterConfigurableSeverity(LegacyContractCustomWarningHighlighting.Id,
   null,
-  HighlightingGroupIds.CompilerWarnings,
-  ContractCustomWarningHighlighting.Id,
+  HighlightingGroupIds.CodeSmell,
+  LegacyContractCustomWarningHighlighting.Id,
   "Warn for malformed contract statement",
   Severity.WARNING,
   false)]
@@ -18,27 +18,28 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
     /// Shows errors, produced by Code Contract compiler.
     /// </summary>
     [ConfigurableSeverityHighlighting(Id, CSharpLanguage.Name)]
-    public class ContractCustomWarningHighlighting : IHighlighting, ICodeContractFixableIssue
+    public class LegacyContractCustomWarningHighlighting : IHighlighting, ICodeContractFixableIssue
     {
         private readonly ValidationResult _validationResult;
         private readonly ValidatedContractBlock _contractBlock;
-        public const string Id = "Custom Warning for contracts";
+        public const string Id = "Custom Warning for legacy contracts";
         private readonly string _toolTip;
 
-        internal static ContractCustomWarningHighlighting Create(CustomWarningValidationResult warning,
+        internal static LegacyContractCustomWarningHighlighting Create(CustomWarningValidationResult warning,
             ValidatedContractBlock contractBlock)
         {
             switch (warning.Warning)
             {
                 case MalformedContractCustomWarning.PreconditionInAsyncMethod:
+                    return new PreconditionInAsyncMethodHighlighting(warning, contractBlock);
                 case MalformedContractCustomWarning.PreconditionInMethodWithIteratorBlock:
-                    return null;
+                    return new PreconditionInMethodWithIteratorBlockHighlighing(warning, contractBlock);
                 default:
-                    return new ContractCustomWarningHighlighting(warning, contractBlock);
+                    return new LegacyContractCustomWarningHighlighting(warning, contractBlock);
             }
         }
 
-        internal ContractCustomWarningHighlighting(CustomWarningValidationResult warning, ValidatedContractBlock contractBlock)
+        internal LegacyContractCustomWarningHighlighting(CustomWarningValidationResult warning, ValidatedContractBlock contractBlock)
         {
             Contract.Requires(warning != null);
             Contract.Requires(contractBlock != null);

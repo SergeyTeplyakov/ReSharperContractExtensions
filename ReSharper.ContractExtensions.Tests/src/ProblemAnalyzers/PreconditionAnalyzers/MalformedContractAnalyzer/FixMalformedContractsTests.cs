@@ -12,6 +12,13 @@ namespace ReSharper.ContractExtensions.Tests.ProblemAnalyzers.PreconditionAnalyz
             get { return @"QuickFixes\PreconditionAnalyzers\MalformedContractQuickFixes"; }
         }
 
+        [TestCase("FixIfThrowInIteratorBlock.cs")]
+        [TestCase("FixIfThrowInAsyncMethod.cs")]
+        public void Test_Fix_Precondition_In_AsyncMethod_Or_Iterator_Block(string fileName)
+        {
+            DoTestFiles(fileName);
+        }
+
         [Test]
         [TestCase("FixMoveAssignmentAssertAssume.cs")]
         [TestCase("FixWithDifferentBlocks.cs")]

@@ -3,6 +3,7 @@ using System.Diagnostics.Contracts;
 using JetBrains.Application.Progress;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.Feature.Services.Bulbs;
+using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
 using JetBrains.ReSharper.Intentions.Extensibility;
 using JetBrains.TextControl;
 using JetBrains.Util;
@@ -30,10 +31,18 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
             : this(warningHighlighting as ICodeContractFixableIssue)
         {}
 
+        public MalformedMethodContractQuickFix(PreconditionInMethodWithIteratorBlockHighlighing warningHighlighting)
+            : this(warningHighlighting as ICodeContractFixableIssue)
+        { }
+
+        public MalformedMethodContractQuickFix(PreconditionInAsyncMethodHighlighting warningHighlighting)
+            : this(warningHighlighting as ICodeContractFixableIssue)
+        { }
+
         protected override Action<ITextControl> ExecutePsiTransaction(ISolution solution, IProgressIndicator progress)
         {
             Contract.Assert(_malformedContractFix != null);
-            return _malformedContractFix.ExecuteFix();
+            return _malformedContractFix.ExecuteFix(solution);
         }
 
         public override string Text

@@ -21,11 +21,11 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
         private static readonly List<ValidationRule> _preconditionValidationRules = PreconditionValidator.GetValidationRules().ToList();
 
         /// <summary>
-        ///  Validate all statements and precondition types not only Code Contract preconditions
+        ///  Validate all statements and precondition types only for legacy if-throws without EndContractBlock!
         /// </summary>
         /// <param name="contractBlock"></param>
         /// <returns></returns>
-        public static ValidatedContractBlock ValidateAllPreconditions(IList<ProcessedStatement> contractBlock)
+        public static ValidatedContractBlock ValidateLegacyRequires(IList<ProcessedStatement> contractBlock)
         {
             var validatedContractBlock =
                 from st in contractBlock

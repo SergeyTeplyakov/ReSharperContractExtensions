@@ -11,23 +11,20 @@ class A
 
   public async Task FooWithLegacyCheck(string s)
   {
-    |if (s == null) throw new ArgumentNullException("s");|(1)
+    if (s == null) throw new ArgumentNullException("s");
     Contract.EndContractBlock();
   }
 
   public async Task FooWithRequires(string s)
   {
-    |Contract.Requires(s != null);|(2)
+    Contract.Requires(s != null);
   }
 
   protected async Task<int> FooIntWithRequires(string s)
   {
-    |Contract.Requires(s != null);|(3)
+    Contract.Requires(s != null);
     return 42;
   }
 }
 ---------------------------------------------------------
-(0): ReSharper Warning: Precondition in async method is asynchronous and will fail returning task
-(1): ReSharper Warning: Precondition in async method is asynchronous and will fail returning task
-(2): ReSharper Warning: Precondition in async method is asynchronous and will fail returning task
-(3): ReSharper Warning: Precondition in async method is asynchronous and will fail returning task
+(0): ReSharper Warning: Lecacy precondition in async method is asynchronous and will fail returning task

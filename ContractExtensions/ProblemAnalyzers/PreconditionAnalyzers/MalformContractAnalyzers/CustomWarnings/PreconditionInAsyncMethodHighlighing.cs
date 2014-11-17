@@ -6,7 +6,7 @@ using ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Malfor
   null,
   HighlightingGroupIds.CodeSmell,
   PreconditionInAsyncMethodHighlighting.Id,
-  "Preconditions in async method",
+  "Legacy preconditions in async method",
   Severity.WARNING,
   false)]
 
@@ -18,7 +18,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
     /// Shows errors, produced by Code Contract compiler.
     /// </summary>
     [ConfigurableSeverityHighlighting(Id, CSharpLanguage.Name)]
-    public class PreconditionInAsyncMethodHighlighting : ContractCustomWarningHighlighting
+    public class PreconditionInAsyncMethodHighlighting : LegacyContractCustomWarningHighlighting
     {
         public const string Id = "Preconditions in async method";
 

@@ -1,9 +1,11 @@
 ﻿using System.Diagnostics.Contracts;
+using JetBrains.Application.Settings.Storage.Persistence;
 using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Impl.Types;
+using JetBrains.ReSharper.Psi.Modules;
 using JetBrains.ReSharper.Psi.Tree;
 using JetBrains.Util.Lazy;
 
@@ -14,10 +16,22 @@ namespace ReSharper.ContractExtensions.ContextActions.Infrastructure
     /// </summary>
     internal abstract class ContextActionExecutorBase
     {
-        protected readonly ICSharpContextActionDataProvider _provider;
+        //protected readonly ICSharpContextActionDataProvider _provider;
 
         protected readonly CSharpElementFactory _factory;
         protected readonly ICSharpFile _currentFile;
+        private readonly IPsiServices _psiServices;
+        private readonly IPsiModule _psiModule;
+
+        protected ContextActionExecutorBase(ICSharpStatement statement)
+        {
+            Contract.Requires(statement != null);
+
+            _psiModule = statement.GetPsiModule();
+            _psiServices = statement.GetPsiServices();
+            _factory = CSharpElementFactory.GetInstance(statement);
+            _currentFile = (ICSharpFile)statement.GetContainingFile();
+        }
 
         protected ContextActionExecutorBase(ContextActionAvailabilityBase availability)
             : this(availability.Provider)
@@ -31,29 +45,30 @@ namespace ReSharper.ContractExtensions.ContextActions.Infrastructure
         {
             Contract.Requires(provider != null);
 
-            _provider = provider;
 
-            _factory = _provider.ElementFactory;
+            _factory = provider.ElementFactory;
 
-            Contract.Assert(_provider.SelectedElement != null,
+            Contract.Assert(provider.SelectedElement != null,
                 "Can't create executor if SelectedElement is null");
 
-            _currentFile = (ICSharpFile)_provider.SelectedElement.GetContainingFile();
-
+            _currentFile = (ICSharpFile)provider.SelectedElement.GetContainingFile();
+            _psiServices = provider.PsiServices;
+            _psiModule = provider.PsiModule;
         }
 
         [ContractInvariantMethod]
         private void ObjectInvariant()
         {
-            Contract.Invariant(_provider != null);
             Contract.Invariant(_factory != null);
             Contract.Invariant(_currentFile != null);
+            Contract.Invariant(_psiServices != null);
+            Contract.Invariant(_psiModule != null);
         }
 
         public void ExecuteTransaction()
         {
             DoExecuteTransaction();
-            _provider.PsiServices.Caches.Update();
+            _psiServices.Caches.Update();
         }
 
         protected abstract void DoExecuteTransaction();
@@ -64,7 +79,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Infrastructure
             Contract.Requires(clrTypeName != null);
             Contract.Ensures(Contract.Result<ITypeElement>() != null);
 
-            return new DeclaredTypeFromCLRName(clrTypeName, _provider.PsiModule, _provider.SourceFile.ResolveContext)
+            return new DeclaredTypeFromCLRName(clrTypeName, _psiModule, _currentFile.GetResolveContext())
                 .GetTypeElement();
         }
 
@@ -81,8 +96,8 @@ namespace ReSharper.ContractExtensions.ContextActions.Infrastructure
         protected PredefinedType GetPredefinedType()
         {
             Contract.Ensures(Contract.Result<PredefinedType>() != null);
-            return _provider.PsiModule.GetPredefinedType(
-                _provider.SourceFile.ResolveContext);
+            return _psiModule.GetPredefinedType(
+                _currentFile.GetResolveContext());
         }
 
         public ITypeElement ContractType

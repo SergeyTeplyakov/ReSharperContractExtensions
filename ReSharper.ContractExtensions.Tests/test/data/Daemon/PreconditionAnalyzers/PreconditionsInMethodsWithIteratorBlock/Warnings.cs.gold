@@ -11,18 +11,16 @@ class A
 
   public IEnumerable<int> FooWithLegacyContract(string s)
   {
-    |if (s == null) throw new ArgumentNullException("s");|(1)
+    if (s == null) throw new ArgumentNullException("s");
     Contract.EndContractBlock();
     yield break;
   }
 
   public IEnumerable<int> Foo(string s)
   {
-    |Contract.Requires(s != null);|(2)
+    Contract.Requires(s != null);
     yield break;
   }
 }
 ---------------------------------------------------------
-(0): ReSharper Warning: Precondition in iterator block will throw only on first MoveNext() call
-(1): ReSharper Warning: Precondition in iterator block will throw only on first MoveNext() call
-(2): ReSharper Warning: Precondition in iterator block will throw only on first MoveNext() call
+(0): ReSharper Warning: Legacy precondition in iterator block will throw only on first MoveNext() call

@@ -132,7 +132,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
             var method = contractStatement.Statement.GetContainingNode<ICSharpFunctionDeclaration>();
             Contract.Assert(method != null);
 
-            return method.GetContractBlockStatements();
+            return method.GetCodeContractBlockStatements();
         }
 
         [CanBeNull]

@@ -1,0 +1,12 @@
+using System.Collections.Generic;
+using System.Diagnostics.Contracts;
+
+class A
+{
+  public IEnumerable<int> Foo(string s)
+  {
+    {caret}Contract.Requires(s != null);
+
+    yield return 42;
+  }
+}

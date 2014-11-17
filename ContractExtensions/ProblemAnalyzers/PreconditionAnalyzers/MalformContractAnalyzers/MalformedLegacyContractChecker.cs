@@ -15,20 +15,19 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
     /// - Ensures statement is after precondition check
     /// </summary>
     [ElementProblemAnalyzer(new[] { typeof(ICSharpFunctionDeclaration) },
-    HighlightingTypes = new[] { typeof(ContractCustomWarningHighlighting), typeof(CodeContractWarningHighlighting) })]
-    public sealed class MalformedMethodContractChecker : ElementProblemAnalyzer<ICSharpFunctionDeclaration>
+    HighlightingTypes = new[] { typeof(LegacyContractCustomWarningHighlighting), typeof(LegacyContractCustomWarningHighlighting) })]
+    public sealed class MalformedLegacyContractChecker : ElementProblemAnalyzer<ICSharpFunctionDeclaration>
     {
         protected override void Run(ICSharpFunctionDeclaration element, ElementProblemAnalyzerData data, IHighlightingConsumer consumer)
         {
-            // Right now there is two different rule sets for Code Contract statements and for any preconditions.
-            var validateContractBlock = CodeContractBlockValidator.ValidateCodeContractBlock(element.GetCodeContractBlockStatements());
+            var preconditions = CodeContractBlockValidator.ValidateLegacyRequires(element.GetLegacyContractBlockStatements());
 
-            foreach (var vr in validateContractBlock.ValidationResults)
+            foreach (var vr in preconditions.ValidationResults)
             {
                 var highlighting = vr.Match(
-                    error => (IHighlighting)new CodeContractErrorHighlighting(error, validateContractBlock),
-                    warning => new CodeContractWarningHighlighting(warning, validateContractBlock),
-                    customWarning => ContractCustomWarningHighlighting.Create(customWarning, validateContractBlock),
+                    error => (IHighlighting)null,
+                    warning => null,
+                    customWarning => LegacyContractCustomWarningHighlighting.Create(customWarning, preconditions),
                     _ => null);
 
                 if (highlighting != null)
