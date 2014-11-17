@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>ReSharper.ContractExtensions</id>
-    <version>0.9.0.9</version>
+    <version>0.9.0.2</version>
     <!-- update plugin ver in AssemblyInfo.cs plz -->
     <title>Code Contract editing extensions</title>
     <authors>Sergey Teplyakov</authors>
@@ -15,7 +15,7 @@
       Detects Code Contract error/warnings in the IDE.
     </description>
     <releaseNotes>
-*What's new in 0.9.0.9*
+*What's new in 0.9.0.2*
 Fixed false positive warnings on Code Contract preconditions in the async methods and iterator blocks (#48)
 Added quick fix for "suspicious legacy precondition" in async methods and iterator blocks.
 
