@@ -1,5 +1,7 @@
 using System.Diagnostics.Contracts;
+using JetBrains.DocumentModel;
 using JetBrains.ReSharper.Daemon;
+using JetBrains.ReSharper.Feature.Services.Daemon;
 using JetBrains.ReSharper.Psi.CSharp;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers;
@@ -20,6 +22,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
     {
         private readonly MemberWithAccess _preconditionContainer;
         private readonly MemberWithAccess _lessVisibleReferencedMember;
+        private readonly DocumentRange _range;
 
         internal RequiresInconsistentVisibiityHighlighting(ICSharpStatement preconditionStatement, 
             MemberWithAccess preconditionContainer, MemberWithAccess lessVisibleReferencedMember)
@@ -28,6 +31,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
             Contract.Requires(preconditionContainer != null);
             Contract.Requires(lessVisibleReferencedMember != null);
 
+            _range = preconditionStatement.GetHighlightingRange();
             _preconditionContainer = preconditionContainer;
             _lessVisibleReferencedMember = lessVisibleReferencedMember;
         }
@@ -39,6 +43,14 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
         public bool IsValid()
         {
             return true;
+        }
+
+        /// <summary>
+        /// Calculates range of a highlighting.
+        /// </summary>
+        public DocumentRange CalculateRange()
+        {
+            return _range;
         }
 
         internal MemberWithAccess PreconditionContainer { get { return _preconditionContainer; } }

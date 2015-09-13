@@ -1,5 +1,7 @@
 using System.Diagnostics.Contracts;
+using JetBrains.DocumentModel;
 using JetBrains.ReSharper.Daemon;
+using JetBrains.ReSharper.Feature.Services.Daemon;
 using JetBrains.ReSharper.Psi.CSharp;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers;
@@ -35,6 +37,14 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
         public bool IsValid()
         {
             return true;
+        }
+
+        /// <summary>
+        /// Calculates range of a highlighting.
+        /// </summary>
+        public DocumentRange CalculateRange()
+        {
+            return _preconditionStatement.GetHighlightingRange();
         }
 
         public string ToolTip
