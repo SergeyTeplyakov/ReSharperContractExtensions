@@ -2,6 +2,8 @@ using System;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using JetBrains.Annotations;
+using JetBrains.Metadata.Reader.API;
+using JetBrains.Metadata.Reader.Impl;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using ReSharper.ContractExtensions.Utilities;

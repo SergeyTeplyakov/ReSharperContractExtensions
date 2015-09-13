@@ -1,5 +1,8 @@
 ﻿using System.Diagnostics.Contracts;
 using JetBrains.Application.Settings.Storage.Persistence;
+using JetBrains.Metadata.Reader.API;
+using JetBrains.Metadata.Reader.Impl;
+using JetBrains.ReSharper.Feature.Services.CSharp.Analyses.Bulbs;
 using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp;

@@ -1,5 +1,6 @@
 using System.Diagnostics.Contracts;
 using System;
+using JetBrains.Metadata.Reader.API;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.Util.Special;
