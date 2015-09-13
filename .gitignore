@@ -170,3 +170,5 @@ $RECYCLE.BIN/
 .DS_Store
 ContractExtensions.sln.ide
 /ContractExtensions/bin.R82/lib
+*.nupkg
+.vs/
