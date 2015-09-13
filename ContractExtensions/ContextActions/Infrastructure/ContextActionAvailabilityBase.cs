@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics.Contracts;
+using JetBrains.ReSharper.Feature.Services.CSharp.Analyses.Bulbs;
 using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
 
 namespace ReSharper.ContractExtensions.ContextActions.Infrastructure
