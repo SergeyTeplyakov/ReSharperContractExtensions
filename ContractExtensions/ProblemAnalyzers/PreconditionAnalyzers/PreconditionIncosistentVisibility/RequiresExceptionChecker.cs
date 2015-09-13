@@ -5,6 +5,7 @@ using System.Linq;
 using JetBrains.ReSharper.Daemon;
 using JetBrains.ReSharper.Daemon.Stages;
 using JetBrains.ReSharper.Daemon.Stages.Dispatcher;
+using JetBrains.ReSharper.Feature.Services.Daemon;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Tree;
@@ -35,19 +36,19 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
                 if (ExceptionIsLessVisible(preconditionContainer, preconditionException))
                 {
                     yield return
-                        new RequiresExceptionInconsistentVisibiityHighlighting(preconditionException,
+                        new RequiresExceptionInconsistentVisibiityHighlighting(invocationExpression, preconditionException,
                             preconditionContainer);
                 }
 
                 if (DoesntHaveAppropriateConstructor(preconditionException))
                 {
-                    yield return new RequiresExceptionValidityHighlighting(preconditionException, preconditionContainer);
+                    yield return new RequiresExceptionValidityHighlighting(invocationExpression, preconditionException, preconditionContainer);
                 }
             }
 
             if (!MessageIsAppropriateForContractRequires(contractAssertion.Message))
             {
-                yield return new InvalidRequiresMessageHighlighting(contractAssertion.Message);
+                yield return new InvalidRequiresMessageHighlighting(invocationExpression, contractAssertion.Message);
             }
 
         }

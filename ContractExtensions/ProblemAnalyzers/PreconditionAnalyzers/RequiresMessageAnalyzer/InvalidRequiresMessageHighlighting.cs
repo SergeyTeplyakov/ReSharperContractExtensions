@@ -1,6 +1,9 @@
 using System.Diagnostics.Contracts;
+using JetBrains.DocumentModel;
 using JetBrains.ReSharper.Daemon;
+using JetBrains.ReSharper.Feature.Services.Daemon;
 using JetBrains.ReSharper.Psi.CSharp;
+using JetBrains.ReSharper.Psi.CSharp.Tree;
 using ReSharper.ContractExtensions.ContractsEx.Assertions;
 using ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers;
 
@@ -21,10 +24,14 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
     public sealed class InvalidRequiresMessageHighlighting : IHighlighting
     {
         private readonly Message _contractMessage;
+        private readonly DocumentRange _range;
 
-        public InvalidRequiresMessageHighlighting(Message contractMessage)
+        public InvalidRequiresMessageHighlighting(IInvocationExpression invocationExpression, Message contractMessage)
         {
             Contract.Requires(contractMessage != null);
+            Contract.Requires(invocationExpression != null);
+
+            _range = invocationExpression.GetHighlightingRange();
             _contractMessage = contractMessage;
         }
 
@@ -37,6 +44,14 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
         public bool IsValid()
         {
             return true;
+        }
+
+        /// <summary>
+        /// Calculates range of a highlighting.
+        /// </summary>
+        public DocumentRange CalculateRange()
+        {
+            return _range;
         }
 
         public string ToolTip

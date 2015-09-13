@@ -2,6 +2,7 @@
 using JetBrains.ReSharper.Daemon;
 using JetBrains.ReSharper.Daemon.Stages;
 using JetBrains.ReSharper.Daemon.Stages.Dispatcher;
+using JetBrains.ReSharper.Feature.Services.Daemon;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Tree;
 using ReSharper.ContractExtensions.ContractsEx.Assertions.Statements;
@@ -27,7 +28,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
                 var highlighting = vr.Match(
                     error => (IHighlighting)null,
                     warning => null,
-                    customWarning => LegacyContractCustomWarningHighlighting.Create(customWarning, preconditions),
+                    customWarning => LegacyContractCustomWarningHighlighting.Create(element, customWarning, preconditions),
                     _ => null);
 
                 if (highlighting != null)

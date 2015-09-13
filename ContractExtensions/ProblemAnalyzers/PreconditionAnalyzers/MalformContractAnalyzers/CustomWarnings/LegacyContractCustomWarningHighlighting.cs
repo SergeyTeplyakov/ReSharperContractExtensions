@@ -1,6 +1,9 @@
 ﻿using System.Diagnostics.Contracts;
+using JetBrains.DocumentModel;
 using JetBrains.ReSharper.Daemon;
+using JetBrains.ReSharper.Feature.Services.Daemon;
 using JetBrains.ReSharper.Psi.CSharp;
+using JetBrains.ReSharper.Psi.CSharp.Tree;
 using ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.MalformContractAnalyzers;
 
 [assembly: RegisterConfigurableSeverity(LegacyContractCustomWarningHighlighting.Id,
@@ -24,27 +27,28 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
         private readonly ValidatedContractBlock _contractBlock;
         public const string Id = "Custom Warning for legacy contracts";
         private readonly string _toolTip;
+        private readonly DocumentRange _range;
 
-        internal static LegacyContractCustomWarningHighlighting Create(CustomWarningValidationResult warning,
-            ValidatedContractBlock contractBlock)
+        internal static LegacyContractCustomWarningHighlighting Create(ICSharpFunctionDeclaration element, CustomWarningValidationResult warning, ValidatedContractBlock contractBlock)
         {
             switch (warning.Warning)
             {
                 case MalformedContractCustomWarning.PreconditionInAsyncMethod:
-                    return new PreconditionInAsyncMethodHighlighting(warning, contractBlock);
+                    return new PreconditionInAsyncMethodHighlighting(element, warning, contractBlock);
                 case MalformedContractCustomWarning.PreconditionInMethodWithIteratorBlock:
-                    return new PreconditionInMethodWithIteratorBlockHighlighing(warning, contractBlock);
+                    return new PreconditionInMethodWithIteratorBlockHighlighing(element, warning, contractBlock);
                 default:
-                    return new LegacyContractCustomWarningHighlighting(warning, contractBlock);
+                    return new LegacyContractCustomWarningHighlighting(element, warning, contractBlock);
             }
         }
 
-        internal LegacyContractCustomWarningHighlighting(CustomWarningValidationResult warning, ValidatedContractBlock contractBlock)
+        internal LegacyContractCustomWarningHighlighting(ICSharpFunctionDeclaration element, CustomWarningValidationResult warning, ValidatedContractBlock contractBlock)
         {
             Contract.Requires(warning != null);
             Contract.Requires(contractBlock != null);
 
             _toolTip = warning.GetErrorText();
+            _range = element.GetHighlightingRange();
             _validationResult = warning;
             _contractBlock = contractBlock;
             MethodName = warning.GetEnclosingMethodName();
@@ -54,6 +58,14 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
         public bool IsValid()
         {
             return true;
+        }
+
+        /// <summary>
+        /// Calculates range of a highlighting.
+        /// </summary>
+        public DocumentRange CalculateRange()
+        {
+            return _range;
         }
 
         public string ToolTip

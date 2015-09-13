@@ -1,5 +1,6 @@
 ﻿using JetBrains.ReSharper.Daemon.Stages;
 using JetBrains.ReSharper.Daemon.Stages.Dispatcher;
+using JetBrains.ReSharper.Feature.Services.Daemon;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Tree;
 using ReSharper.ContractExtensions.ContractsEx.Assertions;
@@ -29,7 +30,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
                 return;
 
             consumer.AddHighlighting(
-                    new MalformedContractErrorHighlighting(contractStatement, validationResult),
+                    new MalformedContractErrorHighlighting(element, contractStatement, validationResult),
                     validationResult.Statement.GetDocumentRange(), element.GetContainingFile());
         }
     }

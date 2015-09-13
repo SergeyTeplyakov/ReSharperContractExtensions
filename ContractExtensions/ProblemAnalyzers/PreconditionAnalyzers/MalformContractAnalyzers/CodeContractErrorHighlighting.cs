@@ -1,6 +1,9 @@
 ﻿using System.Diagnostics.Contracts;
+using JetBrains.DocumentModel;
 using JetBrains.ReSharper.Daemon;
+using JetBrains.ReSharper.Feature.Services.Daemon;
 using JetBrains.ReSharper.Psi.CSharp;
+using JetBrains.ReSharper.Psi.CSharp.Tree;
 using ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.MalformContractAnalyzers;
 
 [assembly: RegisterConfigurableSeverity(CodeContractErrorHighlighting.Id,
@@ -24,12 +27,15 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
         private readonly ValidatedContractBlock _contractBlock;
         public const string Id = "Malformed method contract error highlighting";
         private readonly string _toolTip;
+        private readonly DocumentRange _range;
 
-        internal CodeContractErrorHighlighting(CodeContractErrorValidationResult error, ValidatedContractBlock contractBlock)
+        internal CodeContractErrorHighlighting(ICSharpStatement statement, CodeContractErrorValidationResult error, ValidatedContractBlock contractBlock)
         {
             Contract.Requires(error != null);
             Contract.Requires(contractBlock != null);
+            Contract.Requires(statement != null);
 
+            _range = statement.GetHighlightingRange();
             _error = error;
             _contractBlock = contractBlock;
             _toolTip = error.GetErrorText();
@@ -38,6 +44,14 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
         public bool IsValid()
         {
             return true;
+        }
+
+        /// <summary>
+        /// Calculates range of a highlighting.
+        /// </summary>
+        public DocumentRange CalculateRange()
+        {
+            return _range;
         }
 
         public string ToolTip

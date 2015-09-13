@@ -1,6 +1,8 @@
 using System.Diagnostics.Contracts;
 using JetBrains.Annotations;
+using JetBrains.DocumentModel;
 using JetBrains.ReSharper.Daemon;
+using JetBrains.ReSharper.Feature.Services.Daemon;
 using JetBrains.ReSharper.Psi.CSharp;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using ReSharper.ContractExtensions.Utilities;
@@ -13,6 +15,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
         private readonly IFieldDeclaration _fieldDeclaration;
 
         [CanBeNull]private readonly ICSharpTypeMemberDeclaration _referingFieldOrProperty;
+        private readonly DocumentRange _range;
 
         internal ContractPublicPropertyNameHighlighing(IFieldDeclaration fieldDeclaration, 
             string referingFieldOrPropertyName,
@@ -21,6 +24,7 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
             Contract.Requires(fieldDeclaration != null);
             Contract.Requires(referingFieldOrPropertyName != null);
 
+            _range = fieldDeclaration.GetHighlightingRange();
             _fieldDeclaration = fieldDeclaration;
             _referingFieldOrProperty = referingFieldOrProperty;
 
@@ -47,6 +51,13 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
             return true;
         }
 
+        /// <summary>
+        /// Calculates range of a highlighting.
+        /// </summary>
+        public DocumentRange CalculateRange()
+        {
+            return _range;
+        }
 
         public string ToolTip
         {
