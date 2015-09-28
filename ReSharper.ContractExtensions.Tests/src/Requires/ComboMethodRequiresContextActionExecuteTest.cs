@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics.Contracts;
-using JetBrains.ReSharper.Intentions.CSharp.Test;
+using JetBrains.ReSharper.FeaturesTestFramework.Intentions;
 using NUnit.Framework;
 using ReSharper.ContractExtensions.ContextActions.Requires;
 
@@ -8,6 +8,11 @@ namespace ReSharper.ContractExtensions.Tests.Preconditions
     [TestFixture]
     public class ComboMethodRequiresContextActionExecuteTest : RequiresContextActionExecuteTestBase<ComboMethodRequiresContextAction>
     {
+        protected override string RelativeTestDataPath
+        {
+            get { return "Intentions/ContextActions/ComboRequiresForMethod"; }
+        }
+
         protected override string ExtraPath
         {
             get { return "ComboRequiresForMethod"; }

@@ -1,4 +1,4 @@
-using System.Diagnostics.Contracts;
+﻿using System.Diagnostics.Contracts;
 using System;
 
 class A
@@ -6,8 +6,9 @@ class A
   public void Foo(string s)
   {
     |Console.WriteLine("Hello");|(0)
-    Contract.EndContractBlock();
+    |Contract.EndContractBlock()|(1);
   }
 }
 ---------------------------------------------------------
 (0): ReSharper Underlined Error Highlighting: Malformed contract. Detected expression statement evaluated for side-effect in contracts of method 'Foo'
+(1): ReSharper Dead Code: Method invocation is skipped. Compiler will not generate method invocation because the method is conditional, or it is partial method without implementation

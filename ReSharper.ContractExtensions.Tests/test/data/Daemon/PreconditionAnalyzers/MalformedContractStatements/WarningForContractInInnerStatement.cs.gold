@@ -1,4 +1,5 @@
-using System.Linq;
+﻿#define CONTRACTS_FULL
+
 using System.Diagnostics.Contracts;
 
 class A
@@ -18,33 +19,33 @@ class A
   public void InsideElse(string s)
   {
     if (s != null)
-      Console.WriteLine();
+      |Console|(2).WriteLine();
     else
-      |Contract.Requires(s != null);|(2)
+      |Contract.Requires(s != null);|(3)
   }
   
   public void InsideLoops()
   {
-    for(int n = 0; n < 10; n++)
-      |Contract.Requires(false);|(3)
+    for(|int|(4) |n|(5) = 0; n < 10; n++)
+      |Contract.Requires(false);|(6)
 
-    foreach(var n in Enumerable.Range(1, 10))
-      |Contract.Ensures(false);|(4)
+    foreach(var ||n|(7)|(8) in |Enumerable|(9).Range(1, 10))
+      |Contract.Ensures(false);|(10)
 
-    int n = 42;
+    |int|(11) |n|(12) = 42;
     while(n > 0)
     {
-      |Contract.EnsuresOnThrow<System.Exception>(false);|(5)
+      |Contract.EnsuresOnThrow<System.Exception>(false);|(13)
       n--;
     }
   }
 
   public void InsideSwitch(string s)
   {
-    switch(s)
+    |switch|(14)(s)
     {
       case "foo":
-        |Contract.Requires(s != null);|(6)
+        |Contract.Requires(s != null);|(15)
         break;
     }
   }
@@ -54,13 +55,13 @@ class A
     try
     {
     }
-    catch(System.Exception e)
+    catch(System.Exception |e|(16))
     {
-      |Contract.EndContractBlock();|(7)
+      |Contract.EndContractBlock();|(17)
     }
     finally 
     {
-      |Contract.Requires(false);|(8)
+      |Contract.Requires(false);|(18)
     }
   }
 
@@ -68,7 +69,7 @@ class A
   {
     using (new System.IO.MemoryStream())
     {
-      |Contract.Requires(s != null);|(9)
+      |Contract.Requires(s != null);|(19)
     }
   }
 
@@ -86,20 +87,31 @@ class A
     try
     {
       // This tool will show another warning for this case!
-      |Contract.Requires(s != null);|(10)
+      |Contract.Requires(s != null);|(20)
     }
-    finally {}
+    |finally {}|(21)
   }
 }
 ---------------------------------------------------------
 (0): ReSharper Underlined Error Highlighting: Contract statements in the middle of the method 'InsideIf'
 (1): ReSharper Underlined Error Highlighting: Contract statements in the middle of the method 'EndContractBlockInsideIf'
-(2): ReSharper Underlined Error Highlighting: Contract statements in the middle of the method 'InsideElse'
-(3): ReSharper Underlined Error Highlighting: Contract statements in the middle of the method 'InsideLoops'
-(4): ReSharper Underlined Error Highlighting: Contract statements in the middle of the method 'InsideLoops'
-(5): ReSharper Underlined Error Highlighting: Contract statements in the middle of the method 'InsideLoops'
-(6): ReSharper Underlined Error Highlighting: Contract statements in the middle of the method 'InsideSwitch'
-(7): ReSharper Underlined Error Highlighting: Contract statements in the middle of the method 'InTry'
-(8): ReSharper Underlined Error Highlighting: Contract statements in the middle of the method 'InTry'
-(9): ReSharper Underlined Error Highlighting: Contract statements in the middle of the method 'InUsing'
-(10): ReSharper Underlined Error Highlighting: Malformed contract. Contract section within try block in method 'WarningInTryBlock'
+(2): ReSharper Error Highlighting: Cannot resolve symbol 'Console'
+(3): ReSharper Underlined Error Highlighting: Contract statements in the middle of the method 'InsideElse'
+(4): ReSharper Hint: Use 'var' (built-in types)
+(5): ReSharper Warning: Conflicting variable 'n' is defined below
+(6): ReSharper Underlined Error Highlighting: Contract statements in the middle of the method 'InsideLoops'
+(7): ReSharper Warning: Conflicting variable 'n' is defined below
+(8): ReSharper Dead Code: Local variable 'n' is never used
+(9): ReSharper Error Highlighting: Cannot resolve symbol 'Enumerable'
+(10): ReSharper Underlined Error Highlighting: Contract statements in the middle of the method 'InsideLoops'
+(11): ReSharper Hint: Use 'var' (built-in types)
+(12): ReSharper Underlined Error Highlighting: A local variable named 'n' cannot be declared in this scope because it would give a different meaning to 'n', which is already used in a parent or current scope to denote something else
+(13): ReSharper Underlined Error Highlighting: Contract statements in the middle of the method 'InsideLoops'
+(14): ReSharper Hint: Some cases are not processed: default
+(15): ReSharper Underlined Error Highlighting: Contract statements in the middle of the method 'InsideSwitch'
+(16): ReSharper Dead Code: Local variable 'e' is never used
+(17): ReSharper Underlined Error Highlighting: Contract statements in the middle of the method 'InTry'
+(18): ReSharper Underlined Error Highlighting: Contract statements in the middle of the method 'InTry'
+(19): ReSharper Underlined Error Highlighting: Contract statements in the middle of the method 'InUsing'
+(20): ReSharper Underlined Error Highlighting: Malformed contract. Contract section within try block in method 'WarningInTryBlock'
+(21): ReSharper Dead Code: Redundant empty finally block

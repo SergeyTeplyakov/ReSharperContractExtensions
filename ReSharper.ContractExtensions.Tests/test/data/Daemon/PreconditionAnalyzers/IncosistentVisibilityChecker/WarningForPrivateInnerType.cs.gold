@@ -1,13 +1,13 @@
-using System.Diagnostics.Contracts;
+﻿using System.Diagnostics.Contracts;
 
 public class A
 {
   public void Foo(string s)
   {
-    |Contract.Requires(!Inner.IsValid(s))|(0);
+    ||Contract.Requires(!Inner.IsValid(s))|(0)|(1);
   }
 
-  private class Inner
+  private class |Inner|(2)
   {
     public static bool IsValid(string s) {return s != null;}
   }
@@ -15,3 +15,5 @@ public class A
 
 ---------------------------------------------------------
 (0): ReSharper Underlined Error Highlighting: Member 'Inner.IsValid' has less visibility than the enclosing method 'A.Foo'
+(1): ReSharper Dead Code: Method invocation is skipped. Compiler will not generate method invocation because the method is conditional, or it is partial method without implementation
+(2): ReSharper Suggestion: Class 'Inner' is never instantiated

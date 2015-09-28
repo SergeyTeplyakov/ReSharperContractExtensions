@@ -1,4 +1,4 @@
-﻿using JetBrains.ReSharper.Intentions.CSharp.Test;
+﻿using JetBrains.ReSharper.FeaturesTestFramework.Intentions;
 using NUnit.Framework;
 using ReSharper.ContractExtensions.ContextActions;
 using ReSharper.ContractExtensions.ContextActions.Invariants;
@@ -8,6 +8,10 @@ namespace ReSharper.ContractExtensions.Tests.Invariants
     [TestFixture]
     public class InvariantContextActionExecuteTest : CSharpContextActionExecuteTestBase<InvariantContextAction>
     {
+        protected override string RelativeTestDataPath
+        {
+            get { return "Intentions/ContextActions/Invariants"; }
+        }
         protected override string ExtraPath
         {
             get { return "Invariants"; }

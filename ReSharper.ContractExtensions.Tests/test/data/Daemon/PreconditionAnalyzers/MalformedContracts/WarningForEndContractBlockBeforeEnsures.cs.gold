@@ -1,12 +1,14 @@
-using System.Diagnostics.Contracts;
+﻿using System.Diagnostics.Contracts;
 
 class A
 {
   public void Foo(string s)
   {
-    Contract.EndContractBlock();
-    |Contract.Ensures(s != null);|(0)
+    |Contract.EndContractBlock()|(0);
+    ||Contract.Ensures(s != null)|(2);|(1)
   }
 }
 ---------------------------------------------------------
-(0): ReSharper Underlined Error Highlighting: Malformed contract. Contract call found after prior EndContractBlock in method 'Foo'
+(0): ReSharper Dead Code: Method invocation is skipped. Compiler will not generate method invocation because the method is conditional, or it is partial method without implementation
+(1): ReSharper Underlined Error Highlighting: Malformed contract. Contract call found after prior EndContractBlock in method 'Foo'
+(2): ReSharper Dead Code: Method invocation is skipped. Compiler will not generate method invocation because the method is conditional, or it is partial method without implementation

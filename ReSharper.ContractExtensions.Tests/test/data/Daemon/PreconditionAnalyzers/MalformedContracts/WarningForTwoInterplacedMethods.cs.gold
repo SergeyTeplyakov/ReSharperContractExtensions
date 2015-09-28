@@ -1,19 +1,23 @@
-using System.Diagnostics.Contracts;
+﻿using System.Diagnostics.Contracts;
 
 class A
 {
   public void Foo(string s)
   {
     |InstanceMethod();|(0)
-    Contract.Requires(false);
-    |InstanceMethod();|(1)
-    |StaticMethod();|(2)
-    Contract.EndContractBlock();
+    |Contract.Requires(false)|(1);
+    |InstanceMethod();|(2)
+    |StaticMethod();|(3)
+    |Contract.EndContractBlock()|(4);
   }
-  private void InstanceMethod() {}
-  private void StaticMethod() {}
+  private void |InstanceMethod|(5)() {}
+  private void |StaticMethod|(6)() {}
 }
 ---------------------------------------------------------
 (0): ReSharper Underlined Error Highlighting: Malformed contract. Detected expression statement evaluated for side-effect in contracts of method 'Foo'
-(1): ReSharper Underlined Error Highlighting: Malformed contract. Detected expression statement evaluated for side-effect in contracts of method 'Foo'
+(1): ReSharper Dead Code: Method invocation is skipped. Compiler will not generate method invocation because the method is conditional, or it is partial method without implementation
 (2): ReSharper Underlined Error Highlighting: Malformed contract. Detected expression statement evaluated for side-effect in contracts of method 'Foo'
+(3): ReSharper Underlined Error Highlighting: Malformed contract. Detected expression statement evaluated for side-effect in contracts of method 'Foo'
+(4): ReSharper Dead Code: Method invocation is skipped. Compiler will not generate method invocation because the method is conditional, or it is partial method without implementation
+(5): ReSharper Hint: Method 'InstanceMethod' can be made static
+(6): ReSharper Hint: Method 'StaticMethod' can be made static

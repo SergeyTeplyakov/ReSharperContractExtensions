@@ -1,12 +1,14 @@
-using System.Diagnostics.Contracts;
+﻿using System.Diagnostics.Contracts;
 
 class A
 {
-  private bool _isValid;
+  private bool |_isValid|(0);
   public void Foo()
   {
-    |Contract.Requires(_isValid)|(0);
+    ||Contract.Requires(_isValid)|(1)|(2);
   }
 }
 ---------------------------------------------------------
-(0): ReSharper Underlined Error Highlighting: Member '_isValid' has less visibility than the enclosing method 'Foo'
+(0): ReSharper Warning [CS0649]: Field '_isValid' is never assigned
+(1): ReSharper Underlined Error Highlighting: Member '_isValid' has less visibility than the enclosing method 'Foo'
+(2): ReSharper Dead Code: Method invocation is skipped. Compiler will not generate method invocation because the method is conditional, or it is partial method without implementation

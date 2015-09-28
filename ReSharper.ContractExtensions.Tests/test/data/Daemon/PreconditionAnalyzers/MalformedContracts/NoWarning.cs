@@ -1,10 +1,12 @@
+#define CONTRACTS_FULL
+
 using System;
 using System.Diagnostics.Contracts;
 
 class Guard
 {
   [ContractArgumentValidator]
-  public void Validate() {}
+  public static void Validate() {}
 }
 
 class A

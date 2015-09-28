@@ -1,6 +1,8 @@
 using System;
 using System.Diagnostics.Contracts;
+using JetBrains.DocumentModel;
 using JetBrains.ReSharper.Daemon;
+using JetBrains.ReSharper.Feature.Services.Daemon;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
@@ -21,14 +23,15 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
     {
         private readonly IClass _exceptionDeclaration;
         private readonly MemberWithAccess _preconditionContainer;
+        private readonly DocumentRange _range;
 
-        internal RequiresExceptionValidityHighlighting(
-            IClass exceptionDeclaration,
-            MemberWithAccess preconditionContainer)
+        internal RequiresExceptionValidityHighlighting(IInvocationExpression invocationExpression, IClass exceptionDeclaration, MemberWithAccess preconditionContainer)
         {
             Contract.Requires(exceptionDeclaration != null);
             Contract.Requires(preconditionContainer != null);
+            Contract.Requires(invocationExpression != null);
 
+            _range = invocationExpression.GetHighlightingRange();
             _exceptionDeclaration = exceptionDeclaration;
             _preconditionContainer = preconditionContainer;
         }
@@ -39,6 +42,14 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
         public bool IsValid()
         {
             return true;
+        }
+
+        /// <summary>
+        /// Calculates range of a highlighting.
+        /// </summary>
+        public DocumentRange CalculateRange()
+        {
+            return _range;
         }
 
         public string ToolTip

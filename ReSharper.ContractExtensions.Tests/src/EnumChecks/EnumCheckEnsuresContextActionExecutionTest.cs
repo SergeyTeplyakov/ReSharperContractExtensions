@@ -1,4 +1,4 @@
-﻿using JetBrains.ReSharper.Intentions.CSharp.Test;
+﻿using JetBrains.ReSharper.FeaturesTestFramework.Intentions;
 using NUnit.Framework;
 using ReSharper.ContractExtensions.ContextActions;
 using ReSharper.ContractExtensions.ContextActions.EnumChecks;
@@ -9,6 +9,11 @@ namespace ReSharper.ContractExtensions.Tests.Preconditions
     [TestFixture]
     public class EnumCheckEnsuresContextActionExecutionTest : RequiresContextActionExecuteTestBase<EnumCheckEnsuresContextAction>
     {
+        protected override string RelativeTestDataPath
+        {
+            get { return "Intentions/ContextActions/EnumCheckEnsures"; }
+        }
+
         protected override string ExtraPath
         {
             get { return "EnumCheckEnsures"; }

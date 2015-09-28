@@ -1,9 +1,11 @@
-using System.Diagnostics.Contracts;
+﻿using System.Diagnostics.Contracts;
 
 class A
 {
   [ContractPublicPropertyName("IsValid")]
-  private bool _isValid;
-  public bool IsValid {get; private set;}
+  private bool |_isValid|(0);
+  public bool IsValid {get; |private set;|(1)}
 }
 ---------------------------------------------------------
+(0): ReSharper Warning [CS0169]: Field '_isValid' is never used
+(1): ReSharper Warning: Auto-property accessor is never used

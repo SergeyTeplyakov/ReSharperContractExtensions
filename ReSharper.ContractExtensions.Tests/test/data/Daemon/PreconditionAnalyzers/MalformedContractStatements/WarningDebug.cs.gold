@@ -1,4 +1,4 @@
-using System.Linq;
+﻿#define CONTRACTS_FULL
 using System.Diagnostics.Contracts;
 
 class A
@@ -10,9 +10,10 @@ class A
       // This tool will show another warning for this case!
       |Contract.Requires(s != null);|(0)
     }
-    finally {}
+    |finally {}|(1)
   }
 
 }
 ---------------------------------------------------------
 (0): ReSharper Underlined Error Highlighting: Malformed contract. Contract section within try block in method 'WarningInTryBlock'
+(1): ReSharper Dead Code: Redundant empty finally block

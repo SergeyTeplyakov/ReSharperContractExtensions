@@ -1,11 +1,12 @@
-using System;
+#define CONTRACTS_FULL
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 
 class A
 {
-  private IEnumerable<Foo> Foo(string s)
-  {
-    Contract.Requires(s != null);
-    return null;
-  }
+    private IEnumerable<object> Foo(string s)
+    {
+        Contract.Requires(s != null);
+        return null;
+    }
 }

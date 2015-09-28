@@ -2,6 +2,7 @@
 using JetBrains.ReSharper.Daemon;
 using JetBrains.ReSharper.Daemon.Stages;
 using JetBrains.ReSharper.Daemon.Stages.Dispatcher;
+using JetBrains.ReSharper.Feature.Services.Daemon;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Tree;
 using ReSharper.ContractExtensions.ContractsEx.Assertions.Statements;
@@ -26,9 +27,9 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
             foreach (var vr in validateContractBlock.ValidationResults)
             {
                 var highlighting = vr.Match(
-                    error => (IHighlighting)new CodeContractErrorHighlighting(error, validateContractBlock),
-                    warning => new CodeContractWarningHighlighting(warning, validateContractBlock),
-                    customWarning => ContractCustomWarningHighlighting.Create(customWarning, validateContractBlock),
+                    error => (IHighlighting)new CodeContractErrorHighlighting(vr.Statement, error, validateContractBlock),
+                    warning => new CodeContractWarningHighlighting(vr.Statement, warning, validateContractBlock),
+                    customWarning => ContractCustomWarningHighlighting.Create(vr.Statement, customWarning, validateContractBlock),
                     _ => null);
 
                 if (highlighting != null)

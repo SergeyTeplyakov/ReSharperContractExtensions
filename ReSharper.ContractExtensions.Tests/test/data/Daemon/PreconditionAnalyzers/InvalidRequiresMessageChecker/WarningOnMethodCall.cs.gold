@@ -1,14 +1,15 @@
-using System.Diagnostics.Contracts;
+﻿using System.Diagnostics.Contracts;
 
 class A
 {
   internal const string Message = "message";
   public void Foo(string s)
   {
-    |Contract.Requires(s != null, GetMessage())|(0);
+    ||Contract.Requires(s != null, GetMessage())|(0)|(1);
   }
   public string GetMessage() {return Message;}
 }
 ---------------------------------------------------------
-(0): ReSharper Underlined Error Highlighting: User message to contract call can only be string literal, or static field,
+(0): ReSharper Dead Code: Method invocation is skipped. Compiler will not generate method invocation because the method is conditional, or it is partial method without implementation
+(1): ReSharper Underlined Error Highlighting: User message to contract call can only be string literal, or static field,
 or static property that is at least internally visible

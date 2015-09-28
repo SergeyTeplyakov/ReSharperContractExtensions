@@ -1,11 +1,12 @@
-using System.Diagnostics.Contracts;
+﻿using System.Diagnostics.Contracts;
 
 class A
 {
   internal static string Message = "message";
   public void Foo(string s)
   {
-    Contract.Requires(s != null, Message);
+    |Contract.Requires(s != null, Message)|(0);
   }
 }
 ---------------------------------------------------------
+(0): ReSharper Dead Code: Method invocation is skipped. Compiler will not generate method invocation because the method is conditional, or it is partial method without implementation

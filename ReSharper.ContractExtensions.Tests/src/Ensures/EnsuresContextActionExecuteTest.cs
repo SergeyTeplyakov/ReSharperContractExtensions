@@ -1,4 +1,4 @@
-﻿using JetBrains.ReSharper.Intentions.CSharp.Test;
+﻿using JetBrains.ReSharper.FeaturesTestFramework.Intentions;
 using NUnit.Framework;
 using ReSharper.ContractExtensions.ContextActions;
 
@@ -7,6 +7,11 @@ namespace ReSharper.ContractExtensions.Tests.Postconditions
         [TestFixture]
     public class EnsuresContextActionExecuteForIndexersTest : CSharpContextActionExecuteTestBase<EnsuresContextAction>
     {
+        protected override string RelativeTestDataPath
+        {
+            get { return "Intentions/ContextActions/Ensures/IndexerFixes"; }
+        }
+
         protected override string ExtraPath
         {
             get { return "Ensures\\IndexerFixes"; }
@@ -24,6 +29,11 @@ namespace ReSharper.ContractExtensions.Tests.Postconditions
     [TestFixture]
     public class EnsuresContextActionExecuteTest : CSharpContextActionExecuteTestBase<EnsuresContextAction>
     {
+        protected override string RelativeTestDataPath
+        {
+            get { return "Intentions/ContextActions/Ensures"; }
+        }
+
         protected override string ExtraPath
         {
             get { return "Ensures"; }

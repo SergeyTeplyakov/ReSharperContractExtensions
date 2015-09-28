@@ -1,3 +1,4 @@
+#define CONTRACTS_FULL
 using System.Threading.Tasks;
 using System.Diagnostics.Contracts;
 

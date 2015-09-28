@@ -170,3 +170,9 @@ $RECYCLE.BIN/
 .DS_Store
 ContractExtensions.sln.ide
 /ContractExtensions/bin.R82/lib
+/ContractExtensions/bin/lib
+*.nupkg
+.vs/
+
+/ContractExtensions/Scripts/
+/ReSharper.ContractExtensions.Tests/Scripts/

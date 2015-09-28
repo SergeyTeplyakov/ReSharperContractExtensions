@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System.Diagnostics.Contracts;
+using NUnit.Framework;
 using ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers;
 
 namespace ReSharper.ContractExtensions.Tests.ProblemAnalyzers.PreconditionAnalyzers
@@ -17,6 +18,7 @@ namespace ReSharper.ContractExtensions.Tests.ProblemAnalyzers.PreconditionAnalyz
         }
 
         [TestCase("NoWarningConstant.cs")]
+        [TestCase("NoWarningOnNameof.cs")]
         [TestCase("NoWarningStaticField.cs")]
         [TestCase("NoWarningStaticProperty.cs")]
         [TestCase("NoWarningStringLiteral.cs")]
@@ -27,10 +29,8 @@ namespace ReSharper.ContractExtensions.Tests.ProblemAnalyzers.PreconditionAnalyz
         [TestCase("WarningOnPrivateStaticField.cs")]
         public void Test(string testName)
         {
+            Contract.Requires(testName != null);
             DoTestSolution(testName);
         }
-
-
-
     }
 }

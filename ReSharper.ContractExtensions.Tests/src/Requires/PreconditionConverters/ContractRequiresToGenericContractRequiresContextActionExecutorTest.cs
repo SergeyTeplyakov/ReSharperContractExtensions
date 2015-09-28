@@ -1,4 +1,4 @@
-﻿using JetBrains.ReSharper.Intentions.CSharp.Test;
+﻿using JetBrains.ReSharper.FeaturesTestFramework.Intentions;
 using NUnit.Framework;
 using ReSharper.ContractExtensions.ContextActions.Requires;
 
@@ -8,6 +8,11 @@ namespace ReSharper.ContractExtensions.Tests.Preconditions
     public class ContractRequiresToGenericContractRequiresContextActionExecutorTest 
         : CSharpContextActionExecuteTestBase<ContractRequiresToGenericContractRequiresContextAction>
     {
+        protected override string RelativeTestDataPath
+        {
+            get { return "Intentions/ContextActions/PreconditionConverters"; }
+        }
+
         protected override string ExtraPath
         {
             get { return "PreconditionConverters"; }

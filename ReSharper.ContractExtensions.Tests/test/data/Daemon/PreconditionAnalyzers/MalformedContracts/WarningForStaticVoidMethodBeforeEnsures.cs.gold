@@ -1,13 +1,14 @@
-using System.Diagnostics.Contracts;
+﻿using System.Diagnostics.Contracts;
 
 class A
 {
   public void Foo(string s)
   {
     |StaticMethod();|(0)
-    Contract.Ensures(false);
+    |Contract.Ensures(false)|(1);
   }
   private static void StaticMethod() {}
 }
 ---------------------------------------------------------
 (0): ReSharper Underlined Error Highlighting: Malformed contract. Detected expression statement evaluated for side-effect in contracts of method 'Foo'
+(1): ReSharper Dead Code: Method invocation is skipped. Compiler will not generate method invocation because the method is conditional, or it is partial method without implementation

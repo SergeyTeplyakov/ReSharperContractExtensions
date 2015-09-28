@@ -1,4 +1,4 @@
-using System.Diagnostics.Contracts;
+﻿using System.Diagnostics.Contracts;
 
 class A
 {
@@ -6,7 +6,7 @@ class A
   {
     get 
     {
-      |Contract.Requires(IsValid())|(0);
+      ||Contract.Requires(IsValid())|(0)|(1);
       return "";
     }
   }
@@ -14,3 +14,4 @@ class A
 }
 ---------------------------------------------------------
 (0): ReSharper Underlined Error Highlighting: Member 'IsValid' has less visibility than the enclosing property 'Foo'
+(1): ReSharper Dead Code: Method invocation is skipped. Compiler will not generate method invocation because the method is conditional, or it is partial method without implementation

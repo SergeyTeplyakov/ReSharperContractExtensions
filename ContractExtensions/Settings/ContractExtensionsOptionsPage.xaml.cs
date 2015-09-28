@@ -3,7 +3,6 @@ using System.Windows.Input;
 using JetBrains.Annotations;
 using JetBrains.DataFlow;
 using JetBrains.ReSharper.Feature.Services.Resources;
-using JetBrains.UI.Application.PluginSupport;
 using JetBrains.UI.CrossFramework;
 using JetBrains.UI.Options;
 using ReSharper.ContractExtensions.Settings;
@@ -12,8 +11,7 @@ namespace JetBrains.ReSharper.PostfixTemplates.Settings
 {
   [OptionsPage(
     id: PID, name: "Contract editor extensions",
-    typeofIcon: typeof(ServicesThemedIcons.SurroundTemplate),
-    ParentId = PluginsPage.Pid)]
+    typeofIcon: typeof(ServicesThemedIcons.SurroundTemplate), ParentId="Environment")]
   public sealed partial class PostfixOptionsPage : IOptionsPage
   {
     // ReSharper disable once InconsistentNaming

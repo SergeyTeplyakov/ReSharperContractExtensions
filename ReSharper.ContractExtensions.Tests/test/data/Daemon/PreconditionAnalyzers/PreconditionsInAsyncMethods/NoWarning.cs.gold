@@ -1,3 +1,4 @@
+﻿#define CONTRACTS_FULL
 using System.Threading.Tasks;
 using System.Diagnostics.Contracts;
 
@@ -9,9 +10,11 @@ class A
     return DoFoo(s);
   }
 
-  private async Task DoFoo(string s)
+  private async Task |DoFoo|(0)(string |s|(1))
   {
     await Task.Delay(42);
   }
 }
 ---------------------------------------------------------
+(0): ReSharper Hint: Method 'DoFoo' can be made static
+(1): ReSharper Dead Code: Parameter 's' is never used

@@ -1,13 +1,16 @@
+﻿#define CONTRACTS_FULL
 using System.Diagnostics.Contracts;
 
 class A
 {
-  string Message = "message";
+  string ||Message|(0)|(1) = "message";
   public void Foo(string s)
   {
-    |Contract.Requires(s != null, Message)|(0);
+    |Contract.Requires(s != null, Message)|(2);
   }
 }
 ---------------------------------------------------------
-(0): ReSharper Underlined Error Highlighting: User message to contract call can only be string literal, or static field,
+(0):<overlapped> ReSharper Suggestion: Field can be made readonly
+(1): ReSharper Hint: Convert to constant
+(2): ReSharper Underlined Error Highlighting: User message to contract call can only be string literal, or static field,
 or static property that is at least internally visible

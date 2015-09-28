@@ -1,12 +1,15 @@
-using System;
+﻿#define CONTRACTS_FULL
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 
 class A
 {
-  private IEnumerable<Foo> Foo(string s)
-  {
-    Contract.Requires(s != null);
-    return null;
-  }
+    private IEnumerable<object> |Foo|(0)(string |s|(1))
+    {
+        Contract.Requires(s != null);
+        return null;
+    }
 }
 ---------------------------------------------------------
+(0): ReSharper Dead Code: Method 'Foo' is never used
+(1): ReSharper Dead Code: Parameter 's' is only used for precondition check(s)

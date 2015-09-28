@@ -1,11 +1,13 @@
+﻿#define CONTRACTS_FULL
 using System.Diagnostics.Contracts;
 
 class A
 {
-  public void Foo([JetBrains.Annotations.CanBeNull]string s)
+  public void Foo([|JetBrains|(0).Annotations.CanBeNull]string s)
   {
-    |Contract.Requires(s != null)|(0);
+    |Contract.Requires(s != null)|(1);
   }
 }
 ---------------------------------------------------------
-(0): ReSharper Warning: Suspicios requires for nullable argument 's'
+(0): ReSharper Error Highlighting: Cannot resolve symbol 'JetBrains'
+(1): ReSharper Warning: Suspicios requires for nullable argument 's'

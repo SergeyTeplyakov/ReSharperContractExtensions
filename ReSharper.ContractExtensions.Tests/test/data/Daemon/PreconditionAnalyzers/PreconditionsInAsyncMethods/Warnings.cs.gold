@@ -1,30 +1,35 @@
+﻿#define CONTRACTS_FULL
 using System;
 using System.Threading.Tasks;
 using System.Diagnostics.Contracts;
 
 class A
 {
-  public async Task FooIfThrow(string s)
+  public |async|(0) Task FooIfThrow(string s)
   {
-    |if (s == null) throw new ArgumentNullException("s");|(0)
+    |if (s == null) throw new ArgumentNullException("s");|(1)
   }
 
-  public async Task FooWithLegacyCheck(string s)
+  public |async|(2) Task FooWithLegacyCheck(string s)
   {
     if (s == null) throw new ArgumentNullException("s");
     Contract.EndContractBlock();
   }
 
-  public async Task FooWithRequires(string s)
+  public |async|(3) Task FooWithRequires(string s)
   {
     Contract.Requires(s != null);
   }
 
-  protected async Task<int> FooIntWithRequires(string s)
+  protected |async|(4) Task<int> FooIntWithRequires(string s)
   {
     Contract.Requires(s != null);
     return 42;
   }
 }
 ---------------------------------------------------------
-(0): ReSharper Warning: Lecacy precondition in async method is asynchronous and will fail returning task
+(0): ReSharper Warning [CS1998]: This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await TaskEx.Run(...)' to do CPU-bound work on a background thread
+(1): ReSharper Warning: Lecacy precondition in async method is asynchronous and will fail returning task
+(2): ReSharper Warning [CS1998]: This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await TaskEx.Run(...)' to do CPU-bound work on a background thread
+(3): ReSharper Warning [CS1998]: This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await TaskEx.Run(...)' to do CPU-bound work on a background thread
+(4): ReSharper Warning [CS1998]: This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await TaskEx.Run(...)' to do CPU-bound work on a background thread

@@ -1,5 +1,7 @@
 ﻿using JetBrains.ReSharper.Daemon;
+using JetBrains.ReSharper.Feature.Services.Daemon;
 using JetBrains.ReSharper.Psi.CSharp;
+using JetBrains.ReSharper.Psi.CSharp.Tree;
 using ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.MalformContractAnalyzers;
 
 [assembly: RegisterConfigurableSeverity(PreconditionInAsyncMethodHighlighting.Id,
@@ -22,9 +24,8 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers.Ma
     {
         public const string Id = "Preconditions in async method";
 
-        internal PreconditionInAsyncMethodHighlighting(CustomWarningValidationResult warning,
-            ValidatedContractBlock contractBlock)
-            : base(warning, contractBlock)
+        internal PreconditionInAsyncMethodHighlighting(ICSharpFunctionDeclaration element, CustomWarningValidationResult warning, ValidatedContractBlock contractBlock)
+            : base(element, warning, contractBlock)
         {}
     }
 }

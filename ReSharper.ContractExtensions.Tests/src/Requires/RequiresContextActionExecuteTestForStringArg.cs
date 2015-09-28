@@ -3,7 +3,8 @@ using JetBrains.Application.Settings;
 using JetBrains.Application.Settings.Store.Implementation;
 using JetBrains.DataFlow;
 using JetBrains.ProjectModel;
-using JetBrains.ReSharper.Intentions.CSharp.Test;
+using JetBrains.ReSharper.FeaturesTestFramework.Intentions;
+using JetBrains.ReSharper.Resources.Shell;
 using NUnit.Framework;
 using ReSharper.ContractExtensions.ContextActions.Requires;
 using ReSharper.ContractExtensions.Settings;
@@ -28,6 +29,11 @@ namespace ReSharper.ContractExtensions.Tests.Preconditions
 
                 base.DoTest(testProject);
             });
+        }
+
+        protected override string RelativeTestDataPath
+        {
+            get { return "Intentions/ContextActions/RequiresWithString"; }
         }
 
         protected override string ExtraPath

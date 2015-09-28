@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -6,6 +7,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 using JetBrains.Application;
+using JetBrains.Application.BuildScript.Application.Zones;
+using JetBrains.ReSharper.Resources.Shell;
+using JetBrains.ReSharper.TestFramework;
+using JetBrains.TestFramework;
+using JetBrains.TestFramework.Application.Zones;
 using JetBrains.Threading;
 using NUnit.Framework;
 using ReSharper.ContractExtensions.ContextActions;
@@ -41,7 +47,46 @@ using ReSharper.ContractExtensions.ContextActions.Requires;
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
 
+#pragma warning disable 618
+[assembly: TestDataPathBase(@".\test\data")]
+#pragma warning restore 618
 
+
+[ZoneDefinition]
+public class IExtensionTestEnvironmentZone : ITestsZone, IRequire<PsiFeatureTestZone>
+{
+}
+
+[SetUpFixture]
+public class ReSharperTestEnvironmentAssembly : ExtensionTestEnvironmentAssembly<IExtensionTestEnvironmentZone>
+{
+    //[NotNull]
+    //private static IEnumerable<Assembly> GetAssembliesToLoad()
+    //{
+    //  yield return typeof(PostfixTemplatesManager<>).Assembly;
+    //  yield return Assembly.GetExecutingAssembly();
+    //}
+    //
+    //public override void SetUp()
+    //{
+    //  base.SetUp();
+    //
+    //  ReentrancyGuard.Current.Execute("LoadAssemblies", () => {
+    //    var assemblyManager = Shell.Instance.GetComponent<AssemblyManager>();
+    //    assemblyManager.LoadAssemblies(GetType().Name, GetAssembliesToLoad());
+    //  });
+    //}
+    //
+    //public override void TearDown()
+    //{
+    //  ReentrancyGuard.Current.Execute("UnloadAssemblies", () => {
+    //    var assemblyManager = Shell.Instance.GetComponent<AssemblyManager>();
+    //    assemblyManager.UnloadAssemblies(GetType().Name, GetAssembliesToLoad());
+    //  });
+    //
+    //  base.TearDown();
+    //}
+}
 
 /// <summary>
 ///   Must be in the global namespace.
@@ -51,6 +96,11 @@ using ReSharper.ContractExtensions.ContextActions.Requires;
 public class SamplePluginTestEnvironmentAssembly : ReSharperTestEnvironmentAssembly
 // ReSharper restore CheckNamespace
 {
+    public SamplePluginTestEnvironmentAssembly()
+    {
+        Console.WriteLine("Constructor!");
+    }
+
     /// <summary>
     /// Gets the assemblies to load into test environment.
     /// Should include all assemblies which contain components.
@@ -66,8 +116,16 @@ public class SamplePluginTestEnvironmentAssembly : ReSharperTestEnvironmentAssem
 
     public override void SetUp()
     {
-        base.SetUp();
-        
+        try
+        {
+            base.SetUp();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+
         ReentrancyGuard.Current.Execute(
           "LoadAssemblies",
           () => Shell.Instance.GetComponent<AssemblyManager>().LoadAssemblies(

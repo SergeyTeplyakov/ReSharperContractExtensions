@@ -6,7 +6,7 @@ class A
   {
     Contract.Requires<CustomException>(s != null);
   }
-  protected class CustomException : ArgumentException
+  protected class CustomException : System.ArgumentException
   {
     public CustomException(string message, string paramName) : base(message, paramName) {}
   }

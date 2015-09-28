@@ -3,8 +3,10 @@ using JetBrains.Application.Settings;
 using JetBrains.Application.Settings.Store.Implementation;
 using JetBrains.DataFlow;
 using JetBrains.ProjectModel;
-using JetBrains.ReSharper.Intentions.CSharp.Test;
-using JetBrains.ReSharper.Intentions.Extensibility;
+using JetBrains.ReSharper.Feature.Services.ContextActions;
+using JetBrains.ReSharper.FeaturesTestFramework.Intentions;
+using JetBrains.ReSharper.Resources.Shell;
+//using JetBrains.ReSharper.Intentions.Extensibility;
 using ReSharper.ContractExtensions.Settings;
 
 namespace ReSharper.ContractExtensions.Tests.Preconditions

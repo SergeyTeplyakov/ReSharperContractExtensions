@@ -5,7 +5,7 @@ using JetBrains.Application.Progress;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.Feature.Services.Bulbs;
 using JetBrains.ReSharper.Feature.Services.Generate;
-using JetBrains.ReSharper.Intentions.Extensibility;
+using JetBrains.ReSharper.Feature.Services.QuickFixes;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Tree;
@@ -51,8 +51,8 @@ namespace ReSharper.ContractExtensions.ProblemAnalyzers.PreconditionAnalyzers
 
                 workflow.Context.InputElements.Clear();
                 workflow.Context.InputElements.AddRange(ctors);
-                workflow.BuildInputOptions();
-                workflow.GenerateAndFinish("Generate missing constructor", NullProgressIndicator.Instance);
+                workflow.BuildOptions();
+                workflow.Generate("Generate missing constructor", NullProgressIndicator.Instance);
             }
 
             return null;

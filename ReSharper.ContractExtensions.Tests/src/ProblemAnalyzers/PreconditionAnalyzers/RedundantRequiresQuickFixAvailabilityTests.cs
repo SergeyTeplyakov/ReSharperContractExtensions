@@ -1,5 +1,5 @@
 ﻿using JetBrains.ReSharper.Daemon;
-using JetBrains.ReSharper.Intentions.Test;
+//using JetBrains.ReSharper.Intentions.Test;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.TestFramework;
 using NUnit.Framework;

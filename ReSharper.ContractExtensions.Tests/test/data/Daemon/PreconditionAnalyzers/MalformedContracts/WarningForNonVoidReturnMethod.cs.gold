@@ -1,14 +1,18 @@
-using System.Diagnostics.Contracts;
+﻿using System.Diagnostics.Contracts;
 
 class A
 {
   public void Foo(string s)
   {
     |InstanceMethod();|(0)
-    Contract.Requires(s != null);
-    Contract.Ensures(false);
+    |Contract.Requires(s != null)|(1);
+    |Contract.Ensures(false)|(2);
   }
-  private bool InstanceMethod() { return true; }
+  private |bool|(3) |InstanceMethod|(4)() { return true; }
 }
 ---------------------------------------------------------
 (0): ReSharper Warning: Detected expression statement evaluated for potential side-effect in contracts of method 'Foo'
+(1): ReSharper Dead Code: Method invocation is skipped. Compiler will not generate method invocation because the method is conditional, or it is partial method without implementation
+(2): ReSharper Dead Code: Method invocation is skipped. Compiler will not generate method invocation because the method is conditional, or it is partial method without implementation
+(3): ReSharper Dead Code: Method return value is never used
+(4): ReSharper Hint: Method 'InstanceMethod' can be made static

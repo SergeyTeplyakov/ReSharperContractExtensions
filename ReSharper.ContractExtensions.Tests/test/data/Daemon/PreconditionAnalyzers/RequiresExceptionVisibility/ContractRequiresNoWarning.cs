@@ -1,3 +1,4 @@
+#define CONTRACTS_FULL
 using System.Diagnostics.Contracts;
 
 public class A
@@ -8,7 +9,7 @@ public class A
   }
 }
 
-public class CustomException : ArgumentException
+public class CustomException : System.ArgumentException
 {
   public CustomException(string message, string paramName) : base(message, paramName) {}
 }

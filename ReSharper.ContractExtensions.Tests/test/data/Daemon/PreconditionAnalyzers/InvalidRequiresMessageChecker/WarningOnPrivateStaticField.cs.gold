@@ -1,13 +1,16 @@
-using System.Diagnostics.Contracts;
+﻿using System.Diagnostics.Contracts;
 
 class A
 {
-  private static string Message = "msg";
+  private static string ||Message|(0)|(1) = "msg";
   public void Foo(string s)
   {
-    |Contract.Requires(s != null, Message)|(0);
+    ||Contract.Requires(s != null, Message)|(2)|(3);
   }
 }
 ---------------------------------------------------------
-(0): ReSharper Underlined Error Highlighting: User message to contract call can only be string literal, or static field,
+(0):<overlapped> ReSharper Suggestion: Field can be made readonly
+(1): ReSharper Hint: Convert to constant
+(2): ReSharper Dead Code: Method invocation is skipped. Compiler will not generate method invocation because the method is conditional, or it is partial method without implementation
+(3): ReSharper Underlined Error Highlighting: User message to contract call can only be string literal, or static field,
 or static property that is at least internally visible

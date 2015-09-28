@@ -1,17 +1,18 @@
-using System;
+﻿#define CONTRACTS_FULL
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 
 class A
 {
-  private IEnumerable<int> FooWithArgCheck(string s)
+  private IEnumerable<int> |FooWithArgCheck|(0)(string |s|(1))
   {
-    |if (s == null) throw new ArgumentNullException("s");|(0)
+    |if (s == null) throw new System.ArgumentNullException("s");|(2)
     yield break;
   }
 
   public IEnumerable<int> FooWithLegacyContract(string s)
   {
-    if (s == null) throw new ArgumentNullException("s");
+    if (s == null) throw new System.ArgumentNullException("s");
     Contract.EndContractBlock();
     yield break;
   }
@@ -23,4 +24,6 @@ class A
   }
 }
 ---------------------------------------------------------
-(0): ReSharper Warning: Legacy precondition in iterator block will throw only on first MoveNext() call
+(0): ReSharper Dead Code: Method 'FooWithArgCheck' is never used
+(1): ReSharper Dead Code: Parameter 's' is only used for precondition check(s)
+(2): ReSharper Warning: Legacy precondition in iterator block will throw only on first MoveNext() call

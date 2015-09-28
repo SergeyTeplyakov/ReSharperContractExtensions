@@ -2,6 +2,7 @@
 using JetBrains.Annotations;
 using JetBrains.ReSharper.Psi;
 using System;
+using JetBrains.Metadata.Reader.Impl;
 using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Tree;
 

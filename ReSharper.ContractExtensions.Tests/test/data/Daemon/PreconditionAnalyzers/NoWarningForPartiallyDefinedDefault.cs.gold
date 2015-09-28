@@ -1,10 +1,12 @@
+﻿#define CONTRACTS_FULL
 using System.Diagnostics.Contracts;
 
 class A
 {
-  public void Foo(string s =)
+  public void Foo(string s |=)|(0)
   {
     Contract.Requires(s != null);
   }
 }
 ---------------------------------------------------------
+(0): ReSharper Underlined Error Highlighting: Expression expected

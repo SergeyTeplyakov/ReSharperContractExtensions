@@ -1,14 +1,18 @@
-using System.Diagnostics.Contracts;
+﻿using System.Diagnostics.Contracts;
 
 public class PreconditionWithContractPublicPropertyName
 {
     [ContractPublicPropertyName("IsValid")]
-    private bool _isValid = false;
-    public bool IsValid { get; private set; }
+    private bool ||_isValid|(0)|(1) = false;
+    public bool IsValid { get; |private set;|(2) }
     public void Foo()
     {
-        Contract.Requires(_isValid);
+        |Contract.Requires(_isValid)|(3);
     } 
 }
 
 ---------------------------------------------------------
+(0):<overlapped> ReSharper Suggestion: Field can be made readonly
+(1): ReSharper Hint: Convert to constant
+(2): ReSharper Warning: Auto-property accessor is never used
+(3): ReSharper Dead Code: Method invocation is skipped. Compiler will not generate method invocation because the method is conditional, or it is partial method without implementation

@@ -1,11 +1,13 @@
+#define CONTRACTS_FULL
 using System.Diagnostics.Contracts;
 
 class A
 {
-  internal static string Message {get {return "message";}}
+  internal static string Message {get {|return|(0) "message";}}
   public void Foo(string s)
   {
     Contract.Requires(s != null, Message);
   }
 }
 ---------------------------------------------------------
+(0): ReSharper Suggestion: Use expression body

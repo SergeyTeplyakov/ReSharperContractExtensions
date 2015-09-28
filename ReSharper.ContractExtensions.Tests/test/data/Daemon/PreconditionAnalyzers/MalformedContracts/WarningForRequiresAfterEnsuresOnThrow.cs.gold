@@ -1,13 +1,16 @@
-using System.Diagnostics.Contracts;
+﻿using System.Diagnostics.Contracts;
 
 class A
 {
   public void Foo(string s)
   {
-    |Contract.EnsuresOnThrow<Exception>(false);|(0)
-    |Contract.Requires(s != null);|(1)
+    ||Contract.EnsuresOnThrow<|Exception|(2)>(false)|(1);|(0)
+    ||Contract.Requires(s != null)|(4);|(3)
   }
 }
 ---------------------------------------------------------
 (0): ReSharper Underlined Error Highlighting: Malformed contract. Precondition found after postcondition in contract section of method 'Foo'
-(1): ReSharper Underlined Error Highlighting: Malformed contract. Precondition found after postcondition in contract section of method 'Foo'
+(1): ReSharper Dead Code: Method invocation is skipped. Compiler will not generate method invocation because the method is conditional, or it is partial method without implementation
+(2): ReSharper Error Highlighting: Cannot resolve symbol 'Exception'
+(3): ReSharper Underlined Error Highlighting: Malformed contract. Precondition found after postcondition in contract section of method 'Foo'
+(4): ReSharper Dead Code: Method invocation is skipped. Compiler will not generate method invocation because the method is conditional, or it is partial method without implementation

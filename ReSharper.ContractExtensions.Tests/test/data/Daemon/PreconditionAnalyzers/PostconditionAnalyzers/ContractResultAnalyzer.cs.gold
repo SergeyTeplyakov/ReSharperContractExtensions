@@ -1,3 +1,4 @@
+﻿#define CONTRACTS_FULL
 using System.Diagnostics.Contracts;
 using System.Threading.Tasks;
 
@@ -7,63 +8,63 @@ class A
   {
     // error CC1002: In method A.PostconditionWithMismatchedTaskReturnType: Detected a call to Result with 'System.Threading.Tasks.Task`1<System.Boolean>', should be 'System.Threading.Tasks.Task`1<System.String>'.
     |Contract.Ensures(Contract.Result<Task<bool>>() != null);|(0)
-    throw new NotImplementedException();
+    throw new |NotImplementedException|(1)();
   }
 
   public Task<bool> PostconditionWithMismatchedTaskReturnType2()
   {
     // error CC1002: In method ConsoleApplication8.CDeleteCommandContract`1.PostconditionWithMismatchedTaskReturnType2: Detected a call to Result with 'System.String', should be 'System.Threading.Tasks.Task`1<System.Boolean>'.
-    |Contract.Ensures(Contract.Result<string>() != null);|(1)
-    throw new NotImplementedException();
+    |Contract.Ensures(Contract.Result<string>() != null);|(2)
+    throw new |NotImplementedException|(3)();
   }
 
   public void PostconditionInVoidMethod()
   {
      // error CC1002: In method CodeContractInvestigations.Postconditions.PostconditionInVoidMethod: Detected a call to Result with 'System.String', should be 'System.Void'.
-     |Contract.Ensures(Contract.Result<string>() != null);|(2)
+     |Contract.Ensures(Contract.Result<string>() != null);|(4)
   }
 
   public object PostconditionWithDerivedType()
   {
      // error CC1002: In method CodeContractInvestigations.Postconditions.PostconditionWithDerivedType: Detected a call to Result with 'System.String', should be 'System.Object'.
-     |Contract.Ensures(Contract.Result<string>() != null);|(3)
-     throw new NotImplementedException();
+     |Contract.Ensures(Contract.Result<string>() != null);|(5)
+     throw new |NotImplementedException|(6)();
   }
 
   public object PostconditionWithTwoDerivedTypes()
   {
      // error CC1002: In method CodeContractInvestigations.Postconditions.PostconditionWithDerivedType: Detected a call to Result with 'System.String', should be 'System.Object'.
-     |Contract.Ensures(Contract.Result<string>() != null && Contract.Result<string>().Length != 0);|(4)
-     throw new NotImplementedException();
+     |Contract.Ensures(Contract.Result<string>() != null && Contract.Result<string>().Length != 0);|(7)
+     throw new |NotImplementedException|(8)();
   }
 
   public object PostconditionWithOneWrongType()
   {
      // error CC1002: In method CodeContractInvestigations.Postconditions.PostconditionWithDerivedType: Detected a call to Result with 'System.String', should be 'System.Object'.
-     |Contract.Ensures(Contract.Result<object>() != null && Contract.Result<string>().Length != 0);|(5)
-     throw new NotImplementedException();
+     |Contract.Ensures(Contract.Result<object>() != null && Contract.Result<string>().Length != 0);|(9)
+     throw new |NotImplementedException|(10)();
   }
 
   public object PostconditionWithTwoDifferentTypes()
   {
      // error CC1002: In method CodeContractInvestigations.Postconditions.PostconditionWithDerivedType: Detected a call to Result with 'System.String', should be 'System.Object'.
-     |Contract.Ensures(Contract.Result<string>() != null && Contract.Result<System.DateTime>() != null);|(6)
-     throw new NotImplementedException();
+     |Contract.Ensures(Contract.Result<string>() != null && Contract.Result<System.DateTime>() != null);|(11)
+     throw new |NotImplementedException|(12)();
   }
 
 
   public int PostconditionWithUnrelatedType1()
   {
      // error CC1002: In method CodeContractInvestigations.Postconditions.PostconditionWithDerivedType: Detected a call to Result with 'System.String', should be 'System.Object'.
-     |Contract.Ensures(Contract.Result<string>() != null);|(7)
-     throw new NotImplementedException();
+     |Contract.Ensures(Contract.Result<string>() != null);|(13)
+     throw new |NotImplementedException|(14)();
   }
 
-  public System.StringBuilder PostconditionWithUnrelatedType2()
+  public System.|StringBuilder|(15) PostconditionWithUnrelatedType2()
   {
      // error CC1002: In method CodeContractInvestigations.Postconditions.PostconditionWithDerivedType: Detected a call to Result with 'System.String', should be 'System.Object'.
-     |Contract.Ensures(Contract.Result<string>() != null);|(8)
-     throw new NotImplementedException();
+     |Contract.Ensures(Contract.Result<string>() != null);|(16)
+     throw new |NotImplementedException|(17)();
   }
 
   public object PostconditionWithProperty
@@ -71,8 +72,8 @@ class A
      get
      {
        // error CC1002: In method CodeContractInvestigations.Postconditions.PostconditionWithDerivedType: Detected a call to Result with 'System.String', should be 'System.Object'.
-       |Contract.Ensures(Contract.Result<string>() != null);|(9)
-       throw new NotImplementedException();
+       |Contract.Ensures(Contract.Result<string>() != null);|(18)
+       throw new |NotImplementedException|(19)();
      }
   }
 
@@ -80,45 +81,62 @@ class A
   {
     // OK
     Contract.Ensures(Contract.Result<object>() != null);
-    throw new NotImplementedException();
+    throw new |NotImplementedException|(20)();
   }
 
   public Task<string> EnsuresOnTask2()
   {
     // OK
     Contract.Ensures(Contract.Result<Task<string>>() != null);
-    throw new NotImplementedException();
+    throw new |NotImplementedException|(21)();
   }
 
   public Task<string> EnsuresOnTask()
   {
     // OK
     Contract.Ensures(Contract.Result<string>() != null);
-    throw new NotImplementedException();
+    throw new |NotImplementedException|(22)();
   }
 
-  public async Task<string> EnsuresOnAsyncTask()
+  public |async|(23) Task<string> EnsuresOnAsyncTask()
   {
     // OK
     Contract.Ensures(Contract.Result<string>() != null);
-    throw new NotImplementedException();
+    throw new |NotImplementedException|(24)();
   }
 
   public Task<bool> EnsuresOnTaskOfBool()
   {
     // OK
-    Contract.Ensures(Contract.Result<bool>() != null);
-    throw new NotImplementedException();
+    Contract.Ensures(|Contract.Result<bool>() != null|(25));
+    throw new |NotImplementedException|(26)();
   }
 }
 ---------------------------------------------------------
 (0): ReSharper Underlined Error Highlighting: Detected a call to Result with 'Task<bool>' in method 'PostconditionWithMismatchedTaskReturnType', should be 'Task<string>'
-(1): ReSharper Underlined Error Highlighting: Detected a call to Result with 'string' in method 'PostconditionWithMismatchedTaskReturnType2', should be 'Task<bool>'
-(2): ReSharper Underlined Error Highlighting: Detected a call to Result with 'string' in method 'PostconditionInVoidMethod', should be 'void'
-(3): ReSharper Underlined Error Highlighting: Detected a call to Result with 'string' in method 'PostconditionWithDerivedType', should be 'object'
-(4): ReSharper Underlined Error Highlighting: Detected a call to Result with 'string' in method 'PostconditionWithTwoDerivedTypes', should be 'object'
-(5): ReSharper Underlined Error Highlighting: Detected a call to Result with 'object' in method 'PostconditionWithOneWrongType', should be 'object'
-(6): ReSharper Underlined Error Highlighting: Detected a call to Result with 'string' in method 'PostconditionWithTwoDifferentTypes', should be 'object'
-(7): ReSharper Underlined Error Highlighting: Detected a call to Result with 'string' in method 'PostconditionWithUnrelatedType1', should be 'int'
-(8): ReSharper Underlined Error Highlighting: Detected a call to Result with 'string' in method 'PostconditionWithUnrelatedType2', should be 'StringBuilder'
-(9): ReSharper Underlined Error Highlighting: Detected a call to Result with 'string' in property 'PostconditionWithProperty', should be 'object'
+(1): ReSharper Error Highlighting: Cannot resolve symbol 'NotImplementedException'
+(2): ReSharper Underlined Error Highlighting: Detected a call to Result with 'string' in method 'PostconditionWithMismatchedTaskReturnType2', should be 'Task<bool>'
+(3): ReSharper Error Highlighting: Cannot resolve symbol 'NotImplementedException'
+(4): ReSharper Underlined Error Highlighting: Detected a call to Result with 'string' in method 'PostconditionInVoidMethod', should be 'void'
+(5): ReSharper Underlined Error Highlighting: Detected a call to Result with 'string' in method 'PostconditionWithDerivedType', should be 'object'
+(6): ReSharper Error Highlighting: Cannot resolve symbol 'NotImplementedException'
+(7): ReSharper Underlined Error Highlighting: Detected a call to Result with 'string' in method 'PostconditionWithTwoDerivedTypes', should be 'object'
+(8): ReSharper Error Highlighting: Cannot resolve symbol 'NotImplementedException'
+(9): ReSharper Underlined Error Highlighting: Detected a call to Result with 'object' in method 'PostconditionWithOneWrongType', should be 'object'
+(10): ReSharper Error Highlighting: Cannot resolve symbol 'NotImplementedException'
+(11): ReSharper Underlined Error Highlighting: Detected a call to Result with 'string' in method 'PostconditionWithTwoDifferentTypes', should be 'object'
+(12): ReSharper Error Highlighting: Cannot resolve symbol 'NotImplementedException'
+(13): ReSharper Underlined Error Highlighting: Detected a call to Result with 'string' in method 'PostconditionWithUnrelatedType1', should be 'int'
+(14): ReSharper Error Highlighting: Cannot resolve symbol 'NotImplementedException'
+(15): ReSharper Error Highlighting: Cannot resolve symbol 'StringBuilder'
+(16): ReSharper Underlined Error Highlighting: Detected a call to Result with 'string' in method 'PostconditionWithUnrelatedType2', should be 'StringBuilder'
+(17): ReSharper Error Highlighting: Cannot resolve symbol 'NotImplementedException'
+(18): ReSharper Underlined Error Highlighting: Detected a call to Result with 'string' in property 'PostconditionWithProperty', should be 'object'
+(19): ReSharper Error Highlighting: Cannot resolve symbol 'NotImplementedException'
+(20): ReSharper Error Highlighting: Cannot resolve symbol 'NotImplementedException'
+(21): ReSharper Error Highlighting: Cannot resolve symbol 'NotImplementedException'
+(22): ReSharper Error Highlighting: Cannot resolve symbol 'NotImplementedException'
+(23): ReSharper Warning [CS1998]: This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await TaskEx.Run(...)' to do CPU-bound work on a background thread
+(24): ReSharper Error Highlighting: Cannot resolve symbol 'NotImplementedException'
+(25): ReSharper Warning: Expression is always true
+(26): ReSharper Error Highlighting: Cannot resolve symbol 'NotImplementedException'

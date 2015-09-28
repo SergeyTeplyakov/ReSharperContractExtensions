@@ -8,7 +8,7 @@ public class A
   }
 }
 
-class CustomException : ArgumentException
+class CustomException : System.ArgumentException
 {
   public CustomException(string message, string paramName) : base(message, paramName) {}
 }

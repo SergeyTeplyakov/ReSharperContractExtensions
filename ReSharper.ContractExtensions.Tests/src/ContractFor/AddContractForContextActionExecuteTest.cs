@@ -1,4 +1,4 @@
-﻿using JetBrains.ReSharper.Intentions.CSharp.Test;
+﻿using JetBrains.ReSharper.FeaturesTestFramework.Intentions;
 using NUnit.Framework;
 using ReSharper.ContractExtensions.ContextActions;
 using ReSharper.ContractExtensions.ContextActions.ContractsFor;
@@ -8,6 +8,10 @@ namespace ReSharper.ContractExtensions.Tests.ContractFor
     [TestFixture]
     public class AddContractForContextActionExecuteTest : CSharpContextActionExecuteTestBase<AddContractClassContextAction>
     {
+        protected override string RelativeTestDataPath
+        {
+            get { return "Intentions/ContextActions/ContractFor"; }
+        }
 
         protected override string ExtraPath
         {

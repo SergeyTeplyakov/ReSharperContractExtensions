@@ -4,6 +4,7 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using JetBrains.Application.Progress;
 using JetBrains.Application.Settings;
+using JetBrains.ReSharper.Feature.Services.CSharp.Analyses.Bulbs;
 using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
 using JetBrains.ReSharper.Feature.Services.CSharp.Generate;
 using JetBrains.ReSharper.Feature.Services.Generate;
@@ -162,7 +163,7 @@ namespace ReSharper.ContractExtensions.ContextActions.ContractsFor
 
                 workflow.Context.InputElements.AddRange(workflow.Context.ProvidedElements);
 
-                workflow.GenerateAndFinish("Generate contract class", NullProgressIndicator.Instance);
+                workflow.Generate("Generate contract class", NullProgressIndicator.Instance);
             }
         }
 
@@ -194,20 +195,20 @@ namespace ReSharper.ContractExtensions.ContextActions.ContractsFor
                 return;
 
             using (var workflow = GeneratorWorkflowFactory.CreateWorkflowWithoutTextControl(
-                GeneratorStandardKinds.Implementations,
+                GeneratorStandardKinds.MissingMembers,
                 contractClass,
                 interfaceDeclaration))
             {
                 Contract.Assert(workflow != null);
 
-                workflow.Context.SetGlobalOptionValue(
-                    CSharpBuilderOptions.ImplementationKind,
-                    CSharpBuilderOptions.ImplementationKindExplicit);
-
                 workflow.Context.InputElements.Clear();
                 workflow.Context.InputElements.AddRange(workflow.Context.ProvidedElements);
 
-                workflow.GenerateAndFinish("Generate contract class", NullProgressIndicator.Instance);
+                workflow.Context.SetOption(
+                    CSharpBuilderOptions.ImplementationKind,
+                    CSharpBuilderOptions.ImplementationKindExplicit);
+
+                workflow.Generate("Generate contract class", NullProgressIndicator.Instance);
             }
         }
 
@@ -246,8 +247,8 @@ namespace ReSharper.ContractExtensions.ContextActions.ContractsFor
                 { 
                     workflow.Context.InputElements.Clear();
                     workflow.Context.InputElements.Add(ctor);
-                    workflow.BuildInputOptions();
-                    workflow.GenerateAndFinish("Generate missing constructor", NullProgressIndicator.Instance);
+                    workflow.BuildOptions();
+                    workflow.Generate("Generate missing constructor", NullProgressIndicator.Instance);
                 }
             }
 

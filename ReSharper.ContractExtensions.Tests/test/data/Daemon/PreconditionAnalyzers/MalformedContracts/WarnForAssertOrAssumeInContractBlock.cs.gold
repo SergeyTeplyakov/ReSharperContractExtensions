@@ -1,15 +1,19 @@
-using System.Diagnostics.Contracts;
+﻿using System.Diagnostics.Contracts;
 
 class A
 {
   public void Foo(string s)
   {
-    |Contract.Assert(false);|(0)
-    |Contract.Assume(false);|(1)
-    Contract.Requires(s != null);
-    Contract.Ensures(false);
+    ||Contract.Assert(false)|(1);|(0)
+    ||Contract.Assume(false)|(3);|(2)
+    |Contract.Requires(s != null)|(4);
+    |Contract.Ensures(false)|(5);
   }
 }
 ---------------------------------------------------------
 (0): ReSharper Underlined Error Highlighting: Contract.Assert/Contract.Assume cannot be used in contract section of method 'Foo'. Use only Requires and Ensures
-(1): ReSharper Underlined Error Highlighting: Contract.Assert/Contract.Assume cannot be used in contract section of method 'Foo'. Use only Requires and Ensures
+(1): ReSharper Dead Code: Method invocation is skipped. Compiler will not generate method invocation because the method is conditional, or it is partial method without implementation
+(2): ReSharper Underlined Error Highlighting: Contract.Assert/Contract.Assume cannot be used in contract section of method 'Foo'. Use only Requires and Ensures
+(3): ReSharper Dead Code: Method invocation is skipped. Compiler will not generate method invocation because the method is conditional, or it is partial method without implementation
+(4): ReSharper Dead Code: Method invocation is skipped. Compiler will not generate method invocation because the method is conditional, or it is partial method without implementation
+(5): ReSharper Dead Code: Method invocation is skipped. Compiler will not generate method invocation because the method is conditional, or it is partial method without implementation

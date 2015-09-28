@@ -1,4 +1,6 @@
 using System.Diagnostics.Contracts;
+using JetBrains.Metadata.Reader.API;
+using JetBrains.ReSharper.Feature.Services.CSharp.Analyses.Bulbs;
 using JetBrains.ReSharper.Feature.Services.CSharp.Bulbs;
 using JetBrains.ReSharper.Psi;
 using JetBrains.ReSharper.Psi.CSharp;

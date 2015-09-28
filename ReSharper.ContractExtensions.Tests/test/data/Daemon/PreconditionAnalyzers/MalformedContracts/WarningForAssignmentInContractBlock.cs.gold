@@ -1,13 +1,15 @@
-using System.Diagnostics.Contracts;
+﻿using System.Diagnostics.Contracts;
 
 class A
 {
-  private static string _foo;
+  private static string |_foo|(0);
   public void Foo(string s)
   {
-    |_foo = s;|(0)
-    Contract.Requires(s != null);
+    |_foo = s;|(1)
+    |Contract.Requires(s != null)|(2);
   }
 }
 ---------------------------------------------------------
-(0): ReSharper Underlined Error Highlighting: Malformed contract. Assignment cannot be used in contract section of method 'Foo'
+(0): ReSharper Dead Code: Field '_foo' is assigned but its value is never used
+(1): ReSharper Underlined Error Highlighting: Malformed contract. Assignment cannot be used in contract section of method 'Foo'
+(2): ReSharper Dead Code: Method invocation is skipped. Compiler will not generate method invocation because the method is conditional, or it is partial method without implementation

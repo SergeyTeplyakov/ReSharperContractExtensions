@@ -1,8 +1,9 @@
+#define CONTRACTS_FULL
 using System.Diagnostics.Contracts;
 
 class A
 {
-  public event EventHandler E;
+  public event System.EventHandler E;
 
   public void Foo()
   {

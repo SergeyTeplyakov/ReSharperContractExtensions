@@ -3,7 +3,8 @@ using JetBrains.Application.Settings;
 using JetBrains.Application.Settings.Store.Implementation;
 using JetBrains.DataFlow;
 using JetBrains.ProjectModel;
-using JetBrains.ReSharper.Intentions.CSharp.Test;
+using JetBrains.ReSharper.FeaturesTestFramework.Intentions;
+using JetBrains.ReSharper.Resources.Shell;
 using NUnit.Framework;
 using ReSharper.ContractExtensions.ContextActions.ContractsFor;
 using ReSharper.ContractExtensions.Settings;
@@ -14,6 +15,11 @@ namespace ReSharper.ContractExtensions.Tests.ContractFor
     [TestFixture]
     public class AddContractForWIthExcludeCodeCoverageTest : CSharpContextActionExecuteTestBase<AddContractClassContextAction>
     {
+        protected override string RelativeTestDataPath
+        {
+            get { return "Intentions/ContextActions/ContractFor"; }
+        }
+
         protected override string ExtraPath
         {
             get { return "ContractFor"; }
