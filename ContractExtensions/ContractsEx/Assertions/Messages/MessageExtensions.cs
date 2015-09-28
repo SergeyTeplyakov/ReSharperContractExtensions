@@ -45,9 +45,20 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions
                         
             return Match(message, _ => true, // string literals are valid
                 r => IsValidReference(r.Reference), // references should be checked separately
-                _ => false, // message calls are invalid
+                i => IsValidInvocation(i.InvocationExpression), // message calls are invalid
                 () => true); // "NoMessage" is valid
 
+        }
+
+        private static bool IsValidInvocation(IInvocationExpression invocationExpression)
+        {
+            // Supper naive an hacky way of checking for nameof:
+            if (invocationExpression.GetText().StartsWith("nameof(", StringComparison.InvariantCulture))
+            {
+                return true;
+            }
+
+            return false;
         }
 
         /// <summary>
