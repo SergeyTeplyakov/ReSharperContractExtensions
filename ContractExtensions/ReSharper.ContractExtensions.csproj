@@ -379,6 +379,7 @@
     <Compile Include="Utilities\TreeNodeExtensions.cs" />
     <Compile Include="Utilities\JetTypeEx.cs" />
     <Compile Include="Utilities\TypeExtensions.cs" />
+    <Compile Include="ZooMarker.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ProblemAnalyzers\PreconditionAnalyzers\PurityAnalyzers\" />
