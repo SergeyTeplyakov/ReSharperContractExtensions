@@ -13,7 +13,7 @@ This plugin is available for download in [ReSharper extensions gallery](https://
 
 1. Inconsistent preconditions visibility
  - Warn on Contract.Requires&lt;CustomException&gt;() when CustomException does not have ctor(string) or ctor(string, string) (#4).
- - Warn on Contfact.Requires&lt;CustomException&gt;() when CustomException is less visible then the enclosing method (#3).
+ - Warn on Contract.Requires&lt;CustomException&gt;() when CustomException is less visible then the enclosing method (#3).
  - Error when Contract.Requires less visible members in the predicate than the enclosing method.
 
 2. Errors for malformed method contracts
