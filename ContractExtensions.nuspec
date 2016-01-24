@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>ReSharper.ContractExtensions</id>
-    <version>0.9.2.5</version>
+    <version>0.10.0.1</version>
     <!-- update plugin ver in AssemblyInfo.cs plz -->
     <title>Code Contract editing extensions</title>
     <authors>Sergey Teplyakov, https://github.com/Diagonactic</authors>
@@ -15,9 +15,11 @@
       Detects Code Contract error/warnings in the IDE.
     </description>
 	<dependencies>
-		<dependency id="Wave" version="[3.0, 4.0)" />
+           <dependency id="Wave" version="[4.0,4.1)" />
 	</dependencies>
     <releaseNotes>
+*What's new in 0.10.0.1*
+Support for R# 10
 
 *What's new in 0.9.2.4*
 Updated to API for ReSharper 9.2

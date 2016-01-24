@@ -30,7 +30,7 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions.Statements
         /// </summary>
         private readonly IInvocationExpression _invocationExpression;
         private readonly CodeContractStatementType _statementType;
-        private JetBrains.Util.Lazy.Lazy<CodeContractAssertion> _codeContractExpression;
+        private System.Lazy<CodeContractAssertion> _codeContractExpression;
 
         private CodeContractStatement(ICSharpStatement statement, 
             IInvocationExpression invocationExpression,
@@ -44,8 +44,8 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions.Statements
 
             // Due to weird bug in CC compiler, I can't use the same variable in Contract.Requires
             // and in lambda expression.
-            _codeContractExpression = JetBrains.Util.Lazy.Lazy.Of(
-                () => Assertions.ContractStatementFactory.TryCreateAssertion(_invocationExpression));
+            _codeContractExpression = JetBrains.Util.Lazy.Of(
+                () => Assertions.ContractStatementFactory.TryCreateAssertion(_invocationExpression), true);
         }
 
         public CodeContractStatementType StatementType
@@ -61,8 +61,8 @@ namespace ReSharper.ContractExtensions.ContractsEx.Assertions.Statements
                        StatementType == CodeContractStatementType.EnsuresOnThrow;
             }
         }
-
-        public JetBrains.Util.Lazy.Lazy<CodeContractAssertion> CodeContractExpression
+        
+        public Lazy<CodeContractAssertion> CodeContractExpression
         {
             get
             {

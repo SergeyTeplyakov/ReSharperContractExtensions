@@ -94,8 +94,7 @@ namespace ReSharper.ContractExtensions.ContextActions.ContractsFor
         private IAttribute CreateExcludeFromCodeCoverageAttribute()
         {
             ITypeElement type = TypeFactory.CreateTypeByCLRName(
-                typeof(ExcludeFromCodeCoverageAttribute).FullName,
-                _provider.PsiModule, _currentFile.GetResolveContext()).GetTypeElement();
+                typeof(ExcludeFromCodeCoverageAttribute).FullName, _provider.PsiModule).GetTypeElement();
 
             return _factory.CreateAttribute(type);
         }
@@ -342,8 +341,7 @@ namespace ReSharper.ContractExtensions.ContextActions.ContractsFor
         private IAttribute CreateContractClassAttribute(IClassDeclaration contractClass)
         {
             ITypeElement attributeType = TypeFactory.CreateTypeByCLRName(
-                typeof(ContractClassAttribute).FullName,
-                _provider.PsiModule, _currentFile.GetResolveContext()).GetTypeElement();
+                typeof(ContractClassAttribute).FullName, _provider.PsiModule).GetTypeElement();
 
             var declaredType = contractClass.DeclaredElement;
             var typeofExpression = _factory.CreateExpression("typeof($0)", declaredType);
@@ -362,8 +360,7 @@ namespace ReSharper.ContractExtensions.ContextActions.ContractsFor
         {
             var declaredType = _addContractForAvailability.DeclaredType.GetTypeElement();
             ITypeElement type = TypeFactory.CreateTypeByCLRName(
-                typeof(ContractClassForAttribute).FullName,
-                _provider.PsiModule, _currentFile.GetResolveContext()).GetTypeElement();
+                typeof(ContractClassForAttribute).FullName, _provider.PsiModule).GetTypeElement();
 
             var expression = _factory.CreateExpression("typeof($0)", declaredType);
 

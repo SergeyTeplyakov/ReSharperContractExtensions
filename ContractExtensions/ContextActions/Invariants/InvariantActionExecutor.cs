@@ -125,8 +125,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Invariants
         private void AddContractInvariantAttribute(IMethodDeclaration method)
         {
             ITypeElement type = TypeFactory.CreateTypeByCLRName(
-                typeof(ContractInvariantMethodAttribute).FullName,
-                _provider.PsiModule, _currentFile.GetResolveContext()).GetTypeElement();
+                typeof(ContractInvariantMethodAttribute).FullName, _provider.PsiModule).GetTypeElement();
 
             var attribute = _factory.CreateAttribute(type);
 

@@ -10,7 +10,6 @@ using JetBrains.ReSharper.Psi.CSharp.Tree;
 using JetBrains.ReSharper.Psi.Impl.Types;
 using JetBrains.ReSharper.Psi.Modules;
 using JetBrains.ReSharper.Psi.Tree;
-using JetBrains.Util.Lazy;
 
 namespace ReSharper.ContractExtensions.ContextActions.Infrastructure
 {
@@ -82,8 +81,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Infrastructure
             Contract.Requires(clrTypeName != null);
             Contract.Ensures(Contract.Result<ITypeElement>() != null);
 
-            return new DeclaredTypeFromCLRName(clrTypeName, _psiModule, _currentFile.GetResolveContext())
-                .GetTypeElement();
+            return new DeclaredTypeFromCLRName(clrTypeName, _psiModule).GetTypeElement();
         }
 
         [Pure]
@@ -99,8 +97,7 @@ namespace ReSharper.ContractExtensions.ContextActions.Infrastructure
         protected PredefinedType GetPredefinedType()
         {
             Contract.Ensures(Contract.Result<PredefinedType>() != null);
-            return _psiModule.GetPredefinedType(
-                _currentFile.GetResolveContext());
+            return _psiModule.GetPredefinedType();
         }
 
         public ITypeElement ContractType
